@@ -100,7 +100,7 @@ export class APIComment {
 }
 
 export class APILike{
-  _id?: ObjectId;
+  id?: ObjectId;
   parentId : ObjectId
   parentType :parentTypeEnum
   addedAt : Date

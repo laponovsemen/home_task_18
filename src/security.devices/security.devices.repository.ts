@@ -83,7 +83,7 @@ export class SecurityDevicesRepository {
 
   async deleteAllData() {
       await this.dataSource.query(`
-    DELETE FROM public."UserTable"
+    DELETE FROM public."APIDeviceModelTable"
     WHERE 1 = 1;
     `)
   }

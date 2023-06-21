@@ -17,7 +17,7 @@ export class CommentsRepository{
   }
   async deleteAllData(){
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
+    DELETE FROM public."APICommentTable"
     WHERE 1 = 1;
     `)
   }

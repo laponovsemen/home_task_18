@@ -20,14 +20,16 @@ export class BlogsRepository {
     protected readonly common: Common,
   ) {}
   async getAllBlogs(blogsPagination: paginationCriteriaType) {
-    const filter: { name?: any, "banInfo.isBanned" : boolean } = {"banInfo.isBanned" : false}
+    let filter : {name? : any} = {}
     if (blogsPagination.searchNameTerm) {
-      filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
+      filter.name = blogsPagination.searchNameTerm ?? ''
     }
     const pageSize = blogsPagination.pageSize;
     const totalCount = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    SELECT COUNT(*) 
+    FROM public."BlogsTable"
+    WHERE "isBanned" = false AND "name" Like $1
+    `, [filter.name])
 
 
     const pagesCount = Math.ceil(totalCount / pageSize);
@@ -39,8 +41,10 @@ export class BlogsRepository {
 
 
     const result =await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    SELECT *
+    FROM public."BlogsTable"
+    WHERE "isBanned" = false AND "name" Like $1
+    `, [filter.name])
 
     if (result) {
       const items = result.map((item) => {

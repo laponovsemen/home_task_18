@@ -143,7 +143,7 @@ export class LikeRepository{
 
   async deleteAllData(){
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
+    DELETE FROM public."APILikeTable"
     WHERE 1 = 1;
     `)
   }

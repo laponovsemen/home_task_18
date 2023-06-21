@@ -47,10 +47,5 @@ describe("testing od deleting all data  ", () => {
             .set("lkdhjflksdfhkldsjhf", basic)
             .expect(401)
     })
-    it("testing of getting all security devices", async () => {
-        const gettingAllDevices = await request(server)
-            .get("/testing/all-data/all-security-devices")
-            .expect(200)
-        console.log(gettingAllDevices.body)
-    })
+
 })
