@@ -25,14 +25,17 @@ export class BlogsRepository {
       filter.name = blogsPagination.searchNameTerm ?? ''
     }
     const pageSize = blogsPagination.pageSize;
-    const totalCount = await this.dataSource.query(`
+    const sqlCountQuery = await this.dataSource.query(`
     SELECT COUNT(*) 
     FROM public."BlogsTable"
-    WHERE "isBanned" = false AND "name" Like $1
+    WHERE public."BlogsTable"."blogBanId" = null AND public."BlogsTable"."name" Like $1
     `, [filter.name])
+    const totalCount = parseInt(sqlCountQuery[0].count, 10)
 
-
+    console.log(totalCount)
+    console.log(sqlCountQuery)
     const pagesCount = Math.ceil(totalCount / pageSize);
+    console.log(pagesCount)
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
     const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
@@ -42,8 +45,8 @@ export class BlogsRepository {
 
     const result =await this.dataSource.query(`
     SELECT *
-    FROM public."BlogsTable"
-    WHERE "isBanned" = false AND "name" Like $1
+   FROM public."BlogsTable"
+    WHERE public."BlogsTable"."blogBanId" = null AND public."BlogsTable"."name" Like $1
     `, [filter.name])
 
     if (result) {
