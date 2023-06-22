@@ -119,12 +119,20 @@ export class UsersRepository {
 
 
   async deleteUserById(id: string) {
-
+    const foundUserQuery = await this.dataSource.query(`
+    SELECT *  FROM public."UserTable"
+    WHERE public."UserTable"."id" = $1;
+    `, [id])
+    const foundUser = foundUserQuery[0]
+    if(!foundUser){
+      return false
+    }
     const deletedUser = await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE public."UserTable"."id" = $1;
     `, [id])
-    return deletedUser.deletedCount === 1
+    return true
+
   }
 
   async findUserByLoginOrEmail(loginOrEmail: string, pass : string) {
@@ -280,7 +288,7 @@ export class UsersRepository {
         end if;
     
     ;
-    `,[searchLoginTerm, searchEmailTerm,searchBanTerm,])
+    `,[searchLoginTerm, searchEmailTerm,searchBanTerm])
     const totalCount = parseInt(totalCountQuery[0].count)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
