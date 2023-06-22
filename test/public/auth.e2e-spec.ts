@@ -29,7 +29,9 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     await app.close()
   });
   it("should authorize user //auth is correct", async () => {
-    //await request(app).delete("/testing/all-data")
+    //delete all data
+    await request(app).delete("/testing/all-data")
+    //create user
     const user = await request(server)
       .post("/sa/users")
       .set(authE2eSpec, basic)
@@ -50,7 +52,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       "id": expect.any(String),
       "login": "login"
     })
-
+    //login
     const token = await request(server)
       .post("/auth/login")
       .send({
@@ -61,6 +63,23 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     expect(token.body.accessToken).toEqual(expect.any(String))
 
+    //create 10 users
+    for (let i = 0; i < 10; i++) {
+      await request(server)
+          .post("/sa/users")
+          .set(authE2eSpec, basic)
+          .send({
+            login: `login${i}`,
+            password: `password${i}`,
+            email: `simsbury65@gmail.com${i}`
+          })
+    }
+    const allUsers = await request(server)
+        .get("/sa/users")
+        .set(authE2eSpec, basic)
+
+    expect(allUsers).toEqual({})
+
   })
   it("sdfdsfsdfds", async () => {
     await request(server).delete("/testing/all-data")
@@ -70,7 +89,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       email : "igorlaponov01011972@gmail.com",
       login : "string",
       password : "stringstring",
-    }).expect(204)
+    }).expect(400)
     expect(result.body).toEqual({})
 
 
@@ -88,7 +107,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     await request(server).delete("/testing/all-data")
     // create new user
     const creationOfUser = await request(server)
-      .post("sa/users")
+      .post("/sa/users")
       .set(authE2eSpec, basic)
       .send({
         login: "login",
@@ -154,7 +173,13 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       id: expect.any(String),
       createdAt: expect.any(String),
       login: "login",
-      email: "simsbury65@gmail.com"})
+      email: "simsbury65@gmail.com",
+      banInfo:  {
+           "banDate": null,
+               "banReason": null,
+              "isBanned": false,
+             },
+    })
 
     // try to login
 
