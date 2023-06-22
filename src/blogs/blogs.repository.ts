@@ -187,8 +187,14 @@ export class BlogsRepository {
     const createdBlog : Blog = await this.dataSource.query(`
     SELECT COUNT(*) FROM public."BlogsTable"
     `)
+    const foundBlogAfterCreation = await this.dataSource.query(`
+    SELECT * FROM public."BlogsTable"
+    WHERE name = $1,
+      description = $2,
+      websiteUrl = $3,
+    `, [name, description, websiteUrl])
     return {
-      id: createdBlog.id,
+      id: foundBlogAfterCreation.id,
       name,
       description,
       websiteUrl,
