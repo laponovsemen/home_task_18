@@ -61,7 +61,7 @@ export class UsersRepository {
 
     console.log(result)
     const items = result.map((item) => {
-      return this.common.mongoUserSlicing(item)
+      return this.common.SQLUsermapping(item)
     })
 
 
@@ -90,15 +90,21 @@ export class UsersRepository {
     const password = DTO.password
     const email = DTO.email
     const createdAt = dateOfCreation
-    const newlyCreatedUser: User = await this.dataSource.query(`
+    await this.dataSource.query(`
         INSERT INTO public."UserTable"(
          "login", "email", "password", "createdAt", "isConfirmed", "code", "codeDateOfExpiary", "banDate", "banReason", "isBanned")
         VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
       
     `, [login, email, password, createdAt, true, null, null, null, null, false])
+    const newlyCreatedUser: User = await this.dataSource.query(`
+        SELECT * FROM public."UserTable"
+        WHERE "login" = $1 AND "email" = $2 AND "password" = $3;
+      
+    `, [login, email, password])
+        console.log(newlyCreatedUser)
 
     return {
-      id: newlyCreatedUser.id,
+      id: newlyCreatedUser[0].id.toString(),
       login,
       email,
       createdAt,
@@ -124,12 +130,17 @@ export class UsersRepository {
     return deletedUser.deletedCount === 1
   }
 
-  findUserByLoginOrEmail(loginOrEmail: string, pass : string) {
+  async findUserByLoginOrEmail(loginOrEmail: string, pass : string) {
     const filter = {$or :[{login : loginOrEmail}, {email : loginOrEmail}]}
-    return  this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    //QUERY
+    const queryResult = await this.dataSource.query(`
+    SELECT * FROM public."UserTable"
+    WHERE public."UserTable".login = $1 OR public."UserTable".email = $1;
+    ;`, [loginOrEmail])
+    const result = queryResult[0]
+
+    console.log(result , " result in findUserByLoginOrEmail")
+    return this.common.SQLUsermapping(result)
   }
   async createUnconfirmedUser(login: string, password: string, email: string) {
     const dateOfCreation = new Date()
@@ -143,11 +154,9 @@ export class UsersRepository {
       isConfirmed: false,
       code: codeToSend,
       codeDateOfExpiary: codeDateOfExpiary,
-      banInfo : {
-        banDate : null,
-        banReason : null,
-        isBanned : false
-      }
+      banDate: null,
+      banReason: null,
+      isBanned: false
     }
     const newlyCreatedUser = await await this.dataSource.query(`
     DELETE FROM public."UserTable"
@@ -282,7 +291,7 @@ export class UsersRepository {
     WHERE 1 = 1;
     `)
     const items = result.map((item) => {
-      return this.common.mongoUserSlicing(item)
+      return this.common.SQLUsermapping(item)
     })
 
 

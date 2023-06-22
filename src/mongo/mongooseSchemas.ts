@@ -133,6 +133,16 @@ export class User {
   isConfirmed: boolean;
   code: string | null;
   codeDateOfExpiary: Date | null;
+  banDate: Date | null
+  banReason: String | null
+  isBanned: boolean
+}
+export class UserViewClass {
+  id: string;
+  login: string;
+  email: string;
+  password: string
+  createdAt: string
   banInfo: BanInfoDB
 }
 

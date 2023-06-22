@@ -31,7 +31,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
   it("should authorize user //auth is correct", async () => {
     //await request(app).delete("/testing/all-data")
     const user = await request(server)
-      .post("sa/users")
+      .post("/sa/users")
       .set(authE2eSpec, basic)
       .send({
         login: "login",
@@ -88,7 +88,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     await request(server).delete("/testing/all-data")
     // create new user
     const creationOfUser = await request(server)
-      .post("/users")
+      .post("sa/users")
       .set(authE2eSpec, basic)
       .send({
         login: "login",
@@ -96,6 +96,11 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         email: "simsbury65@gmail.com"
       }).expect(201)
     expect(creationOfUser.body).toEqual({
+      "banInfo":  {
+        "banDate": null,
+        "banReason": null,
+        "isBanned": false,
+      },
       id: expect.any(String),
       createdAt: expect.any(String),
       login: "login",

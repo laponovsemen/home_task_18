@@ -51,6 +51,7 @@ describe("TESTING OF GETTING ALL BLOGS", () => {
 
 })
 
+
 describe("TESTING OF CREATING BLOGS", () => {
     let app: INestApplication;
     let server : any
@@ -130,7 +131,7 @@ describe("TESTING OF CREATING BLOGS", () => {
     })
     it("should return STATRUS CODE 400 //Validation field is incorrect, WebUrl is incrrect", async () => {
         request(server).delete("/testing/all-data").set(auth, basic)
-        const result = await request(app)
+        const result = await request(server)
             .post("/blogs")
             .set(auth, basic)
             .send({

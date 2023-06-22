@@ -127,7 +127,7 @@ export class Common {
   createEmailSendCode() {
     return uuidv4()
   }
-  mongoUserSlicing = (Obj2: User) => {
+  /*mongoUserSlicing = (Obj2: User) => {
     return {
       id: Obj2.id,
       login: Obj2.login,
@@ -135,7 +135,7 @@ export class Common {
       createdAt : Obj2.createdAt,
       banInfo : Obj2.banInfo
     };
-  };
+  };*/
 
 
   mongoBanSlicing= (Obj2: BloggerBansForSpecificBlog) => {
@@ -178,4 +178,19 @@ export class Common {
     console.log(result, " blyat blyat");
     return result
   }
+
+  SQLUsermapping(Obj: User) {
+        return {
+          id: Obj.id,
+          login: Obj.login,
+          email: Obj.email,
+          createdAt: '2023-06-22T04:50:48.741+03:00',
+          password : Obj.password,
+          banInfo : {
+            banDate: Obj.banDate,
+            banReason: Obj.banReason,
+            isBanned: Obj.isBanned
+          }
+        }
+    }
 }

@@ -57,7 +57,7 @@ export class AuthController {
     const deviceId = new ObjectId(this.common.mongoObjectId())
     const user = await this.usersService.findUserByLoginOrEmail(signInDto.loginOrEmail, signInDto.password);
     console.log(user?.banInfo.isBanned , " is user banned");
-    //console.log(user)
+    console.log(user)
     if (user?.password !== signInDto.password || user?.banInfo.isBanned) {
 
       throw new UnauthorizedException();
@@ -65,7 +65,7 @@ export class AuthController {
 
 
     const result = await this.authService.signIn(user, ip, deviceName, deviceId);
-    const newSession = await this.securityDevicesRepository.createNewSession(user._id.toString(),
+    const newSession = await this.securityDevicesRepository.createNewSession(user.id.toString(),
       ip,
       deviceName,
       lastActiveDate,
