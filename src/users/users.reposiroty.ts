@@ -272,10 +272,15 @@ export class UsersRepository {
          public."UserTable"."login" LIKE $1 
     AND
         public."UserTable"."email" LIKE $2 
-   /*  AND 
-        public."UserTable"."isBanned" = $3 */
+     AND 
+        if $3 = 'banned' then
+            public."UserTable"."isBanned" = false;
+        elsif $3 = 'notBanned' then
+            public."UserTable"."isBanned" = true;
+        end if;
+    
     ;
-    `,[searchLoginTerm, searchEmailTerm])
+    `,[searchLoginTerm, searchEmailTerm,searchBanTerm,])
     const totalCount = parseInt(totalCountQuery[0].count)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
@@ -291,9 +296,15 @@ export class UsersRepository {
     AND
         public."UserTable"."email" LIKE $2
     AND 
-        public."UserTable"."isBanned" = $3
+        if $3 = 'banned' then
+            public."UserTable"."isBanned" = false;
+        elsif $3 = 'notBanned' then
+            public."UserTable"."isBanned" = true;
+        end if;
+    ORDER BY $4 $5
+    LIMIT $6 OFFSET $7
     ;
-    `, [searchLoginTerm, searchEmailTerm, searchBanTerm])
+    `, [searchLoginTerm, searchEmailTerm, searchBanTerm, sortBy, sortDirection, pageSize, ToSkip])
     const items = result.map((item) => {
       return this.common.SQLUsermapping(item)
     })
