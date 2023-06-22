@@ -30,7 +30,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
   });
   it("should authorize user //auth is correct", async () => {
     //delete all data
-    await request(app).delete("/testing/all-data")
+    await request(server).delete("/testing/all-data")
     //create user
     const user = await request(server)
       .post("/sa/users")
@@ -78,7 +78,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         .get("/sa/users")
         .set(authE2eSpec, basic)
 
-    expect(allUsers).toEqual({})
+    expect(allUsers.body).toEqual({})
 
   })
   it("sdfdsfsdfds", async () => {

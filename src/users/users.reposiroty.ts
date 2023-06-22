@@ -119,14 +119,11 @@ export class UsersRepository {
 
 
   async deleteUserById(id: string) {
-    const userId = this.common.tryConvertToObjectId(id)
-    if (!userId) {
-      return null
-    }
+
     const deletedUser = await this.dataSource.query(`
     DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    WHERE public."UserTable"."id" = $1;
+    `, [id])
     return deletedUser.deletedCount === 1
   }
 
@@ -259,26 +256,27 @@ export class UsersRepository {
 
   async getAllUsersSA(paginationCriteria: paginationCriteriaType) {
     const banStatus = paginationCriteria.banStatus
-    const searchLoginTerm = paginationCriteria.searchLoginTerm
-    const searchEmailTerm = paginationCriteria.searchEmailTerm
-    let searchParams: any[] = []
-    if (searchEmailTerm) searchParams.push({ email: { $regex: searchEmailTerm, $options: "i" } })
-    if (searchLoginTerm) searchParams.push({ login: { $regex: searchLoginTerm, $options: "i" } })
-    if (banStatus === "banned") {
-      searchParams.push({"banInfo.isBanned" : true})
-    } else if (banStatus === "notBanned"){
-      searchParams.push({"banInfo.isBanned" : false})
-    }
+    const searchLoginTerm = paginationCriteria.searchLoginTerm ?? '%'
+    const searchEmailTerm = paginationCriteria.searchEmailTerm ?? '%'
+    const searchBanTerm = banStatus === "banned" ? true : false
+            //banStatus === "notBanned"
+            //? false : `true OR public."UserTable"."isBanned" = false`
 
-    let filter: { $or?: any[] } = { $or: searchParams }
-    if (searchParams.length === 0) filter = {}
+
 
 
     const pageSize = paginationCriteria.pageSize;
-    const totalCount = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const totalCountQuery = await this.dataSource.query(`
+    SELECT COUNT(*) FROM public."UserTable"
+    WHERE 
+         public."UserTable"."login" LIKE $1 
+    AND
+        public."UserTable"."email" LIKE $2 
+   /*  AND 
+        public."UserTable"."isBanned" = $3 */
+    ;
+    `,[searchLoginTerm, searchEmailTerm])
+    const totalCount = parseInt(totalCountQuery[0].count)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
@@ -287,9 +285,15 @@ export class UsersRepository {
 
 
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT * FROM public."UserTable"
+    WHERE 
+        public."UserTable"."login" LIKE $1 
+    AND
+        public."UserTable"."email" LIKE $2
+    AND 
+        public."UserTable"."isBanned" = $3
+    ;
+    `, [searchLoginTerm, searchEmailTerm, searchBanTerm])
     const items = result.map((item) => {
       return this.common.SQLUsermapping(item)
     })
