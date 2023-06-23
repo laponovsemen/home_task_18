@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { paginationCriteriaType } from "../appTypes";
 import { ObjectId } from "mongodb";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 
 export type WithMongoId<Type> = Type & { _id: ObjectId };
@@ -123,9 +124,11 @@ export enum parentTypeEnum {
 }
 
 
-
+@Entity()
 export class User {
+  @PrimaryGeneratedColumn('uuid')
   id?: string;
+  @Column({type: 'varchar', collation: 'C', unique: true, nullable: false})
   login: string;
   email: string;
   password: string

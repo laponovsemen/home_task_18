@@ -90,12 +90,14 @@ export class UsersRepository {
     const password = DTO.password
     const email = DTO.email
     const createdAt = dateOfCreation
-    await this.dataSource.query(`
+    const result = await this.dataSource.query(`
         INSERT INTO public."UserTable"(
          "login", "email", "password", "createdAt", "isConfirmed", "code", "codeDateOfExpiary", "banDate", "banReason", "isBanned")
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
-      
+        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id;
     `, [login, email, password, createdAt, true, null, null, null, null, false])
+
+
     const newlyCreatedUser: User = await this.dataSource.query(`
         SELECT * FROM public."UserTable"
         WHERE "login" = $1 AND "email" = $2 AND "password" = $3;
@@ -263,56 +265,56 @@ export class UsersRepository {
 
 
   async getAllUsersSA(paginationCriteria: paginationCriteriaType) {
-    const banStatus = paginationCriteria.banStatus
+    const searchBanTerm = paginationCriteria.banStatus
     const searchLoginTerm = paginationCriteria.searchLoginTerm ?? '%'
     const searchEmailTerm = paginationCriteria.searchEmailTerm ?? '%'
-    const searchBanTerm = banStatus === "banned" ? true : false
-            //banStatus === "notBanned"
-            //? false : `true OR public."UserTable"."isBanned" = false`
-
-
-
-
-    const pageSize = paginationCriteria.pageSize;
-    const totalCountQuery = await this.dataSource.query(`
+    let banQuery = ``
+    if(searchBanTerm === 'banned'){
+      banQuery = 'AND public."UserTable"."isBanned" = false;'
+    }else if(searchBanTerm === 'notBanned'){
+      banQuery = 'AND public."UserTable"."isBanned" = true;'
+    }
+const query = `
     SELECT COUNT(*) FROM public."UserTable"
     WHERE 
          public."UserTable"."login" LIKE $1 
     AND
-        public."UserTable"."email" LIKE $2 
-     AND 
-        if $3 = 'banned' then
-            public."UserTable"."isBanned" = false;
-        elsif $3 = 'notBanned' then
-            public."UserTable"."isBanned" = true;
-        end if;
-    
-    ;
-    `,[searchLoginTerm, searchEmailTerm,searchBanTerm])
+        (public."UserTable"."email" LIKE $2 );
+        
+    `
+  const resultQuery = query + banQuery;
+
+
+    const pageSize = paginationCriteria.pageSize;
+    const totalCountQuery = await this.dataSource.query(resultQuery, [searchLoginTerm, searchEmailTerm])
+    console.log(resultQuery, " resultQuery")
+
+
     const totalCount = parseInt(totalCountQuery[0].count)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
     const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
+
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-
-    const result = await this.dataSource.query(`
+    const selectQuery = `
     SELECT * FROM public."UserTable"
     WHERE 
         public."UserTable"."login" LIKE $1 
     AND
         public."UserTable"."email" LIKE $2
-    AND 
-        if $3 = 'banned' then
-            public."UserTable"."isBanned" = false;
-        elsif $3 = 'notBanned' then
-            public."UserTable"."isBanned" = true;
-        end if;
-    ORDER BY $4 $5
-    LIMIT $6 OFFSET $7
+    `
+
+
+    const result = await this.dataSource.query(selectQuery + banQuery + `
+    ORDER BY $3
+    LIMIT $4 OFFSET $5
     ;
-    `, [searchLoginTerm, searchEmailTerm, searchBanTerm, sortBy, sortDirection, pageSize, ToSkip])
+    ` , [searchLoginTerm, searchEmailTerm, `${sortBy} ${sortDirection.toUpperCase()}`, pageSize, ToSkip])
+
+
+    console.log(result, " SQL_RESULT")
     const items = result.map((item) => {
       return this.common.SQLUsermapping(item)
     })
