@@ -247,20 +247,20 @@ export class UsersRepository {
     const isBanned = DTO.isBanned
     const banDate = new Date()
     const banReason = DTO.banReason
-    return  this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    return  this.dataSource.query(`UPDATE public."UserTable"
+    SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
+        WHERE id = $1;
+    `,[userId, banDate, banReason,isBanned])
   }
 
   async unbanUserDB(userId: string, DTO: BanUserDTO) {
   const isBanned = DTO.isBanned
-  const banDate = new Date()
+  const banDate = new Date().toISOString()
   const banReason = DTO.banReason
-    return await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    return await this.dataSource.query(`UPDATE public."UserTable"
+    SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
+        WHERE id = $1;
+    `,[userId, null, null,isBanned])
   }
 
 
