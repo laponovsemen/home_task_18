@@ -123,7 +123,7 @@ export class UsersRepository {
   async deleteUserById(id: string) {
     const foundUserQuery = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
-    WHERE public."UserTable"."id" = $1;
+    WHERE "id" = $1;
     `, [id])
     const foundUser = foundUserQuery[0]
     if(!foundUser){
@@ -131,7 +131,7 @@ export class UsersRepository {
     }
     const deletedUser = await this.dataSource.query(`
     DELETE FROM public."UserTable"
-    WHERE public."UserTable"."id" = $1;
+    WHERE "id" = $1;
     `, [id])
     return true
 
