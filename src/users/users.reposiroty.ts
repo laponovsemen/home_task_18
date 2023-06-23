@@ -301,23 +301,23 @@ const query = `
     const selectQuery = `
     SELECT * FROM public."UserTable"
     WHERE 
-        public."UserTable"."login" LIKE $1 
+        public."UserTable"."login" LIKE $1
     AND
         public."UserTable"."email" LIKE $2
     `
 
-
+    console.log(sortBy, ' sortBy')
+    console.log([sortBy, searchLoginTerm, searchEmailTerm,  pageSize, ToSkip ])
     const result = await this.dataSource.query(selectQuery + banQuery + `
-    ORDER BY $3
-    LIMIT $4 OFFSET $5
+    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+    LIMIT $3 OFFSET $4
     ;
-    ` , [searchLoginTerm, searchEmailTerm, `${sortBy} ${sortDirection.toUpperCase()}`, pageSize, ToSkip])
+    ` , [ searchLoginTerm, searchEmailTerm,  pageSize, ToSkip ])
 
-
-    console.log(result, " SQL_RESULT")
-    const items = result.map((item) => {
-      return this.common.SQLUsermapping(item)
-    })
+       console.log(result, " SQL_RESULT")
+       const items = result.map((item) => {
+         return this.common.SQLUsermapping(item)
+       })
 
 
     console.log(
