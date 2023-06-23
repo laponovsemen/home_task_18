@@ -181,11 +181,10 @@ export class Common {
 
   SQLUsermapping(Obj: User) {
         return {
-          id: Obj.id,
+          id: Obj.id.toString(),
           login: Obj.login,
           email: Obj.email,
           createdAt: '2023-06-22T04:50:48.741+03:00',
-          password : Obj.password,
           banInfo : {
             banDate: Obj.banDate,
             banReason: Obj.banReason,
@@ -193,4 +192,19 @@ export class Common {
           }
         }
     }
+
+  SQLUserWithPasswordMapping(Obj: User) {
+    return {
+      id: Obj.id.toString(),
+      login: Obj.login,
+      email: Obj.email,
+      createdAt: '2023-06-22T04:50:48.741+03:00',
+      password: Obj.password,
+      banInfo: {
+        banDate: Obj.banDate,
+        banReason: Obj.banReason,
+        isBanned: Obj.isBanned
+      }
+    }
+  }
 }

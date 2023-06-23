@@ -25,14 +25,14 @@ export class BanProcedureUseCase implements ICommandHandler<BanProcedureCommand>
     const newBanStatusOfUser = command.DTO.isBanned
 
     if(!newBanStatusOfUser){
-      await this.likeRepository.makeLikesVisible(command.userId)
-      await this.commentsRepository.makeCommentsVisible(command.userId)
+      //await this.likeRepository.makeLikesVisible(command.userId)
+      //await this.commentsRepository.makeCommentsVisible(command.userId)
       return await this.usersRepository.unbanUserDB(command.userId, command.DTO)
 
     } else {
-      await this.securityDevicesRepository.deleteAllSessionsForSpecifiedUser(command.userId)
-      await this.likeRepository.makeLikesHiden(command.userId)
-      await this.commentsRepository.makeCommentsHiden(command.userId)
+      //await this.securityDevicesRepository.deleteAllSessionsForSpecifiedUser(command.userId)
+      //await this.likeRepository.makeLikesHiden(command.userId)
+      //await this.commentsRepository.makeCommentsHiden(command.userId)
       return await this.usersRepository.banUserDB(command.userId, command.DTO)
     }
   }

@@ -147,7 +147,7 @@ export class UsersRepository {
     const result = queryResult[0]
 
     console.log(result , " result in findUserByLoginOrEmail")
-    return this.common.SQLUsermapping(result)
+    return this.common.SQLUserWithPasswordMapping(result)
   }
   async createUnconfirmedUser(login: string, password: string, email: string) {
     const dateOfCreation = new Date()
