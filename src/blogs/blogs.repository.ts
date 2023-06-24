@@ -189,8 +189,9 @@ export class BlogsRepository {
     "name", "description", "websiteUrl", "isMembership", "createdAt", "blogOwnerId", "blogBanId")
     VALUES ($1, $2, $3, $4, $5, $6, $7);
     `, [name, description , websiteUrl, isMembership, createdAt, blogOwnerInfo.userId, null])
+
     const foundBlogAfterCreation = await this.dataSource.query(`
-    SELECT * FROM public."BlogsTable"
+    SELECT cast("id" as TEXT) FROM public."BlogsTable"
     WHERE "name" = $1 AND "description" = $2 AND "websiteUrl" = $3
     `, [name, description, websiteUrl])
     return {
