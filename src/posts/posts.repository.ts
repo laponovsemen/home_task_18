@@ -70,7 +70,7 @@ export class PostsRepository {
       return null
     } else {
       console.log(userId , "userId in getPostById");
-      const foundPostFrame = this.common.mongoPostSlicing(foundPost)
+      const foundPostFrame = this.common.SQLPostMapping(foundPost)
       const likesCount = await this.likeRepository.findLikesCountForSpecificPost(postId)
       const dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
       const newestLikes = await this.likeRepository.findNewestLikesForSpecificPost(postId)
@@ -105,7 +105,7 @@ export class PostsRepository {
     WHERE 1 = 1;
     `)
     const items = result.map((item) => {
-      return this.common.mongoPostSlicing(item)
+      return this.common.SQLPostMapping(item)
     });
 
     /*console.log({

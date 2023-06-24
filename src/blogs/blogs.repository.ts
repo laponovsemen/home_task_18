@@ -156,7 +156,7 @@ export class BlogsRepository {
         totalCount: totalCount,
         pagesCount: pagesCount,
         page: page,
-        items: result.map(item => this.common.mongoPostSlicing(item)),
+        items: result.map(item => this.common.SQLPostMapping(item)),
       };
     }
 
@@ -278,7 +278,8 @@ export class BlogsRepository {
      "title", "shortDescription", "content", "blogId", "blogName", "createdAt", "isHiden")
     VALUES ( $1, $2, $3, $4, $5, $6, $7)
     RETURNING *;
-    `, [newPost.title,
+    `, [
+      newPost.title,
       newPost.shortDescription,
       newPost.content,
       newPost.blogId,
@@ -288,7 +289,7 @@ export class BlogsRepository {
 
     console.log(newPost, "newPost")
     console.log(createdPostForSpecificBlog, "createdPostForSpecificBlog")
-    return this.common.mongoPostSlicing(createdPostForSpecificBlog[0])
+    return this.common.SQLPostMapping(createdPostForSpecificBlog[0])
   }
   async deleteAllData(){
     await this.dataSource.query(`

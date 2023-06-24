@@ -336,7 +336,19 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .expect(201)
 
       expect(createdPost.body).toEqual({
-
+          id : expect.any(String),
+          blogId: expect.any(String),
+          blogName: "string",
+          content: "content",
+          createdAt: expect.any(String),
+          extendedLikesInfo: {
+              dislikesCount: 0,
+              likesCount: 0,
+              myStatus: "None",
+              newestLikes: [],
+          },
+          shortDescription: "shortDescription",
+          title: "title",
       })
 
     const postId = createdPost.body.id

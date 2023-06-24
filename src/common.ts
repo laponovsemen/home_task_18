@@ -69,13 +69,13 @@ export class Common {
       banStatus
     };
   }
-  mongoPostSlicing = (Obj2: WithMongoId<APIPost>) => {
+  SQLPostMapping = (Obj2: WithMongoId<APIPost>) => {
     return {
-      id: Obj2._id,
+      id: Obj2.id.toString(),
       title: Obj2.title,
       shortDescription: Obj2.shortDescription,
       content: Obj2.content,
-      blogId: Obj2.blogId,
+      blogId: Obj2.blogId.toString(),
       blogName: Obj2.blogName,
       createdAt: Obj2.createdAt,
       extendedLikesInfo: {

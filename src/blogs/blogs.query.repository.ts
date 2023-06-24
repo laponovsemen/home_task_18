@@ -154,7 +154,7 @@ export class BlogsQueryRepository {
         totalCount: totalCount,
         pagesCount: pagesCount,
         page: page,
-        items: result.map(item => this.common.mongoPostSlicing(item)),
+        items: result.map(item => this.common.SQLPostMapping(item)),
       };
     }
 
@@ -270,7 +270,7 @@ export class BlogsQueryRepository {
     WHERE 1 = 1;
     `)
     console.log(newPost + "newPost")
-    return this.common.mongoPostSlicing(createdPostForSpecificBlog)
+    return this.common.SQLPostMapping(createdPostForSpecificBlog)
   }
   async deleteAllData(){
     await this.dataSource.query(`
