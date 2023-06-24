@@ -224,10 +224,10 @@ export class UsersRepository {
 
   async findUserById(userId: string) {
     console.log(userId, "userId in findUserById");
-    const result = await await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const result = await this.dataSource.query(`
+    SELECT *  FROM public."UserTable"
+    WHERE "id" = $1;
+    `, [userId])
     console.log(result, "result findUserById findUserById");
     return result
   }
