@@ -484,7 +484,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .send({
         isBanned: true,
         banReason: "stringstringstringst",
-      })
+      }).expect(204)
 
     await request(server)
       .get(`/comments/${commentId}`)

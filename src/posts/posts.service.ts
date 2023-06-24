@@ -32,7 +32,7 @@ export class PostsService{
     console.log(userFromDb, "userFromDb");
     console.log(token, "token");
     if(userFromDb){
-      userId = userFromDb[0].id
+      userId = userFromDb.id
     }
     console.log(userId, "userId");
     console.log(userFromDb, "userFromDb");
@@ -92,7 +92,7 @@ export class PostsService{
 
     for (let i = 0; i < allCommentsFrames.items.length; i++) {
       const comment = allCommentsFrames.items[i]
-      const commentId = new ObjectId(comment.id)
+      const commentId = comment.id
       allCommentsFrames.items[i].likesInfo.likesCount = await this.likeRepository.findLikesCountForSpecificComment(commentId)
       allCommentsFrames.items[i].likesInfo.dislikesCount = await this.likeRepository.findDisikesCountForSpecificComment(commentId)
     }
@@ -106,7 +106,7 @@ export class PostsService{
       //console.log(userId, " id of user ");
       for (let i = 0; i < allCommentsFrames.items.length; i++) {
         const comment = allCommentsFrames.items[i]
-        const commentId = new ObjectId(comment.id)
+        const commentId = comment.id
         const myLike = await this.likeRepository.findMyStatusForSpecificComment(commentId, userId)
         console.log(myLike, "myLike");
         //console.log(postId , "postId");
@@ -122,6 +122,7 @@ export class PostsService{
   async createCommentForSpecificPost(DTO: CommentForSpecifiedPostDTO, postIdAsString: string, token: string) {
     const content = DTO.content
     const user = await this.authService.getUserByToken(token)
+    console.log(user, " in await this.authService.getUserByToken(token)")
     const foundPost = await this.postsRepository.getPostByIdWithOutLikes(postIdAsString)
     if(!user || !postIdAsString || !foundPost){
       console.log("no user or no post found");
@@ -132,7 +133,7 @@ export class PostsService{
     const newComment: APIComment ={
       content: content,
       commentatorInfo: {
-        userId: user._id,
+        userId: user.id,
         userLogin: user.login,
       },
       postId : postIdAsString,
@@ -141,12 +142,14 @@ export class PostsService{
     }
     console.log(newComment);
     const createdComment = await this.commentsRepository.createNewComment({...newComment})
+
+    console.log(createdComment , " createdComment to return");
     return {
       id: createdComment.id.toString(),
       content: createdComment.content,
       commentatorInfo: {
-        userId: createdComment.commentatorInfo.userId,
-        userLogin: createdComment.commentatorInfo.userLogin,
+        userId: createdComment.commentatorId,
+        userLogin: createdComment.commentatorLogin,
       },
       createdAt: createdComment.createdAt,
       likesInfo: {

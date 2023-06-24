@@ -7,7 +7,7 @@ import {
   APIPost,
   Blog,
   BloggerBansForSpecificBlog,
-  commentatorInfoModel,
+  commentatorInfoModel, SQLComment,
   User,
   WithMongoId
 } from "./mongo/mongooseSchemas";
@@ -86,11 +86,30 @@ export class Common {
       },
     };
   };
-  mongoCommentSlicing = (Obj2: WithMongoId<APIComment>) => {
+  mongoCommentSlicing = (Obj2: APIComment) => {
     return {
-      id: Obj2._id,
+      id: Obj2.id,
       content: Obj2.content,
-      commentatorInfo: Obj2.commentatorInfo,
+      commentatorInfo: {
+        userId : Obj2.commentatorInfo.userId,
+        userLogin : Obj2.commentatorInfo.userLogin,
+      },
+      createdAt: Obj2.createdAt,
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: "None",
+      },
+    };
+  };
+  SQLCommentMapping = (Obj2: SQLComment) => {
+    return {
+      id: Obj2.id,
+      content: Obj2.content,
+      commentatorInfo: {
+        userId : Obj2.commentatorId,
+        userLogin : Obj2.login,
+      },
       createdAt: Obj2.createdAt,
       likesInfo: {
         likesCount: 0,

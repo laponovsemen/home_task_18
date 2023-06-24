@@ -181,31 +181,30 @@ export class LikeRepository{
     }
   }
 
-  async findLikesCountForSpecificComment(commentId: ObjectId) {
+  async findLikesCountForSpecificComment(commentId: string) {
     const likes = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    return likes.length
+    SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
+    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Like])
+    return likes[0].count
   }
 
-  async findDisikesCountForSpecificComment(commentId: ObjectId) {
+  async findDisikesCountForSpecificComment(commentId: string) {
     const dislikes = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    return dislikes.length
+    SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
+    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Dislike])
+    return dislikes[0].count
   }
 
-  async findMyStatusForSpecificComment(commentId: ObjectId, userIdAsString: string) {
-    console.log(userIdAsString, "userIdAsString")
-    const userId = this.common.tryConvertToObjectId(userIdAsString)
+  async findMyStatusForSpecificComment(commentId: string, userId: string) {
+
     console.log(userId, "after user id");
     if(!userId){
       console.log(userId, "нету юзер ай ди");
       return null
-
     }
+
     console.log("before filter");
     console.log({
       parentId: commentId,
@@ -219,9 +218,10 @@ export class LikeRepository{
     }
 
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT "status" FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "userId" = $3;
+    `, [parentTypeEnum.comment, commentId, userId])
+
     console.log(result, "result");
     return result
 

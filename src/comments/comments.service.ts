@@ -17,7 +17,7 @@ export class CommentsService{
     console.log(userFromDb, "userFromDb");
     console.log(token, "token");
     if(userFromDb){
-      userId = userFromDb._id
+      userId = userFromDb.id
     }
     console.log(userId, "userId");
     return await this.commentsRepository.getCommentById(commentId, userId);

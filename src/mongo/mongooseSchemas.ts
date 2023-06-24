@@ -85,16 +85,25 @@ export class Blog {
   banInfo: BlogBanInfoDB
 }
 export class commentatorInfoModel {
-  userId: ObjectId;
+  userId: number;
   userLogin: string;
 }
 
 
 
 export class APIComment {
-  id?: ObjectId;
+  id?: string;
   content: string;
   commentatorInfo: commentatorInfoModel;
+  createdAt: string;
+  postId : string;
+  isHiden : boolean
+}
+export class SQLComment {
+  id?: string;
+  content: string;
+  commentatorId: string;
+  login: string
   createdAt: string;
   postId : string;
   isHiden : boolean

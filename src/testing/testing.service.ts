@@ -6,6 +6,8 @@ import { PostsRepository } from "../posts/posts.repository";
 import { LikeRepository } from "../likes/likes.repository";
 import { SecurityDevicesRepository } from "../security.devices/security.devices.repository";
 import { BansRepository } from "../blogs/bans.repository";
+import {InjectDataSource} from "@nestjs/typeorm";
+import {DataSource} from "typeorm";
 
 
 @Injectable()
@@ -17,9 +19,18 @@ export class TestingService {
               private readonly likeRepository: LikeRepository,
               private readonly bansRepository: BansRepository,
               private readonly securityDevicesRepository: SecurityDevicesRepository,
+              @InjectDataSource() private dataSource: DataSource
               ) {
   }
   async  deleteAllData(){
+    // try {
+    //   const entities = this.dataSource.entityMetadatas
+    //   const tableNames = entities.map(e => `"${e.tableName}"`).join(', ')
+    //   return this.dataSource.query(`TRUNCATE ${tableNames} CASCADE`)
+    // } catch (e) {
+    //   console.log(e)
+    //   return null
+    // }
     await this.blogsRepository.deleteAllData()
     await this.postsRepository.deleteAllData()
     await this.usersRepository.deleteAllData()

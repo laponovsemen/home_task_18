@@ -154,7 +154,8 @@ export class PostsRepository {
   async deleteAllData(){
     await this.dataSource.query(`
     DELETE FROM public."APIPostTable"
-    WHERE 1 = 1;
+    WHERE 1 = 1
+   ;
     `)
   }
 
