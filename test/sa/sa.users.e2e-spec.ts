@@ -294,6 +294,29 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       })
       .expect(200)
 
+      const  allUsers5 = await request(server)
+          .get("/sa/users")
+          .set(authE2eSpec, basic)
+      expect(allUsers5.body).toEqual({
+          items: [
+              {
+                  "banInfo": {
+                      "banDate": null,
+                      "banReason": null,
+                      "isBanned": false,
+                  },
+                  createdAt: expect.any(String),
+                  email: "simsbury65@gmail.com",
+                  id: expect.any(String),
+                  login: "login",
+              },
+          ],
+          page: 1,
+          pageSize: 10,
+          pagesCount: 1,
+          totalCount: 1,
+      })
+
     //access token of user
     expect(loginProcedure.body).toEqual({accessToken : expect.any(String)})
     const accessTokenOfUser = loginProcedure.body.accessToken
@@ -309,6 +332,31 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       })
       .expect(400)
 
+
+      const  allUsers4 = await request(server)
+          .get("/sa/users")
+          .set(authE2eSpec, basic)
+      expect(allUsers4.body).toEqual({
+          items: [
+              {
+                  "banInfo": {
+                      "banDate": null,
+                      "banReason": null,
+                      "isBanned": false,
+                  },
+                  createdAt: expect.any(String),
+                  email: "simsbury65@gmail.com",
+                  id: expect.any(String),
+                  login: "login",
+              },
+          ],
+          page: 1,
+          pageSize: 10,
+          pagesCount: 1,
+          totalCount: 1,
+      })
+
+
     // try to create blog by blogger with correct input data
     const createdBlog = await request(server)
       .post(`/blogger/blogs`)
@@ -323,6 +371,30 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     const blogId = createdBlog.body.id
     console.log(blogId, " blogId of created blog");
     console.log(accessTokenOfUser, " blogId accessTokenOfUser created blog");
+
+      const  allUsers2 = await request(server)
+          .get("/sa/users")
+          .set(authE2eSpec, basic)
+      expect(allUsers2.body).toEqual({
+          items: [
+              {
+                  "banInfo": {
+                      "banDate": null,
+                      "banReason": null,
+                      "isBanned": false,
+                  },
+                  createdAt: expect.any(String),
+                  email: "simsbury65@gmail.com",
+                  id: expect.any(String),
+                  login: "login",
+              },
+          ],
+          page: 1,
+          pageSize: 10,
+          pagesCount: 1,
+          totalCount: 1,
+      })
+
 
     //try to create post by blogger with wrong input data
     const createdPost = await request(server)
@@ -349,6 +421,28 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           },
           shortDescription: "shortDescription",
           title: "title",
+      })
+        const  allUsers3 = await request(server)
+            .get("/sa/users")
+            .set(authE2eSpec, basic)
+      expect(allUsers3.body).toEqual({
+          items: [
+              {
+                  "banInfo": {
+                      "banDate": null,
+                      "banReason": null,
+                      "isBanned": false,
+                  },
+                  createdAt: expect.any(String),
+                  email: "simsbury65@gmail.com",
+                  id: expect.any(String),
+                  login: "login",
+              },
+          ],
+          page: 1,
+          pageSize: 10,
+          pagesCount: 1,
+          totalCount: 1,
       })
 
     const postId = createdPost.body.id

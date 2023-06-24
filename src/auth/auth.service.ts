@@ -113,8 +113,8 @@ export class AuthService implements OnModuleInit{
 
     //console.log(userId)
     console.log(userId, " userId")
-    //console.log(payload, " payload")
-    //console.log(accessToken, "accessToken in getUserByToken");
+    console.log(payload, " payload")
+    console.log(accessToken, "accessToken in getUserByToken");
 
     return await this.usersRepository.findUserById(userId)
 

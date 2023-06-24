@@ -57,31 +57,31 @@ export class PostsRepository {
 
   }
 
-  async getPostById(id: string, userId : string) {
-    const postId = this.common.tryConvertToObjectId(id)
+  async getPostById(postId: string, userId : string) {
+
     if (!postId) {
       return null
     }
     const foundPost = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    if (!foundPost) {
+    SELECT * FROM public."APIPostTable"
+    WHERE "id" = $1;
+    `, [postId])
+    if (foundPost) {
       return null
     } else {
       console.log(userId , "userId in getPostById");
       const foundPostFrame = this.common.SQLPostMapping(foundPost)
-      const likesCount = await this.likeRepository.findLikesCountForSpecificPost(postId)
-      const dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
-      const newestLikes = await this.likeRepository.findNewestLikesForSpecificPost(postId)
-      const myLike = await this.likeRepository.findMyStatusForSpecificPost(postId, userId)
-      foundPostFrame.extendedLikesInfo.likesCount = likesCount
-      foundPostFrame.extendedLikesInfo.dislikesCount = dislikesCount
-      foundPostFrame.extendedLikesInfo.newestLikes = newestLikes
-      foundPostFrame.extendedLikesInfo.myStatus = myLike ? myLike.status : "None"
+      //const likesCount = await this.likeRepository.findLikesCountForSpecificPost(postId)
+      //const dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
+      //const newestLikes = await this.likeRepository.findNewestLikesForSpecificPost(postId)
+      //const myLike = await this.likeRepository.findMyStatusForSpecificPost(postId, userId)
+      //foundPostFrame.extendedLikesInfo.likesCount = likesCount
+      //foundPostFrame.extendedLikesInfo.dislikesCount = dislikesCount
+      //foundPostFrame.extendedLikesInfo.newestLikes = newestLikes
+      //foundPostFrame.extendedLikesInfo.myStatus = myLike ? myLike.status : "None"
       //console.log(foundPostFrame);
       //console.log(foundPostFrame, "foundPostFrame");
-      console.log(myLike , "myLike");
+      //console.log(myLike , "myLike");
       //console.log(userId , "userId");
       return foundPostFrame
     }

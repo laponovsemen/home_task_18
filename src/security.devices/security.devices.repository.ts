@@ -28,10 +28,7 @@ export class SecurityDevicesRepository {
         lastActiveDate:	lastActiveDate.toISOString(), // Date of the last generating of refresh/access tokens
         deviceId:	deviceId, //  Id of connected device session
       }
-    return await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    return //await this.dataSource.query()
   }
 
   async updateSessionByDeviceId(deviceId: string, lastActiveDate: Date, newRefreshToken: string) {

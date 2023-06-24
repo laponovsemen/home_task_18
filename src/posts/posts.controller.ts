@@ -14,7 +14,7 @@ import {
 import { BlogsService } from "../blogs/blogs.service";
 import { Common } from "../common";
 import { paginationCriteriaType, PaginatorViewModelType } from "../appTypes";
-import { Blog } from "../mongo/mongooseSchemas";
+import {Blog, blogOwnerInfoModel} from "../mongo/mongooseSchemas";
 import { PostsService } from "./posts.service";
 import { IsNotEmpty, Length, Matches } from "class-validator";
 import { CommentForSpecifiedPostDTO, LikeStatusDTO, PostDTO } from "../input.classes";
@@ -75,13 +75,16 @@ export class PostsController {
                                      @Param('id') postId,
                                      @User() user,
                                      @Body() DTO : CommentForSpecifiedPostDTO) {
+    console.log("start createCommentForSpecificPost procedure")
     const token = req.headers.authorization
     const commentatorId = user.userId
     const postForComment = await this.postsService.getPostById(postId, token)
+    console.log(postForComment, " postForComment")
     if(!postForComment){
       throw new NotFoundException()
     }
     const banVerification = await this.commandBus.execute(new BanVerificationOfUserCommand(commentatorId, postId))
+    console.log(banVerification, " banVerification")
     if(!banVerification){
       throw new ForbiddenException()
     }

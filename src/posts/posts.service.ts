@@ -32,9 +32,10 @@ export class PostsService{
     console.log(userFromDb, "userFromDb");
     console.log(token, "token");
     if(userFromDb){
-      userId = userFromDb._id
+      userId = userFromDb[0].id
     }
     console.log(userId, "userId");
+    console.log(userFromDb, "userFromDb");
     return await this.postsRepository.getPostById(id, userId)
   }
   async getAllPosts(paginationCriteria: paginationCriteriaType, token: string) {
