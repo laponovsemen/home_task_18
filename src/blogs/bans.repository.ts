@@ -135,8 +135,11 @@ export class BansRepository {
   }
 
   async findBanStatusForSpecificUser(blogId: string, commentatorId: string) {
+
+    //return this.banModel.findOne({ blogId: new ObjectId(blogId), userId: new ObjectId(commentatorId) });
+
     return  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
+    SELECT * FROM public."UserTable"
     WHERE 1 = 1;
     `)
   }

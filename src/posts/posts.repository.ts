@@ -62,11 +62,13 @@ export class PostsRepository {
     if (!postId) {
       return null
     }
-    const foundPost = await this.dataSource.query(`
+    const foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1;
     `, [postId])
-    if (foundPost) {
+    const foundPost = foundPostQuery[0]
+    if (foundPostQuery.length === 0) {
+      console.log("empty result of query ingetPostById")
       return null
     } else {
       console.log(userId , "userId in getPostById");
@@ -196,14 +198,16 @@ export class PostsRepository {
   }
 
   async getPostByIdWithOutLikes(postIdAsString: string) {
-    const postId = this.common.tryConvertToObjectId(postIdAsString)
-    if(!postId){
+
+    if(!postIdAsString){
       return null
     }
-    await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const foundPostQuery = await this.dataSource.query(`
+    SELECT *  FROM public."APIPostTable"
+    WHERE "id" = $1;
+    `, [postIdAsString])
+    const foundPost = foundPostQuery[0]
+    return foundPost
   }
 
   async makeAllPostsForBlogHiden(blogId: string) {
