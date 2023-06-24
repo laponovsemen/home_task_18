@@ -45,8 +45,8 @@ export class AuthService implements OnModuleInit{
     const payload = { userId : user.id, login : user.login,ip, title,deviceId };
     //console.log(user._id!.toHexString(), "user._id user._id");
     return {
-      access_token: await this.jwtService.signAsync(payload, {expiresIn: '10s', secret :jwtConstants.secretForAccess}),
-      refresh_token: await this.jwtService.signAsync(payload, {expiresIn: '20s', secret :jwtConstants.secretForRefresh}),
+      access_token: await this.jwtService.signAsync(payload, {expiresIn: '10m', secret :jwtConstants.secretForAccess}),
+      refresh_token: await this.jwtService.signAsync(payload, {expiresIn: '20m', secret :jwtConstants.secretForRefresh}),
     };
   }
 
@@ -143,8 +143,8 @@ export class AuthService implements OnModuleInit{
       title: refreshTokenVerification.title,
       deviceId: refreshTokenVerification.deviceId }
 
-    const newAccessToken = await this.jwtService.signAsync(payload, {expiresIn: '10s',secret :jwtConstants.secretForAccess})
-    const newRefreshToken = await this.jwtService.signAsync(payload, {expiresIn: '20s',secret :jwtConstants.secretForRefresh})
+    const newAccessToken = await this.jwtService.signAsync(payload, {expiresIn: '10m',secret :jwtConstants.secretForAccess})
+    const newRefreshToken = await this.jwtService.signAsync(payload, {expiresIn: '20m',secret :jwtConstants.secretForRefresh})
     const updatedSession = await this.securityDevicesRepository.updateSessionByDeviceId(deviceId, lastActiveDate, newRefreshToken)
     return {
       access_token: newAccessToken,

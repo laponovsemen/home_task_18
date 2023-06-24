@@ -86,7 +86,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
-    limit: 5,
+    limit: 500,
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
