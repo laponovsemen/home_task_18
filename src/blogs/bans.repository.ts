@@ -144,7 +144,7 @@ export class BansRepository {
     `, [blogId, commentatorId])
     const result = findBanStatusQuery[0]
     if(findBanStatusQuery.length === 0){
-      return true
+      return false
     } else {
       return result
     }

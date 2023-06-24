@@ -21,8 +21,7 @@ export class UsersRepository {
 
   async deleteAllData() {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
+    TRUNCATE public."UserTable"
     `)
   }
 

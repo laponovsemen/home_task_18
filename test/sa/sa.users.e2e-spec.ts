@@ -55,7 +55,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     await app.init();
     server = app.getHttpServer()
-  });
+  }, 10000);
   afterAll(async () => {
     await app.close()
   });
@@ -266,7 +266,8 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     }, 10000)
   it("shoud create user , ban it by SA and try to login => result must be 401", async ()=>{
-    await request(server).delete("/testing/all-data")
+    const trancateAllTables = await request(server).delete("/testing/all-data")
+      expect(trancateAllTables.status).toBe(204)
     const user = await request(server)
       .post("/sa/users")
       .set(authE2eSpec, basic)
@@ -280,7 +281,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     const result = await request(server)
       .get("/sa/users")
       .set(authE2eSpec, basic)
-
+    expect(result.body.items).toHaveLength(1)
     const oneUser = result.body.items[0]
     const userId = oneUser.id
     console.log(oneUser , "oneUser");

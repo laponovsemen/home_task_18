@@ -95,8 +95,8 @@ export class APIComment {
   id?: ObjectId;
   content: string;
   commentatorInfo: commentatorInfoModel;
-  createdAt: Date;
-  postId : ObjectId;
+  createdAt: string;
+  postId : string;
   isHiden : boolean
 }
 

@@ -24,9 +24,11 @@ export class CommentsRepository{
   async createNewComment(newComment : APIComment){
     console.log(newComment, 'in repo');
     return await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    INSERT INTO public."APICommentTable"(
+    "content", "commentatorId", "createdAt", "postId", "isHiden")
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+    `, [newComment.content, newComment.commentatorInfo.userId,newComment.createdAt, newComment.postId, newComment.isHiden])
   }
 
   async getCommentById(commentIdFromService: string, userId: string) {

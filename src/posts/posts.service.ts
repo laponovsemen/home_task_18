@@ -122,9 +122,8 @@ export class PostsService{
   async createCommentForSpecificPost(DTO: CommentForSpecifiedPostDTO, postIdAsString: string, token: string) {
     const content = DTO.content
     const user = await this.authService.getUserByToken(token)
-    const postId = this.common.tryConvertToObjectId(postIdAsString)
     const foundPost = await this.postsRepository.getPostByIdWithOutLikes(postIdAsString)
-    if(!user || !postId || !foundPost){
+    if(!user || !postIdAsString || !foundPost){
       console.log("no user or no post found");
       return null
 
@@ -136,14 +135,14 @@ export class PostsService{
         userId: user._id,
         userLogin: user.login,
       },
-      postId : postId,
-      createdAt: new Date(),
+      postId : postIdAsString,
+      createdAt: new Date().toISOString(),
       isHiden : false
     }
     console.log(newComment);
     const createdComment = await this.commentsRepository.createNewComment({...newComment})
     return {
-      id: createdComment._id.toString(),
+      id: createdComment.id.toString(),
       content: createdComment.content,
       commentatorInfo: {
         userId: createdComment.commentatorInfo.userId,
