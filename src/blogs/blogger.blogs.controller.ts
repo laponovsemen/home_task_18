@@ -109,11 +109,14 @@ export class BloggerBlogsController {
   ): Promise<any | void> {
     const foundBlog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId)
     if(!foundBlog){
-
+      console.log("blog not found")
       throw new NotFoundException("Blog not found")
     }
-    if (foundBlog.blogOwnerInfo.userId.toString() !== user.userId){
+    console.log(foundBlog , " foundBlog")
+    if (foundBlog.blogOwnerId.toString() !== user.userId){
+      console.log("FORBIDDEN EXCEPTION")
       throw new ForbiddenException("Blog not found")
+
     }
 
     const result =  await this.blogsService.createPostForSpecificBlog(DTO, blogId);
@@ -147,7 +150,7 @@ export class BloggerBlogsController {
     if(!foundBlog){
       throw new NotFoundException("Blog not found")
     }
-    if (foundBlog.blogOwnerInfo.userId.toString() !== user.userId){
+    if (foundBlog.blogOwnerId.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -166,7 +169,7 @@ export class BloggerBlogsController {
     if(!foundBlog){
       throw new NotFoundException("Blog not found")
     }
-    if (foundBlog.blogOwnerInfo.userId.toString() !== user.userId){
+    if (foundBlog.blogOwnerId.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -194,7 +197,7 @@ export class BloggerBlogsController {
     //console.log(foundBlog.blogOwnerInfo.userId.toString(), "foundBlog.blogOwnerInfo.userId.toString()");
     //console.log(user.userId, "user.userId");
 
-    if (foundBlog.blogOwnerInfo.userId.toString() !== user.userId){
+    if (foundBlog.blogOwnerId.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -221,7 +224,7 @@ export class BloggerBlogsController {
       throw new NotFoundException("Blog not found")
     }
 
-    if (foundBlog.blogOwnerInfo.userId.toString() !== user.userId){
+    if (foundBlog.blogOwnerId.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 

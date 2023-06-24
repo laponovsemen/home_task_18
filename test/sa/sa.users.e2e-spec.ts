@@ -322,6 +322,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     const blogId = createdBlog.body.id
     console.log(blogId, " blogId of created blog");
+    console.log(accessTokenOfUser, " blogId accessTokenOfUser created blog");
 
     //try to create post by blogger with wrong input data
     const createdPost = await request(server)
@@ -333,6 +334,10 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         content: "content",
       })
       .expect(201)
+
+      expect(createdPost.body).toEqual({
+
+      })
 
     const postId = createdPost.body.id
     console.log(postId, " postId of created blog");

@@ -259,7 +259,7 @@ export class BlogsQueryRepository {
       title: DTO.title, //    maxLength: 30
       shortDescription: DTO.shortDescription, //maxLength: 100
       content: DTO.content, // maxLength: 1000
-      blogId: new ObjectId(id),
+      blogId: id,
       blogName : blog.name,
       createdAt: createdAt,
       isHiden: false

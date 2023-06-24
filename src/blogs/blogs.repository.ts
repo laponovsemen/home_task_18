@@ -185,16 +185,16 @@ export class BlogsRepository {
        banInfo
     }
     const createdBlog : Blog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    INSERT INTO public."BlogsTable"(
+    "name", "description", "websiteUrl", "isMembership", "createdAt", "blogOwnerId", "blogBanId")
+    VALUES ($1, $2, $3, $4, $5, $6, $7);
+    `, [name, description , websiteUrl, isMembership, createdAt, blogOwnerInfo.userId, null])
     const foundBlogAfterCreation = await this.dataSource.query(`
     SELECT * FROM public."BlogsTable"
-    WHERE name = $1,
-      description = $2,
-      websiteUrl = $3,
+    WHERE "name" = $1 AND "description" = $2 AND "websiteUrl" = $3
     `, [name, description, websiteUrl])
     return {
-      id: foundBlogAfterCreation.id,
+      id: foundBlogAfterCreation[0].id,
       name,
       description,
       websiteUrl,
@@ -252,9 +252,15 @@ export class BlogsRepository {
   }
   async createPostForSpecificBlog(DTO: any, id: string) {
     const createdAt = new Date()
-    const blog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+
+    const blogsQuery = await this.dataSource.query(`
+    SELECT * FROM public."BlogsTable"
+    WHERE "id" = $1
+    `,[id])
+
+    const blog = blogsQuery[0]
+    console.log(blogsQuery, " blogsQuery in createPostForSpecificBlog")
+    console.log(blog, " blog in createPostForSpecificBlog")
     if(!blog){
       return null
     }
@@ -262,16 +268,27 @@ export class BlogsRepository {
       title: DTO.title, //    maxLength: 30
       shortDescription: DTO.shortDescription, //maxLength: 100
       content: DTO.content, // maxLength: 1000
-      blogId: new ObjectId(id),
+      blogId: id,
       blogName : blog.name,
       createdAt: createdAt,
       isHiden: false
     }
     const createdPostForSpecificBlog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
-    console.log(newPost + "newPost")
-    return this.common.mongoPostSlicing(createdPostForSpecificBlog)
+    INSERT INTO public."APIPostTable"(
+     "title", "shortDescription", "content", "blogId", "blogName", "createdAt", "isHiden")
+    VALUES ( $1, $2, $3, $4, $5, $6, $7)
+    RETURNING *;
+    `, [newPost.title,
+      newPost.shortDescription,
+      newPost.content,
+      newPost.blogId,
+      newPost.blogName,
+      newPost.createdAt,
+      false])
+
+    console.log(newPost, "newPost")
+    console.log(createdPostForSpecificBlog, "createdPostForSpecificBlog")
+    return this.common.mongoPostSlicing(createdPostForSpecificBlog[0])
   }
   async deleteAllData(){
     await this.dataSource.query(`
@@ -280,25 +297,27 @@ export class BlogsRepository {
     `)
   }
 
-  async getBlogByIdWithBloggerInfo(id) {
-    const blogId = this.common.tryConvertToObjectId(id)
+  async getBlogByIdWithBloggerInfo(blogId) {
+    //const blogId = this.common.tryConvertToObjectId(id)
     if (!blogId) {
       return null
     }
-    const foundBlog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
-    if (!foundBlog) {
+    const foundBlogQuery = await this.dataSource.query(`
+    SELECT * FROM public."BlogsTable"
+    WHERE "id" = $1
+    `, [parseInt(blogId,10 )])
+    if (foundBlogQuery.length === 0) {
       return null
     }
+    const foundBlog = foundBlogQuery[0]
     return {
-      id: foundBlog._id,
+      id: blogId,
       name: foundBlog.name,
       description: foundBlog.description,
       websiteUrl: foundBlog.websiteUrl,
       isMembership: foundBlog.isMembership,
       createdAt: foundBlog.createdAt,
-      blogOwnerInfo: foundBlog.blogOwnerInfo
+      blogOwnerId: foundBlog.blogOwnerId
     }
   }
 

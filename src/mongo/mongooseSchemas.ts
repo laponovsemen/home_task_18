@@ -42,8 +42,8 @@ export class APISession {
 
 export class BloggerBansForSpecificBlog {
   _id?: ObjectId;
-  ownerId: ObjectId;
-  blogId: ObjectId;
+  ownerId: string;
+  blogId: string;
   banInfo : BanInfoDB
 
   userId: ObjectId;
@@ -52,11 +52,11 @@ export class BloggerBansForSpecificBlog {
 }
 
 export class APIPost {
-  id? : ObjectId;
+  id? : string;
   title: string; //    maxLength: 30
   shortDescription: string; //maxLength: 100
   content: string; // maxLength: 1000
-  blogId: ObjectId;
+  blogId: string;
   blogName: string;
   createdAt: Date;
   isHiden: boolean;
