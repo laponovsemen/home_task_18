@@ -203,25 +203,27 @@ export class BlogsRepository {
       banInfo
     }
   }
-  async getBlogById(id: string) {
-    const blogId = this.common.tryConvertToObjectId(id)
+  async getBlogById(blogId: string) {
+
     if (!blogId) {
       return null
     }
-    const foundBlog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
-    if(!foundBlog){
+    const foundBlogQuery = await this.dataSource.query(`
+    SELECT * FROM public."BlogsTable"
+    WHERE id = $1
+    `, [blogId])
+    if(foundBlogQuery.length === 0){
       return null
     }
+    const foundBlog = foundBlogQuery[0]
     return {
-      id: foundBlog._id,
+      id: foundBlog.id.toString(),
       name: foundBlog.name,
       description: foundBlog.description,
       websiteUrl: foundBlog.websiteUrl,
       isMembership: foundBlog.isMembership,
       createdAt: foundBlog.createdAt,
-      //blogOwnerInfo : foundBlog.blogOwnerInfo
+
     }
   }
   async updateBlogById(DTO: any, id: string) {

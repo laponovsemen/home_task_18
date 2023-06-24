@@ -138,9 +138,15 @@ export class BansRepository {
 
     //return this.banModel.findOne({ blogId: new ObjectId(blogId), userId: new ObjectId(commentatorId) });
 
-    return  await this.dataSource.query(`
-    SELECT * FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const findBanStatusQuery =  await this.dataSource.query(`
+    SELECT * FROM public."BlogBanInfoTable"
+    WHERE "blogId" = $1 AND "userId" = $2;
+    `, [blogId, commentatorId])
+    const result = findBanStatusQuery[0]
+    if(findBanStatusQuery.length === 0){
+      return true
+    } else {
+      return result
+    }
   }
 }
