@@ -81,7 +81,32 @@ export class CommentsQueryRepository{
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
       const result = await this.dataSource.query(`
-    SELECT *  FROM public."UserTable" u
+    SELECT CAST("id" AS TEXT),
+        "login",
+        "email",
+        "password",
+        "createdAt",
+        "isConfirmed",
+        "code",
+        "codeDateOfExpiary",
+        "banDate",
+        "banReason",
+        "isBanned",
+        "name",
+        "description",
+        "websiteUrl",
+        "isMembership",
+        CAST("blogOwnerId" AS TEXT),
+        "blogBanId",
+        "title",
+        "shortDescription",
+        "content",
+        CAST("blogId" AS TEXT),
+        "blogName",
+        "isHiden",
+        CAST("postId" AS TEXT),
+        CAST("commentatorId" AS TEXT) 
+        FROM public."UserTable" u
     RIGHT JOIN public."BlogsTable" b
     ON b."blogOwnerId" = u."id"
     RIGHT JOIN public."APIPostTable" p
@@ -101,6 +126,8 @@ export class CommentsQueryRepository{
         page: page,
         items: result.map(item => this.common.mongoPostAndCommentCommentSlicing(item, result)),
       };
+      console.log(array, " console.log(array) to return")
       return array
+
     }
 }

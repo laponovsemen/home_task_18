@@ -167,7 +167,7 @@ export class Common {
       login: Obj2.login}
   }
 
-  mongoPostAndCommentCommentSlicing = (item : APIComment, listOfPostsForBlogs: APIPost[]) =>  {
+  mongoPostAndCommentCommentSlicing = (item : any, listOfPostsForBlogs: APIPost[]) =>  {
     const post  = listOfPostsForBlogs.find(post => post.id.toString() === item.postId.toString())
     console.log(post , " post mongoPostAndCommentCommentSlicing");
     console.log(listOfPostsForBlogs, " listOfPostsForBlogs");
@@ -179,8 +179,8 @@ export class Common {
       content: item.content,
       createdAt: item.createdAt,
       commentatorInfo:{
-        userId: item.commentatorInfo.userId,
-        userLogin: item.commentatorInfo.userLogin
+        userId: item.commentatorId,
+        userLogin: item.login
     },
       likesInfo: {
         likesCount: 0,
@@ -188,10 +188,10 @@ export class Common {
         myStatus: "None"
     },
       postInfo:{
-        blogId: post.blogId,
-        blogName: post.blogName,
-        title: post.title,
-        id: post.id
+        blogId: item.blogId,
+        blogName: item.blogName,
+        title: item.title,
+        id: item.postId
     }
     }
     console.log(result, " blyat blyat");

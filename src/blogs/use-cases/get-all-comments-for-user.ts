@@ -43,6 +43,7 @@ export class GetAllCommentForUserUseCase implements ICommandHandler<GetAllCommen
     const paginationCriteria: paginationCriteriaType = this.common.getPaginationCriteria(command.queryParams);
     const listOfAllCommentsForSuchPosts
         = await this.commentsQueryRepository.getListOfCommentsForSpecificUser(paginationCriteria, command.userFromToken)
+    console.log(listOfAllCommentsForSuchPosts, " FINAL ")
     return listOfAllCommentsForSuchPosts
   }
 }
