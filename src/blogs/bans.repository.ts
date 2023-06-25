@@ -62,9 +62,9 @@ export class BansRepository {
       };
       const res =  await this.dataSource.query(`
     INSERT INTO public."BlogBanInfoTable"(
-    "banDate", "isBanned", "blogId", "userId", "ownerId")
-    VALUES ( $1, $2, $3, $4, $5);
-    `, [newBan.banDate, newBan.isBanned, newBan.blogId, newBan.userId, newBan.ownerId])
+    "banDate", "isBanned", "blogId", "userId", "ownerId", "banReason")
+    VALUES ( $1, $2, $3, $4, $5, $6);
+    `, [newBan.banDate, newBan.isBanned, newBan.blogId, newBan.userId, newBan.ownerId, newBan.banReason])
 
       console.log('i ban this user, ban ibfo =>', res);
       return true;
@@ -97,7 +97,12 @@ export class BansRepository {
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
     const result =  await this.dataSource.query(`
-    SELECT * FROM public."BlogBanInfoTable"
+    SELECT b."banDate", b."isBanned", b."userId", b."banReason", u."login"
+      FROM public."BlogBanInfoTable" b
+      LEFT JOIN 
+      public."UserTable" u
+      ON b."userId" = u."id"
+      
     WHERE "isBanned" = $1 AND "blogId" = $2
     ORDER BY $3;
     `, [true, blogId, `${sortBy} ${sortDirection.toUpperCase()}`])
