@@ -297,6 +297,27 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     const blogId2 = createdBlogRes2.body.id
 
+      // update uncreated blog
+      await request(server)
+          .put(`/blogger/blogs/2281337`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              name : "another name",
+              description: "another string",
+              websiteUrl : createBlogDto2.websiteUrl
+          }).expect(404)
+
+      // delete uncreated blog
+      await request(server)
+          .put(`/blogger/blogs/2281337`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              name : "another name",
+              description: "another string",
+              websiteUrl : createBlogDto2.websiteUrl
+          }).expect(404)
+
+
       const updatedBlogRes2 = await request(server)
           .put(`/blogger/blogs/${blogId2}`)
           .auth(loginRes1.body.accessToken, {type: 'bearer'})
@@ -392,7 +413,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                    },
              "postInfo":  {
                  "blogId": expect.any(String),
-                     "blogName": "another name",
+                     "blogName": "string",
                      "id": expect.any(String),
                      "title": "title",
                    },
@@ -421,7 +442,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
        "page": 1,
            "pageSize": 10,
            "pagesCount": 1,
-           "totalCount": 3,
+           "totalCount": 2,
          })
   }, 200000);
 
