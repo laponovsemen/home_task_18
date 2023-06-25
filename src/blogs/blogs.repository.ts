@@ -80,7 +80,7 @@ export class BlogsRepository {
     const pageSize = blogsPagination.pageSize;
     const totalCountQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS TEXT) FROM public."BlogsTable"
-        WHERE "blogOwnerId" = $1 AND public."BlogsTable"."name" Like $2
+        WHERE "blogOwnerId" = $1 AND public."BlogsTable"."name" ILIKE $2
     `, [userId, filter.name])
 
   const totalCount = parseInt(totalCountQuery[0].count, 10)
@@ -100,7 +100,7 @@ export class BlogsRepository {
     "isMembership",
     "createdAt"
      FROM public."BlogsTable"
-     WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" Like $4
+     WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" ILIKE $4
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
      LIMIT $2 OFFSET $3
     `, [userId,pageSize , ToSkip, filter.name ])
