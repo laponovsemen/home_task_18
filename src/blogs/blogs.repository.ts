@@ -94,7 +94,7 @@ export class BlogsRepository {
 
     const result = await this.dataSource.query(`
     SELECT CAST("id" AS TEXT),
-    "name" COLLATE "en_US.utf8",
+    "name" COLLATE "C",
     "description",
     "websiteUrl",
     "isMembership",
