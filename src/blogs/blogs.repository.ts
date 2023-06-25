@@ -101,7 +101,7 @@ export class BlogsRepository {
     "createdAt"
      FROM public."BlogsTable"
      WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" ILIKE $4
-     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} collate "en_US.utf8"
      LIMIT $2 OFFSET $3
     `, [userId,pageSize , ToSkip, filter.name ])
 
