@@ -128,7 +128,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     expect(createdBlogRes.status).toBe(201)
     expect(createdBlogRes.body).toEqual({
-        "createdAt": expect.any(String),
+        "createdAt": expect.any(Date.toString()),
          "description": createBlogDto.description,
          "id": expect.any(String),
          "isMembership": false,
@@ -347,7 +347,54 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .get(`/blogger/blogs/comments`)
       .auth(accessToken1, {type: 'bearer'})
     expect(allCommentsForSpecifiedUser.status).toEqual(200)
-    expect(allCommentsForSpecifiedUser.body).toEqual({})
+    expect(allCommentsForSpecifiedUser.body).toEqual({
+           "items":  [
+              {
+             "commentatorInfo":  {
+                 "userId": "1761",
+                     "userLogin": "login0",
+                   },
+             "content": "ldklkdjflnalduhsajklcnzLKkcnx",
+                 "createdAt": "2023-06-25T06:16:58.299Z",
+                 "id": "67",
+                 "likesInfo":  {
+                 "dislikesCount": 0,
+                     "likesCount": 0,
+                     "myStatus": "None",
+                   },
+             "postInfo":  {
+                 "blogId": "252",
+                     "blogName": "string",
+                     "id": "117",
+                     "title": "title",
+                   },
+           },
+          {
+             "commentatorInfo":  {
+                 "userId": "1761",
+                     "userLogin": "login0",
+                   },
+             "content": "ldklkdjflnalduhsajklcnzLKkcnx",
+                 "createdAt": "2023-06-25T06:16:59.393Z",
+                 "id": "68",
+                 "likesInfo":  {
+                 "dislikesCount": 0,
+                     "likesCount": 0,
+                     "myStatus": "None",
+                   },
+             "postInfo":  {
+                 "blogId": "252",
+                     "blogName": "string",
+                     "id": "118",
+                     "title": "title",
+                   },
+           },
+       ],
+       "page": 1,
+           "pageSize": 10,
+           "pagesCount": 1,
+           "totalCount": 3,
+         })
   }, 200000);
 
 });

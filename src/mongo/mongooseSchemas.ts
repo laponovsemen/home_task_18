@@ -80,7 +80,7 @@ export class Blog {
   description: string;
   websiteUrl: string;
   isMembership: boolean;
-  createdAt: Date;
+  createdAt: string;
   blogOwnerInfo : blogOwnerInfoModel;
   banInfo: BlogBanInfoDB
 }
