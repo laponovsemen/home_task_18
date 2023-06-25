@@ -81,11 +81,11 @@ export class CommentsQueryRepository{
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
       const result = await this.dataSource.query(`
-    SELECT CAST("id" AS TEXT),
+    SELECT CAST(c."id" AS TEXT),
         "login",
         "email",
         "password",
-        "createdAt",
+        c."createdAt",
         "isConfirmed",
         "code",
         "codeDateOfExpiary",
@@ -100,10 +100,10 @@ export class CommentsQueryRepository{
         "blogBanId",
         "title",
         "shortDescription",
-        "content",
+        c."content",
         CAST("blogId" AS TEXT),
         "blogName",
-        "isHiden",
+        c."isHiden",
         CAST("postId" AS TEXT),
         CAST("commentatorId" AS TEXT) 
         FROM public."UserTable" u
