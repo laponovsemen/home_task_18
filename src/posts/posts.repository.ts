@@ -128,15 +128,14 @@ export class PostsRepository {
       items: items,
     };
   }
-  async deletePostById(id : string) {
-    const postId = this.common.tryConvertToObjectId(id)
+  async deletePostById(postId : string) {
     if(!postId){
       return null
     }
     const deletedPost = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    DELETE FROM public."APIPostTable"
+    WHERE "id" = $1;
+    `, [postId])
     return  deletedPost.deletedCount === 1
   }
   async updatePostById( DTO : PostDTO, postId : string) {

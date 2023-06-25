@@ -94,7 +94,7 @@ export class BlogsRepository {
 
 
     const result = await this.dataSource.query(`
-    SELECT "id",
+    SELECT CAST("id" AS TEXT),
     "name",
     "description",
     "websiteUrl",
