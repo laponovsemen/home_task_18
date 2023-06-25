@@ -146,6 +146,9 @@ export class UsersRepository {
     const result = queryResult[0]
 
     console.log(result , " result in findUserByLoginOrEmail")
+    if (!result) {
+      return null
+    }
     return this.common.SQLUserWithPasswordMapping(result)
   }
   async createUnconfirmedUser(login: string, password: string, email: string) {

@@ -115,7 +115,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
          "name": "string",
          "websiteUrl": "simsbury65@gmail.com",
     })
-
+      // create post for specific blog
     const createdPostForSpecificBlog = await request(server)
       .post(`/blogger/blogs/${createdBlog.body.id}/posts`)
       .set("Authorization", `Bearer ${accessTokenOfUser}`)
@@ -125,7 +125,57 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         "content": "string"
       })
       .expect(201)
+
+      // checl post
+      expect(createdPostForSpecificBlog.body).toEqual({
+              "blogId": expect.any(String),
+             "blogName": "string",
+             "content": "string",
+             "createdAt": expect.any(String),
+             "extendedLikesInfo":  {
+               "dislikesCount": 0,
+                   "likesCount": 0,
+                   "myStatus": "None",
+                   "newestLikes": [],
+                 },
+         "id": expect.any(String),
+             "shortDescription": "stringstring",
+             "title": "string",
+      })
+
+      // update
+      await request(server)
+          .put(`/blogger/blogs/2281331/posts`)
+          .set("Authorization", `Bearer ${accessTokenOfUser}`)
+          .send({
+              "title": "string2",
+              "shortDescription": "stringstring2",
+              "content": "string2"
+          })
+          .expect(404)
+
+      await request(server)
+          .put(`/blogger/blogs/${createdBlog.body.id}/posts`)
+          .set("Authorization", `Bearer ${accessTokenOfUser}`)
+          .send({
+              "title": "string2",
+              "shortDescription": "stringstring2",
+              "content": "string2"
+          })
+          .expect(204)
+
+      const foundPostAfterUpdate =  await request(server)
+          .get(`/blogger/blogs/${createdBlog.body.id}/posts`)
+          .set("Authorization", `Bearer ${accessTokenOfUser}`)
+          .expect(200)
+
+      expect(foundPostAfterUpdate.body).toEqual({})
+
+
+
     //extract postId
+
+
     const postId = createdPostForSpecificBlog.body.id
 
     await request(server)

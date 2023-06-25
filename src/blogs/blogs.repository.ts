@@ -102,9 +102,9 @@ export class BlogsRepository {
     "createdAt"
      FROM public."BlogsTable"
      WHERE "blogOwnerId" = $1 
-     ORDER BY $2
-     LIMIT $3 OFFSET $4
-    `, [userId, `${sortBy} ${sortDirection.toUpperCase()}` ,pageSize , ToSkip ])
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+     LIMIT $2 OFFSET $3
+    `, [userId,pageSize , ToSkip ])
 
     if (result) {
       const items = result.map((item) => {
