@@ -7,6 +7,7 @@ import { paginationCriteriaType } from "../appTypes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
 import {DataSource} from "typeorm";
+import {PostDTO} from "../input.classes";
 
 @Injectable()
 export class PostsRepository {
@@ -138,18 +139,18 @@ export class PostsRepository {
     `)
     return  deletedPost.deletedCount === 1
   }
-  async updatePostById( DTO : any, id : string) {
-    const postId = this.common.tryConvertToObjectId(id)
+  async updatePostById( DTO : PostDTO, postId : string) {
     console.log(postId, " postId after convert");
     if(!postId){
       return null
     }
     const updatesPost = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APIPostTable"
+    SET "title" = $1, "shortDescription" = $2, "content" = $3
+    WHERE "id" = $4;
+    `, [postId, DTO.title, DTO.shortDescription, DTO.content])
 
-    return updatesPost.matchedCount === 1
+    return true
   }
   async deleteAllData(){
     await this.dataSource.query(`

@@ -197,7 +197,7 @@ export class BloggerBlogsController {
     //console.log(foundBlog.blogOwnerInfo.userId.toString(), "foundBlog.blogOwnerInfo.userId.toString()");
     //console.log(user.userId, "user.userId");
 
-    if (foundBlog.blogOwnerId.toString() !== user.userId){
+    if (foundBlog.blogOwnerId.toString() !== user.userId.toString()){
       throw new ForbiddenException("Blog not found")
     }
 
