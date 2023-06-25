@@ -94,14 +94,14 @@ export class BlogsRepository {
 
     const result = await this.dataSource.query(`
     SELECT CAST("id" AS TEXT),
-    "name",
+    "name" COLLATE "en_US.utf8",
     "description",
     "websiteUrl",
     "isMembership",
     "createdAt"
      FROM public."BlogsTable"
      WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" ILIKE $4
-     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} collate "en_US.utf8"
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
      LIMIT $2 OFFSET $3
     `, [userId,pageSize , ToSkip, filter.name ])
 

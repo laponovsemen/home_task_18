@@ -142,6 +142,10 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
              "shortDescription": "stringstring",
              "title": "string",
       })
+      await request(server)
+          .get(`/blogger/blogs`)
+          .set("Authorization", `Bearer ${accessTokenOfUser}`)
+
 
       // update
       await request(server)
