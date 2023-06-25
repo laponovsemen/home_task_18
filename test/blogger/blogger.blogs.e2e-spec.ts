@@ -297,6 +297,29 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     const blogId2 = createdBlogRes2.body.id
 
+      const updatedBlogRes2 = await request(server)
+          .put(`/blogger/blogs/${blogId2}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              name : "another name",
+              description: "another string",
+              websiteUrl : createBlogDto2.websiteUrl
+          }).expect(204)
+
+      const  foundBlog = await request(server)
+          .get(`/blogger/blogs/${blogId2}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(200)
+
+      expect(foundBlog.body).toEqual({
+          id : expect.any(String),
+          name : "another name",
+          description: "another string",
+          isMembership: false,
+          websiteUrl : createBlogDto2.websiteUrl,
+          createdAt : expect.any(String)
+      })
+
     const createPostDTO1 : PostForSpecificBlogDTO = {
       title : "title",
       shortDescription : "shortDescription",
@@ -351,41 +374,41 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
            "items":  [
               {
              "commentatorInfo":  {
-                 "userId": "1761",
+                 "userId": expect.any(String),
                      "userLogin": "login0",
                    },
              "content": "ldklkdjflnalduhsajklcnzLKkcnx",
-                 "createdAt": "2023-06-25T06:16:58.299Z",
-                 "id": "67",
+                 "createdAt":expect.any(String),
+                 "id": expect.any(String),
                  "likesInfo":  {
                  "dislikesCount": 0,
                      "likesCount": 0,
                      "myStatus": "None",
                    },
              "postInfo":  {
-                 "blogId": "252",
-                     "blogName": "string",
-                     "id": "117",
+                 "blogId": expect.any(String),
+                     "blogName": "another name",
+                     "id": expect.any(String),
                      "title": "title",
                    },
            },
           {
              "commentatorInfo":  {
-                 "userId": "1761",
+                 "userId": expect.any(String),
                      "userLogin": "login0",
                    },
              "content": "ldklkdjflnalduhsajklcnzLKkcnx",
-                 "createdAt": "2023-06-25T06:16:59.393Z",
-                 "id": "68",
+                 "createdAt": expect.any(String),
+                 "id": expect.any(String),
                  "likesInfo":  {
                  "dislikesCount": 0,
                      "likesCount": 0,
                      "myStatus": "None",
                    },
              "postInfo":  {
-                 "blogId": "252",
-                     "blogName": "string",
-                     "id": "118",
+                 "blogId": expect.any(String),
+                     "blogName": "another name",
+                     "id":expect.any(String),
                      "title": "title",
                    },
            },

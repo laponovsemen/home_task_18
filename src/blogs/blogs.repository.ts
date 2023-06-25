@@ -10,7 +10,7 @@ import { paginationCriteriaType } from '../appTypes';
 import { Common } from '../common';
 import { ObjectId } from 'mongodb';
 import { Injectable } from "@nestjs/common";
-import { BanBlogDTO } from "../input.classes";
+import {BanBlogDTO, BlogDTO} from "../input.classes";
 import {DataSource} from "typeorm";
 
 @Injectable()
@@ -227,15 +227,18 @@ export class BlogsRepository {
 
     }
   }
-  async updateBlogById(DTO: any, blogId: string) {
+  async updateBlogById(DTO: BlogDTO, blogId: string) {
 
     if (!blogId) {
       console.log("blogId convertation failed");
       return null
     }
     const updateResult = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    UPDATE public."BlogsTable"
+    SET  "name" = $2, "description" = $3, "websiteUrl" = $4
+    WHERE "id" = $1;
+    `, [blogId, DTO.name, DTO.description, DTO.websiteUrl])
+    console.log(updateResult, " updateResult")
     return updateResult.matchedCount === 1
   }
   async deleteBlogById(id: string) {

@@ -163,7 +163,7 @@ export class BlogsQueryRepository {
       userId : user.userId,
       userLogin :user.login,
     }
-    const createdAt = new Date()
+    const createdAt = new Date().toISOString()
     const description = DTO.description
     const isMembership = false
     const name = DTO.name
