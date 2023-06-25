@@ -84,7 +84,7 @@ export class BlogsRepository {
         WHERE "blogOwnerId" = $1
     `, [userId])
 
-  const totalCount = totalCountQuery[0].count
+  const totalCount = parseInt(totalCountQuery[0].count, 10)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
