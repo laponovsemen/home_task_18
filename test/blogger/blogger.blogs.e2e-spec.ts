@@ -7,7 +7,7 @@ import process from "process";
 import cookieParser from "cookie-parser";
 import { AppModule } from "../../src/app.module";
 import { HttpExceptionFilter } from "../../src/exception.filter";
-import { ArrayContains, isMongoId, useContainer } from "class-validator";
+import {ArrayContains, isMongoId, isString, useContainer} from "class-validator";
 import {
   BanUserByBloggerDTO,
   BlogDTO,
@@ -96,7 +96,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           "isBanned": false
         }
       });
-      expect(isMongoId(res.body.id)).toBeTruthy();
+      expect(isString(res.body.id)).toBeTruthy();
       users.push({ ...createUserDto, ...res.body });
     }
 
@@ -216,7 +216,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           "isBanned": false
         }
       });
-      expect(isMongoId(res.body.id)).toBeTruthy();
+      expect(isString(res.body.id)).toBeTruthy();
       users.push({ ...createUserDto, ...res.body });
     }
 

@@ -157,11 +157,11 @@ export class Common {
   };*/
 
 
-  mongoBanSlicing= (Obj2: BloggerBansForSpecificBlog) => {
+  mongoBanSlicing= (Obj2: any) => {
     return {banInfo:
-        {banDate: Obj2.banInfo.banDate,
-          banReason:Obj2.banInfo.banReason,
-          isBanned: Obj2.banInfo.isBanned
+        {banDate: Obj2.banDate,
+          banReason:Obj2.banReason,
+          isBanned: Obj2.isBanned
         },
       id: Obj2.userId,
       login: Obj2.login}
@@ -172,8 +172,8 @@ export class Common {
     console.log(post , " post mongoPostAndCommentCommentSlicing");
     console.log(listOfPostsForBlogs, " listOfPostsForBlogs");
     console.log(item, "item");
-    console.log(post.id.toString() === item.postId.toString(), "post._id.toString() === item.postId.toString()");
-    console.log(post.id.toString(), " post._id.toString()");
+    //console.log(post.id.toString() === item.postId.toString(), "post._id.toString() === item.postId.toString()");
+    //console.log(post.id.toString(), " post._id.toString()");
     console.log(item.postId.toString(), " item.postId.toString()");
     const result = {id: item.id,
       content: item.content,

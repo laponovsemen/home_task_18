@@ -279,26 +279,33 @@ export class BlogsQueryRepository {
     `)
   }
 
-  async getBlogByIdWithBloggerInfo(id) {
-    const blogId = this.common.tryConvertToObjectId(id)
+  async getBlogByIdWithBloggerInfo(blogId) {
     if (!blogId) {
       return null
     }
-    const foundBlog = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    if (!foundBlog) {
+    const foundBlogQuery = await this.dataSource.query(`
+    SELECT b."id", b."name", b."description", b."websiteUrl", b."isMembership", b."createdAt", b."blogOwnerId", u."login"
+    FROM public."BlogsTable" b
+    LEFT JOIN 
+    public."UserTable" u
+    ON u."id" = b."blogOwnerId"
+    WHERE b."id" = $1;
+    `, [blogId])
+    const foundBlog = foundBlogQuery[0]
+    if (foundBlogQuery.length === 0) {
       return null
     }
     return {
-      id: foundBlog._id,
+      id: foundBlog.id,
       name: foundBlog.name,
       description: foundBlog.description,
       websiteUrl: foundBlog.websiteUrl,
       isMembership: foundBlog.isMembership,
       createdAt: foundBlog.createdAt,
-      blogOwnerInfo: foundBlog.blogOwnerInfo
+      blogOwnerInfo: {
+        userId : foundBlog.blogOwnerId,
+        userLogin : foundBlog.login
+      }
     }
   }
 

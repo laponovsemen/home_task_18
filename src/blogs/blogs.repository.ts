@@ -74,10 +74,10 @@ export class BlogsRepository {
     }
   }
   async getAllBlogsForSpecifiedBlogger(blogsPagination: paginationCriteriaType, userId : string) {
-    const filter: { name?: any,  "blogOwnerInfo.userId" : string} = {"blogOwnerInfo.userId" : userId}
-    if (blogsPagination.searchNameTerm) {
-      filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
-    }
+    //const filter: { name?: any,  "blogOwnerInfo.userId" : string} = {"blogOwnerInfo.userId" : userId}
+    // if (blogsPagination.searchNameTerm) {
+    //   filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
+    // }
     const pageSize = blogsPagination.pageSize;
     const totalCount = await this.dataSource.query(`
     SELECT COUNT(*) FROM public."BlogsTable"
@@ -227,8 +227,7 @@ export class BlogsRepository {
 
     }
   }
-  async updateBlogById(DTO: any, id: string) {
-    const blogId = this.common.tryConvertToObjectId(id)
+  async updateBlogById(DTO: any, blogId: string) {
 
     if (!blogId) {
       console.log("blogId convertation failed");

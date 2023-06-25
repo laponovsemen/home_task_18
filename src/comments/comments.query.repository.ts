@@ -58,4 +58,49 @@ export class CommentsQueryRepository{
   }
 
 
+    async getListOfCommentsForSpecificUser(paginationCriteria: any, userFromToken: any) {
+      console.log( "i`m in getListOfCommentsForSpecificUser");
+      const pageSize = paginationCriteria.pageSize;
+      const userId = userFromToken.userId
+      const totalCountQuery = await this.dataSource.query(`
+    SELECT CAST(COUNT(*) AS INTEGER) FROM public."UserTable" u
+    LEFT JOIN
+    public."BlogsTable" b
+    ON b."blogOwnerId" = u."id"
+    LEFT JOIN public."APIPostTable" p
+    ON b."id" = p."blogId"
+    LEFT JOIN public."APICommentTable" c
+    ON c."postId" = p."id"
+    WHERE b."blogOwnerId" = $1;
+    `, [userId])
+      const totalCount = totalCountQuery[0].count
+      const pagesCount = Math.ceil(totalCount / pageSize);
+      const page = paginationCriteria.pageNumber;
+      const sortBy = paginationCriteria.sortBy;
+      const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
+      const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
+      //console.log(listOfPostsForBlogs, "list of posts nhui");
+      const result = await this.dataSource.query(`
+    SELECT *  FROM public."UserTable" u
+    RIGHT JOIN public."BlogsTable" b
+    ON b."blogOwnerId" = u."id"
+    RIGHT JOIN public."APIPostTable" p
+    ON b."id" = p."blogId"
+    RIGHT JOIN public."APICommentTable" c
+    ON c."postId" = p."id"
+    WHERE b."blogOwnerId" = $1;
+    `, [userId])
+      console.log(result, " result in getListOfCommentsByPostIds");
+      console.log(result, "blyat");
+
+
+      const array = {
+        pageSize: pageSize,
+        totalCount: totalCount,
+        pagesCount: pagesCount,
+        page: page,
+        items: result.map(item => this.common.mongoPostAndCommentCommentSlicing(item, result)),
+      };
+      return array
+    }
 }

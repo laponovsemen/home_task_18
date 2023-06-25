@@ -35,10 +35,12 @@ export class BansRepository {
       return null;
     }
 
-    const banExists =  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const banExistsQuery =  await this.dataSource.query(`
+    SELECT * FROM public."BlogBanInfoTable"
+    WHERE "userId" = $1 AND "blogId" = $2;
+    `, [userToBanId, blogId])
+    const [banExists] = banExistsQuery
+
     console.log(banExists, 'is banned');
     if (banExists && DTO.isBanned) {
       console.log('u want to ban banned user');
@@ -50,27 +52,27 @@ export class BansRepository {
     }
     if (DTO.isBanned) {
       const newBan = {
-        ownerId: new ObjectId(ownerId),
-        blogId: new ObjectId(blogId),
-        banInfo: {
-          banDate: new Date().toISOString(),
-          banReason: DTO.banReason,
-          isBanned: DTO.isBanned
-        },
-        userId: new ObjectId(userToBanId),
-        login: userToBan.login
+        ownerId: ownerId,
+        blogId: blogId,
+        banDate: new Date().toISOString(),
+        banReason: DTO.banReason,
+        isBanned: DTO.isBanned,
+        userId: userToBanId,
+
       };
       const res =  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    INSERT INTO public."BlogBanInfoTable"(
+    "banDate", "isBanned", "blogId", "userId", "ownerId")
+    VALUES ( $1, $2, $3, $4, $5);
+    `, [newBan.banDate, newBan.isBanned, newBan.blogId, newBan.userId, newBan.ownerId])
+
       console.log('i ban this user, ban ibfo =>', res);
       return true;
     } else {
       await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    DELETE FROM public."BlogBanInfoTable"
+    WHERE "userId" = $1 AND "blogId" = $2;
+    `, [userToBanId, blogId])
       console.log('unban user');
       return true;
     }
@@ -78,29 +80,27 @@ export class BansRepository {
   }
 
   async getAllBannedUsersForSpecificBlog(paginationCriteria: paginationCriteriaType, blogOwnerFromToken: string, blogId: string) {
-    /*const filter: FilterQuery<BloggerBansForSpecificBlog> = {
-      name: {
-        $regex: paginationCriteria.searchNameTerm ?? "",
-        $options: "i"
-      }
-    };*/
-    const filter = {ownerId: new ObjectId(blogOwnerFromToken), blogId: new ObjectId(blogId)}
+
+    //const filter = {ownerId: blogOwnerFromToken, blogId: new ObjectId(blogId)}
     const pageSize = paginationCriteria.pageSize;
-    const totalCount =  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+
+    const totalCountQuery =  await this.dataSource.query(`
+    SELECT cast(COUNT(*) AS INTEGER) FROM public."BlogBanInfoTable"
+    WHERE "isBanned" = $1 AND "blogId" = $2;
+    `, [true, blogId])
+
+    const totalCount = totalCountQuery[0].count
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
     const sortDirection: "asc" | "desc" = paginationCriteria.sortDirection;
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-    console.log(filter, " filter");
     const result =  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT * FROM public."BlogBanInfoTable"
+    WHERE "isBanned" = $1 AND "blogId" = $2
+    ORDER BY $3;
+    `, [true, blogId, `${sortBy} ${sortDirection.toUpperCase()}`])
 
 
     const items = result.map((item) => {

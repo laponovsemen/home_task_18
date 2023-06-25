@@ -92,6 +92,7 @@ export class BloggerUsersController {
     console.log("getting all banned users for specific blog procedure");
     const blogOwnerFromToken = user.userId
     const blog = await this.blogsQueryRepository.getBlogByIdWithBloggerInfo(blogId)
+    console.log(blog , " blog in getting all banned users for specific blog procedure")
     if(!blog){
       throw new NotFoundException()
     }
