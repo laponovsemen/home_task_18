@@ -253,19 +253,18 @@ export class BlogsRepository {
     console.log(updateResult, " updateResult")
     return updateResult.matchedCount === 1
   }
-  async deleteBlogById(id: string) {
-    const blogId = this.common.tryConvertToObjectId(id)
-    console.log(blogId);
+  async deleteBlogById(blogId: string) {
+
     if (!blogId) {
       return null
     }
     const deletedBlog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
-    console.log(deletedBlog);
-    console.log(deletedBlog.deletedCount === 1);
+    DELETE FROM public."BlogsTable"
+    WHERE "id" = $1
+    `, [blogId])
 
-    return deletedBlog.deletedCount === 1
+
+    return
   }
   async createPostForSpecificBlog(DTO: any, id: string) {
     const createdAt = new Date()
