@@ -74,15 +74,14 @@ export class BlogsRepository {
     }
   }
   async getAllBlogsForSpecifiedBlogger(blogsPagination: paginationCriteriaType, userId : string) {
-    //const filter: { name?: any,  "blogOwnerInfo.userId" : string} = {"blogOwnerInfo.userId" : userId}
-    // if (blogsPagination.searchNameTerm) {
-    //   filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
-    // }
+    let filter : {name? : any} = {}
+    filter.name = blogsPagination.searchNameTerm ?? '%'
+
     const pageSize = blogsPagination.pageSize;
     const totalCountQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS TEXT) FROM public."BlogsTable"
-        WHERE "blogOwnerId" = $1
-    `, [userId])
+        WHERE "blogOwnerId" = $1 AND public."BlogsTable"."name" Like $2
+    `, [userId, filter.name])
 
   const totalCount = parseInt(totalCountQuery[0].count, 10)
     const pagesCount = Math.ceil(totalCount / pageSize);
@@ -101,10 +100,10 @@ export class BlogsRepository {
     "isMembership",
     "createdAt"
      FROM public."BlogsTable"
-     WHERE "blogOwnerId" = $1 
+     WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" Like $4
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
      LIMIT $2 OFFSET $3
-    `, [userId,pageSize , ToSkip ])
+    `, [userId,pageSize , ToSkip, filter.name ])
 
     if (result) {
       const items = result.map((item) => {
