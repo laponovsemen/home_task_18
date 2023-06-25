@@ -75,7 +75,7 @@ export class BlogsRepository {
   }
   async getAllBlogsForSpecifiedBlogger(blogsPagination: paginationCriteriaType, userId : string) {
     let filter : {name? : any} = {}
-    filter.name = blogsPagination.searchNameTerm ?? '%'
+    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%`:  '%%'
 
     const pageSize = blogsPagination.pageSize;
     const totalCountQuery = await this.dataSource.query(`
