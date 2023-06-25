@@ -311,13 +311,18 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .auth(loginRes1.body.accessToken, {type: 'bearer'})
           .expect(200)
 
+      console.log(foundBlog.body, " foundBlog2")
+      console.log(createdBlogRes1.body, " createdBlogRes1")
+      console.log(createdBlogRes2.body, " createdBlogRes2")
+      console.log(blogId1, " blogId1")
+      console.log(blogId2, " blogId2")
       expect(foundBlog.body).toEqual({
           id : expect.any(String),
           name : "another name",
           description: "another string",
           isMembership: false,
           websiteUrl : createBlogDto2.websiteUrl,
-          createdAt : expect.any(String)
+          createdAt : createdBlogRes2.body.createdAt
       })
 
     const createPostDTO1 : PostForSpecificBlogDTO = {
