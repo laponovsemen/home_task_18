@@ -79,9 +79,12 @@ export class BlogsRepository {
     //   filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
     // }
     const pageSize = blogsPagination.pageSize;
-    const totalCount = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    const totalCountQuery = await this.dataSource.query(`
+    SELECT CAST(COUNT(*) AS TEXT) FROM public."BlogsTable"
+        WHERE "blogOwnerId" = $1
+    `, [userId])
+
+  const totalCount = totalCountQuery[0].count
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
@@ -91,8 +94,17 @@ export class BlogsRepository {
 
 
     const result = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    SELECT "id",
+    "name",
+    "description",
+    "websiteUrl",
+    "isMembership",
+    "createdAt"
+     FROM public."BlogsTable"
+     WHERE "blogOwnerId" = $1 
+     ORDER BY $2
+     LIMIT $3 OFFSET $4
+    `, [userId, `${sortBy} ${sortDirection.toUpperCase()}` ,pageSize , ToSkip ])
 
     if (result) {
       const items = result.map((item) => {
