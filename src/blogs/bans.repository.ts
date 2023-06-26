@@ -97,7 +97,12 @@ export class BansRepository {
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
     const result =  await this.dataSource.query(`
-    SELECT b."banDate", b."isBanned", b."userId", b."banReason", u."login"
+    SELECT b."banDate",
+     b."isBanned",
+      CAST(b."userId" AS TEXT),
+       b."banReason",
+        u."login"
+        
       FROM public."BloggerBanForBlogInfoTable" b
       LEFT JOIN 
       public."UserTable" u

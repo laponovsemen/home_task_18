@@ -1,9 +1,10 @@
 import {
+  IS_NUMBER_STRING,
   IS_UUID,
   IsBoolean, IsDefined,
   IsEnum,
   IsNotEmpty,
-  IsNotIn,
+  IsNotIn, IsNumber, IsNumberString,
   IsObject,
   IsString,
   IsUrl, IsUUID, isUUID,
@@ -118,7 +119,7 @@ export class BanUserByBloggerDTO {
   @Length(20)
   banReason: string
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   blogId: string
 }
 

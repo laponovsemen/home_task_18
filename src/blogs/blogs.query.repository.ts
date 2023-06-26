@@ -272,7 +272,8 @@ export class BlogsQueryRepository {
   }
 
   async getBlogByIdWithBloggerInfo(blogId) {
-    if (!blogId) {
+
+    if (!blogId || !parseInt(blogId, 10)) {
       return null
     }
     const foundBlogQuery = await this.dataSource.query(`
@@ -282,7 +283,7 @@ export class BlogsQueryRepository {
     public."UserTable" u
     ON u."id" = b."blogOwnerId"
     WHERE b."id" = $1;
-    `, [blogId])
+    `, [parseInt(blogId, 10)])
     const foundBlog = foundBlogQuery[0]
     if (foundBlogQuery.length === 0) {
       return null
