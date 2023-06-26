@@ -226,4 +226,21 @@ export class Common {
       }
     }
   }
+
+    SQLBlogMapping(Obj : any) {
+      return {
+          id: Obj.id,
+          name: Obj.name,
+          description: Obj.description,
+          websiteUrl: Obj.websiteUrl,
+          isMembership: Obj.isMembership,
+          createdAt: Obj.createdAt,
+          blogOwnerInfo:{
+            userId: Obj.blogOwnerId,
+            userLogin: Obj.login
+          },
+          banInfo:{
+            isBanned: !!Obj.isBanned ,
+            banDate: Obj.banDate ? Obj.banDate : null}}
+        }
 }

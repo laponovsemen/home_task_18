@@ -21,21 +21,16 @@ export class BlogsRepository {
   ) {}
   async getAllBlogs(blogsPagination: paginationCriteriaType) {
     let filter : {name? : any} = {}
-
-    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%'
+    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%`:  '%%'
 
     const pageSize = blogsPagination.pageSize;
-    const sqlCountQuery = await this.dataSource.query(`
-    SELECT COUNT(*) 
-    FROM public."BlogsTable"
-    WHERE "blogBanId" IS NULL  AND "name" ILike $1
-    `,[filter.name])
-    const totalCount = parseInt(sqlCountQuery[0].count, 10)
+    const totalCountQuery = await this.dataSource.query(`
+        SELECT CAST(COUNT(*) AS INTEGER) FROM public."BlogsTable"
+        WHERE  "name" ILIKE $1 AND "blogBanId" IS NULL
+    `, [filter.name])
 
-    console.log(totalCount)
-    console.log(sqlCountQuery)
+    const totalCount = parseInt(totalCountQuery[0].count, 10)
     const pagesCount = Math.ceil(totalCount / pageSize);
-    console.log(pagesCount, "pagesCount")
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
     const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
@@ -43,26 +38,33 @@ export class BlogsRepository {
 
 
 
-    const result =await this.dataSource.query(`
-    SELECT *
-    FROM public."BlogsTable"
-    WHERE "blogBanId" IS NULL  AND "name" ILike $1
-    `,[filter.name])
+    const result = await this.dataSource.query(`
+    SELECT CAST("id" AS TEXT),
+    "name" COLLATE "C",
+    "description",
+    "websiteUrl",
+    "isMembership",
+    "createdAt"
+     FROM public."BlogsTable"
+     WHERE  "name" ILIKE $3 AND "blogBanId" IS NULL
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
+     LIMIT $1 OFFSET $2
+    `, [pageSize , ToSkip, filter.name ])
 
     if (result) {
       const items = result.map((item) => {
-        return this.common.mongoBlogSlicing(item);
+        return this.common.mongoBlogSlicingWithoutBlogOwnerInfo(item);
       });
       const array = await Promise.all(items);
       console.log(
-        {
-          pageSize: pageSize,
-          totalCount: totalCount,
-          pagesCount: pagesCount,
-          page: page,
-          items: array,
-        },
-        'its fucking result',
+          {
+            pageSize: pageSize,
+            totalCount: totalCount,
+            pagesCount: pagesCount,
+            page: page,
+            items: array,
+          },
+          'its fucking result',
       );
       return {
         pageSize: pageSize,
@@ -72,6 +74,7 @@ export class BlogsRepository {
         items: array,
       };
     }
+
   }
   async getAllBlogsForSpecifiedBlogger(blogsPagination: paginationCriteriaType, userId : string) {
     let filter : {name? : any} = {}

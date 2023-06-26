@@ -19,18 +19,24 @@ export class BlogsQueryRepository {
       protected readonly dataSource: DataSource,
     protected readonly common: Common,
   ) {}
-  async getAllBlogs(blogsPagination: paginationCriteriaType) {
+  async getAllBlogsSA(blogsPagination: paginationCriteriaType) {
     let filter : {name? : any} = {}
-    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%`:  '%%'
+
+    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%'
 
     const pageSize = blogsPagination.pageSize;
-    const totalCountQuery = await this.dataSource.query(`
-    SELECT CAST(COUNT(*) AS INTEGER) FROM public."BlogsTable"
-        WHERE  "name" ILIKE $1
-    `, [filter.name])
+    const sqlCountQuery = await this.dataSource.query(`
+    SELECT COUNT(*) 
+    FROM public."BlogsTable"
+    WHERE "blogBanId" IS NULL  AND "name" ILike $1
+    `,[filter.name])
 
-    const totalCount = parseInt(totalCountQuery[0].count, 10)
+    const totalCount = parseInt(sqlCountQuery[0].count, 10)
+
+    console.log(totalCount)
+    console.log(sqlCountQuery)
     const pagesCount = Math.ceil(totalCount / pageSize);
+    console.log(pagesCount, "pagesCount")
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
     const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
@@ -38,22 +44,32 @@ export class BlogsQueryRepository {
 
 
 
-    const result = await this.dataSource.query(`
-    SELECT CAST("id" AS TEXT),
-    "name" COLLATE "C",
-    "description",
-    "websiteUrl",
-    "isMembership",
-    "createdAt"
-     FROM public."BlogsTable"
-     WHERE  "name" ILIKE $3
-     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
-     LIMIT $1 OFFSET $2
-    `, [pageSize , ToSkip, filter.name ])
+    const result =await this.dataSource.query(`
+    SELECT 
+    CAST(b."id" AS TEXT),
+    CAST(b."name" AS TEXT),
+    b."description",
+    b."websiteUrl",
+    b."isMembership",
+    b."createdAt",
+    CAST(b."blogOwnerId" AS TEXT),
+    u."login",
+    bb."isBanned",
+    bb."banDate"
+    
+    FROM public."BlogsTable" b
+    LEFT JOIN public."UserTable" u
+    ON b."blogOwnerId" = u."id"
+    LEFT JOIN public."BlogBanTable" bb
+    ON b."blogBanId" = bb."id"
+    WHERE "blogBanId" IS NULL  AND "name" ILike $1
+    ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()}
+    LIMIT $2 OFFSET $3
+    `,[filter.name, pageSize, ToSkip])
 
     if (result) {
       const items = result.map((item) => {
-        return this.common.mongoBlogSlicingWithoutBlogOwnerInfo(item);
+        return this.common.SQLBlogMapping(item);
       });
       const array = await Promise.all(items);
       console.log(
