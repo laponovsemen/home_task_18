@@ -36,7 +36,7 @@ export class BansRepository {
     }
 
     const banExistsQuery =  await this.dataSource.query(`
-    SELECT * FROM public."BlogBanInfoTable"
+    SELECT * FROM public."BloggerBanForBlogInfoTable"
     WHERE "userId" = $1 AND "blogId" = $2;
     `, [userToBanId, blogId])
     const [banExists] = banExistsQuery
@@ -61,7 +61,7 @@ export class BansRepository {
 
       };
       const res =  await this.dataSource.query(`
-    INSERT INTO public."BlogBanInfoTable"(
+    INSERT INTO public."BloggerBanForBlogInfoTable"(
     "banDate", "isBanned", "blogId", "userId", "ownerId", "banReason")
     VALUES ( $1, $2, $3, $4, $5, $6);
     `, [newBan.banDate, newBan.isBanned, newBan.blogId, newBan.userId, newBan.ownerId, newBan.banReason])
@@ -70,7 +70,7 @@ export class BansRepository {
       return true;
     } else {
       await this.dataSource.query(`
-    DELETE FROM public."BlogBanInfoTable"
+    DELETE FROM public."BloggerBanForBlogInfoTable"
     WHERE "userId" = $1 AND "blogId" = $2;
     `, [userToBanId, blogId])
       console.log('unban user');
@@ -85,7 +85,7 @@ export class BansRepository {
     const pageSize = paginationCriteria.pageSize;
 
     const totalCountQuery =  await this.dataSource.query(`
-    SELECT cast(COUNT(*) AS INTEGER) FROM public."BlogBanInfoTable"
+    SELECT cast(COUNT(*) AS INTEGER) FROM public."BloggerBanForBlogInfoTable"
     WHERE "isBanned" = $1 AND "blogId" = $2;
     `, [true, blogId])
 
@@ -98,7 +98,7 @@ export class BansRepository {
 
     const result =  await this.dataSource.query(`
     SELECT b."banDate", b."isBanned", b."userId", b."banReason", u."login"
-      FROM public."BlogBanInfoTable" b
+      FROM public."BloggerBanForBlogInfoTable" b
       LEFT JOIN 
       public."UserTable" u
       ON b."userId" = u."id"
@@ -144,7 +144,7 @@ export class BansRepository {
     //return this.banModel.findOne({ blogId: new ObjectId(blogId), userId: new ObjectId(commentatorId) });
 
     const findBanStatusQuery =  await this.dataSource.query(`
-    SELECT * FROM public."BlogBanInfoTable"
+    SELECT * FROM public."BloggerBanForBlogInfoTable"
     WHERE "blogId" = $1 AND "userId" = $2;
     `, [blogId, commentatorId])
     const result = findBanStatusQuery[0]

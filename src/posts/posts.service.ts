@@ -45,7 +45,7 @@ export class PostsService{
 
     for(let i = 0; i < allPostsFrames.items.length; i++){
       const post = allPostsFrames.items[i]
-      const postId = new ObjectId(post.id)
+      const postId = post.id
       allPostsFrames.items[i].extendedLikesInfo.likesCount = await this.likeRepository.findLikesCountForSpecificPost(postId)
       allPostsFrames.items[i].extendedLikesInfo.dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
       allPostsFrames.items[i].extendedLikesInfo.newestLikes = await this.likeRepository.findNewestLikesForSpecificPost(postId)

@@ -159,7 +159,7 @@ export class BlogsRepository {
      WHERE "blogId" = $1
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
      LIMIT $2 OFFSET $3
-    `, [blogId, ToSkip , pageSize])
+    `, [blogId,pageSize, ToSkip])
 
 
       console.log(

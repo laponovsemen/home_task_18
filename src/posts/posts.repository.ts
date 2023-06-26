@@ -63,10 +63,12 @@ export class PostsRepository {
     if (!postId) {
       return null
     }
+
     const foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
-    WHERE "id" = $1;
-    `, [postId])
+    WHERE "id" = $1 AND "isHiden" = $2;
+    `, [postId, false])
+
     const foundPost = foundPostQuery[0]
     if (foundPostQuery.length === 0) {
       console.log("empty result of query ingetPostById")
@@ -243,15 +245,19 @@ export class PostsRepository {
 
   async makeAllPostsForBlogHiden(blogId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APIPostTable"
+    SET "isHiden" = $2
+    WHERE "blogId" = $1;
+
+    `, [blogId, true])
   }
 
   async makeAllPostsForBlogVisible(blogId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APIPostTable"
+    SET "isHiden" = $2
+    WHERE "blogId" = $1;
+
+    `, [blogId, false])
   }
 }

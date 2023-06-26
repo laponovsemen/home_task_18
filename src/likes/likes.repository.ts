@@ -58,35 +58,29 @@ export class LikeRepository{
 
   }
 
-  async findLikesCountForSpecificPost(postId: ObjectId) {
+  async findLikesCountForSpecificPost(postId: string) {
     const likes = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
+    `, [parentTypeEnum.post, postId, StatusTypeEnum.Like])
+    return likes[0].count
 
-    return likes.length
   }
 
   async findDisikesCountForSpecificPost(postId: ObjectId) {
     const dislikes = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    return dislikes.length
-
+    SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
+    `, [parentTypeEnum.post, postId, StatusTypeEnum.Dislike])
+    return dislikes[0].count
   }
 
-  async findNewestLikesForSpecificPost(postId:ObjectId) {
-    const likesFilter = { $and: [
-        { parentId: postId },
-        { parentType: parentTypeEnum.post },
-        { status: StatusTypeEnum.Like },
-        { isHiden : false}
-      ] }
+  async findNewestLikesForSpecificPost(postId: string) {
+
     const newestLikesToUpdate = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+   SELECT * FROM public."APILikeTable"
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    `, [parentTypeEnum.post, postId, StatusTypeEnum.Like, false])
 
     //console.log(newestLikesToUpdate, " newestLikesToUpdate")
     return newestLikesToUpdate

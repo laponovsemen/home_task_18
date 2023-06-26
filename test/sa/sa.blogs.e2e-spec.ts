@@ -173,7 +173,30 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .set("Authorization", `Bearer ${accessTokenOfUser}`)
           .expect(200)
 
-      expect(foundPostAfterUpdate.body).toEqual({})
+      expect(foundPostAfterUpdate.body).toEqual(  {
+          "items": [
+              {
+                  "blogId": expect.any(String),
+                  "blogName": "string",
+                  "content": "string2",
+                  "createdAt": expect.any(String),
+                  "extendedLikesInfo": {
+                      "dislikesCount": 0,
+                      "likesCount": 0,
+                      "myStatus": "None",
+                      "newestLikes": [],
+                  },
+                  "id": expect.any(String),
+                  "shortDescription": "stringstring2",
+                  "title": "string2",
+              },
+          ],
+          "page": 1,
+          "pageSize": 10,
+          "pagesCount": 1,
+          "totalCount": 1,
+      }
+  )
 
 
 
