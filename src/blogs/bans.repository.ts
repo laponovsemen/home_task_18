@@ -101,7 +101,7 @@ export class BansRepository {
      b."isBanned",
       CAST(b."userId" AS TEXT),
        b."banReason",
-        u."login"
+        u."login" COLLATE "C"
         
       FROM public."BloggerBanForBlogInfoTable" b
       LEFT JOIN 
