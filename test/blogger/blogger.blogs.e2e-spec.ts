@@ -593,8 +593,20 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
               "blogId": blogId1
           })
           .expect(404)
+
       await request(server)
           .put(`/blogger/blogs/${blogId1}/posts/2281337`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content after update",
+              "shortDescription":"shortDescription after update",
+              "title":"title updated",
+              "blogId": blogId1
+          })
+          .expect(404)
+
+      await request(server)
+          .put(`/blogger/blogs/${blogId1}/posts/602afe92-7d97-4395-b1b9-6cf98b351bbe`)
           .auth(loginRes1.body.accessToken, {type: 'bearer'})
           .send({
               "content":"content after update",
@@ -637,6 +649,11 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
       await request(server)
           .delete(`/blogger/blogs/2281337/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(404)
+
+      await request(server)
+          .delete(`/blogger/blogs/${blogId1}/posts/602afe92-7d97-4395-b1b9-6cf98b351bbe`)
           .auth(loginRes1.body.accessToken, {type: 'bearer'})
           .expect(404)
 

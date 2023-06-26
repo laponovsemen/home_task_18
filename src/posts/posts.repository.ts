@@ -128,7 +128,13 @@ export class PostsRepository {
       items: items,
     };
   }
-  async deletePostById(postId : string) {
+  async deletePostById(id : string) {
+    let postId = 0
+    try{
+      postId = parseInt(id, 10)
+    } catch {
+      return null
+    }
     if(!postId){
       return null
     }
@@ -146,12 +152,19 @@ export class PostsRepository {
     `, [postId])
     return  true
   }
-  async updatePostById( DTO : PostDTO, postId : string) {
+  async updatePostById( DTO : PostDTO, id : string) {
+    let postId = 0
+    try{
+      postId = parseInt(id, 10)
+    } catch {
+      return null
+    }
     console.log(postId, " postId after convert");
+
     if(!postId){
       return null
     }
-    const foundPostQuery =await this.dataSource.query(`
+    const foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1;
     `, [postId])
