@@ -20,15 +20,16 @@ export class BlogsQueryRepository {
     protected readonly common: Common,
   ) {}
   async getAllBlogs(blogsPagination: paginationCriteriaType) {
-    const filter: { name?: any} = {}
-    if (blogsPagination.searchNameTerm) {
-      filter.name = {$regex: blogsPagination.searchNameTerm, $options: 'i'}
-    }
+    let filter : {name? : any} = {}
+    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%`:  '%%'
+
     const pageSize = blogsPagination.pageSize;
-    const totalCount = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const totalCountQuery = await this.dataSource.query(`
+    SELECT CAST(COUNT(*) AS INTEGER) FROM public."BlogsTable"
+        WHERE  "name" ILIKE $1
+    `, [filter.name])
+
+    const totalCount = parseInt(totalCountQuery[0].count, 10)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
@@ -38,24 +39,32 @@ export class BlogsQueryRepository {
 
 
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT CAST("id" AS TEXT),
+    "name" COLLATE "C",
+    "description",
+    "websiteUrl",
+    "isMembership",
+    "createdAt"
+     FROM public."BlogsTable"
+     WHERE  "name" ILIKE $3
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
+     LIMIT $1 OFFSET $2
+    `, [pageSize , ToSkip, filter.name ])
 
     if (result) {
       const items = result.map((item) => {
-        return this.common.mongoBlogSlicing(item);
+        return this.common.mongoBlogSlicingWithoutBlogOwnerInfo(item);
       });
       const array = await Promise.all(items);
       console.log(
-        {
-          pageSize: pageSize,
-          totalCount: totalCount,
-          pagesCount: pagesCount,
-          page: page,
-          items: array,
-        },
-        'its fucking result',
+          {
+            pageSize: pageSize,
+            totalCount: totalCount,
+            pagesCount: pagesCount,
+            page: page,
+            items: array,
+          },
+          'its fucking result',
       );
       return {
         pageSize: pageSize,

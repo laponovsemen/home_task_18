@@ -795,11 +795,41 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .send({"isBanned":false})
           .expect(204)
 
-      await request(server)
+      const getBlogById = await request(server)
           .get(`/blogs/${blogId}`)
           .expect(200)
 
+      expect(getBlogById.body).toEqual({
+              "createdAt": expect.any(String),
+             "description": "stringstring",
+             "id": expect.any(String),
+             "isMembership": false,
+             "name": "string",
+             "websiteUrl": "simsbury65@gmail.com"})
 
+      for (let i = 0; i < 10; i++) {
+          const createdBlog = await request(server)
+              .post(`/blogger/blogs`)
+              .set("Authorization", `Bearer ${accessTokenOfUser}`)
+              .send({
+                  name: "string2",
+                  description: "stringstring2",
+                  websiteUrl: "simsbury65@gmail.com"
+              })
+              .expect(201)
+
+          const bannedBlog = await request(server)
+              .put(`/sa/blogs/${createdBlog.body.id}/ban`)
+              .set("Authorization", basic)
+              .send({"isBanned":true})
+              .expect(204)
+      }
+
+        const allBlogsBySA = await request(server)
+            .get(`/sa/blogs`)
+            .set(authE2eSpec, basic)
+            .expect(200)
+      expect(allBlogsBySA.body).toEqual({})
   },10000)
 
 
