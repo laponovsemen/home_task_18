@@ -445,5 +445,92 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
            "totalCount": 2,
          })
   }, 200000);
+  it("create user, login, create blog, create another user , create posts for specific blog, comment them and get them", async () => {
+
+    await request(server).delete("/testing/all-data");
+
+    const users = [];
+    for (let i = 0; i <= 2; i++) {
+      const createUserDto: UserDTO = {
+        login: `login${i}`,
+        password: "password",
+        email: `simsbury65${i}@gmail.com`
+      };
+
+      const res = await request(server)
+        .post("/sa/users")
+        .set(authE2eSpec, basic)
+        .send(createUserDto);
+
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({
+        id: expect.any(String),
+        login: createUserDto.login,
+        "email": createUserDto.email,
+        "createdAt": expect.any(String),
+        "banInfo": {
+          "banDate": null,
+          "banReason": null,
+          "isBanned": false
+        }
+      });
+      expect(isString(res.body.id)).toBeTruthy();
+      users.push({ ...createUserDto, ...res.body });
+    }
+
+    const [user0, user1] = users;
+
+    const loginRes1 = await request(server)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: user0.login,
+        password: user0.password
+      });
+
+    const loginRes2 = await request(server)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: user1.login,
+        password: user1.password
+      });
+
+    expect(loginRes1.status).toBe(200);
+    expect(loginRes1.body).toEqual({ accessToken: expect.any(String)});
+    const  accessToken1  = loginRes1.body.accessToken;
+    expect(loginRes2.status).toBe(200);
+    expect(loginRes2.body).toEqual({ accessToken: expect.any(String)});
+    const  accessToken2  = loginRes2.body.accessToken;
+
+      const createBlogDto1: BlogDTO = {
+          name : "string",
+          description: "stringasdstring",
+          websiteUrl : "simsbury65@gmail.com"
+      }
+
+      const createBlogDto2: BlogDTO = {
+          name : "string",
+          description: "stringasdstring",
+          websiteUrl : "simsbury65@gmail.com"
+      }
+
+      const createdBlogRes1 = await request(server)
+          .post(`/blogger/blogs`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send(createBlogDto1)
+
+    const ban = await request(server)
+          .put(`/blogger/users/${user1.id}/ban`)
+            .auth(accessToken1, {type: 'bearer'})
+          .send({
+              "isBanned":true,
+              "banReason":"length_21-weqweqweqwq",
+              "blogId": createdBlogRes1.body.id
+          }).expect(204);
+
+
+
+
+  }, 200000);
 
 });
