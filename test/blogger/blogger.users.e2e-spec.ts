@@ -161,6 +161,17 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
             .expect(204)
 
     }
+      await request(server)
+          .put(`/blogger/users/602afe92-7d97-4395-b1b9-6cf98b351bbe/ban`)
+          .auth(accessToken, {type: 'bearer'})
+          .send({
+              "isBanned": true,
+              "banReason": "stringstringstringst",
+              "blogId": createdBlogRes.body.id
+          })
+          .expect(404)
+
+
 
       await request(server)
           .get(`/blogger/users/blog/:id`)

@@ -226,6 +226,9 @@ export class UsersRepository {
 
   async findUserById(userId: string) {
     console.log(userId, "userId in findUserById");
+    if(!Number(userId)){
+      return null
+    }
     const [result] = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
     WHERE "id" = $1
