@@ -604,6 +604,51 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           })
           .expect(404)
 
+      const foundPost =  await request(server)
+          .get(`/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(200)
+
+      expect(foundPost.body).toEqual({
+          "blogId": expect.any(String),
+          "blogName": "string",
+          "content": "content after update",
+          "createdAt": expect.any(String),
+          "extendedLikesInfo": {
+              "dislikesCount": 0,
+              "likesCount": 0,
+              "myStatus": "None",
+              "newestLikes": [],
+          },
+          "id": expect.any(String),
+          "shortDescription": "shortDescription after update",
+          "title": "title updated",
+      })
+
+      await request(server)
+          .delete(`/blogger/blogs/${blogId1}/posts/2281337`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(404)
+
+      await request(server)
+          .delete(`/blogger/blogs/${blogId1}/posts/2281337`)
+          .auth(loginRes2.body.accessToken, {type: 'bearer'})
+          .expect(403)
+
+      await request(server)
+          .delete(`/blogger/blogs/2281337/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(404)
+
+      await request(server)
+          .delete(`/blogger/blogs/${blogId1}/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(204)
+
+      await request(server)
+          .get(`/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .expect(404)
 
 
 

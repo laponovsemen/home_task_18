@@ -143,7 +143,16 @@ export class PostsRepository {
     if(!postId){
       return null
     }
-    const updatesPost = await this.dataSource.query(`
+    const foundPostQuery =await this.dataSource.query(`
+    SELECT * FROM public."APIPostTable"
+    WHERE "id" = $1;
+    `, [postId])
+    if(foundPostQuery.length === 0){
+      return null
+    }
+
+
+    const updatedPost = await this.dataSource.query(`
     UPDATE public."APIPostTable"
     SET "title" = $2 , "shortDescription" = $3 , "content" = $4
     WHERE "id" = $1;
