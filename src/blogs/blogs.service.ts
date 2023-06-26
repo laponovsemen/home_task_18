@@ -39,7 +39,7 @@ export class BlogsService {
       return allPostsFrames
     } else {
       console.log("i am in ");
-      const userId = user._id.toString()
+      const userId = user.id.toString()
       //console.log(userId, " id of user ");
       for(let i = 0; i < allPostsFrames.items.length; i++){
         const post = allPostsFrames.items[i]

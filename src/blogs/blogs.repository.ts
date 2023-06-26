@@ -130,16 +130,14 @@ export class BlogsRepository {
     }
   }
   async getAllPostsForSpecificBlog(paginationCriteria: paginationCriteriaType, blogId: string,) {
-    const foundBlog = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
-    if(!foundBlog) {
-      return null
-    }
+    const countBlogsQuery = await this.dataSource.query(`
+    SELECT CAST(COUNT(*) AS INTEGER) 
+    FROM public."APIPostTable"
+     WHERE "blogId" = $1
+    `, [blogId])
+
     const pageSize = paginationCriteria.pageSize;
-    const totalCount = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    const totalCount = countBlogsQuery[0].count
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
@@ -148,8 +146,20 @@ export class BlogsRepository {
       paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
     const result = await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    SELECT CAST("id" AS TEXT),
+     "title",
+      "shortDescription",
+       "content",
+        CAST("blogId" AS TEXT),
+         "blogName",
+          "createdAt",
+           "isHiden"
+    
+     FROM public."APIPostTable"
+     WHERE "blogId" = $1
+     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+     LIMIT $2 OFFSET $3
+    `, [blogId, ToSkip , pageSize])
 
 
       console.log(

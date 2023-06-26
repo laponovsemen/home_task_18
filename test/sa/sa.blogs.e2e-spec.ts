@@ -149,7 +149,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
       // update
       await request(server)
-          .put(`/blogger/blogs/2281331/posts`)
+          .put(`/blogger/blogs/2281331/posts/${createdPostForSpecificBlog.body.id}`)
           .set("Authorization", `Bearer ${accessTokenOfUser}`)
           .send({
               "title": "string2",
@@ -159,7 +159,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .expect(404)
 
       await request(server)
-          .put(`/blogger/blogs/${createdBlog.body.id}/posts`)
+          .put(`/blogger/blogs/${createdBlog.body.id}/posts/${createdPostForSpecificBlog.body.id}`)
           .set("Authorization", `Bearer ${accessTokenOfUser}`)
           .send({
               "title": "string2",
