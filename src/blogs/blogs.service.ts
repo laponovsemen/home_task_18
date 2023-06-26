@@ -26,7 +26,7 @@ export class BlogsService {
     }
     for(let i = 0; i < allPostsFrames.items.length; i++){
       const post = allPostsFrames.items[i]
-      const postId = new ObjectId(post.id)
+      const postId = post.id
       allPostsFrames.items[i].extendedLikesInfo.likesCount = await this.likeRepository.findLikesCountForSpecificPost(postId)
       allPostsFrames.items[i].extendedLikesInfo.dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
       // @ts-ignore
@@ -43,7 +43,7 @@ export class BlogsService {
       //console.log(userId, " id of user ");
       for(let i = 0; i < allPostsFrames.items.length; i++){
         const post = allPostsFrames.items[i]
-        const postId = new ObjectId(post.id)
+        const postId = post.id
 
         const myLike = await this.likeRepository.findMyStatusForSpecificPost(postId, userId)
         console.log(myLike , "myLike");
