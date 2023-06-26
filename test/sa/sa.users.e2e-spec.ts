@@ -788,6 +788,18 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     const BlogAfterBan = await request(server)
       .get(`/blogs/${blogId}`)
       .expect(404)
+
+      const unbannedBlog = await request(server)
+          .put(`/sa/blogs/${blogId}/ban`)
+          .set("Authorization", basic)
+          .send({"isBanned":false})
+          .expect(204)
+
+      await request(server)
+          .get(`/blogs/${blogId}`)
+          .expect(200)
+
+
   },10000)
 
 
