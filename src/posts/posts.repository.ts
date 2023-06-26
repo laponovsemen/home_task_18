@@ -132,11 +132,19 @@ export class PostsRepository {
     if(!postId){
       return null
     }
+    const foundPostQuery =await this.dataSource.query(`
+    SELECT * FROM public."APIPostTable"
+    WHERE "id" = $1;
+    `, [postId])
+    if(foundPostQuery.length === 0){
+      return null
+    }
+
     const deletedPost = await this.dataSource.query(`
     DELETE FROM public."APIPostTable"
     WHERE "id" = $1;
     `, [postId])
-    return  deletedPost.deletedCount === 1
+    return  true
   }
   async updatePostById( DTO : PostDTO, postId : string) {
     console.log(postId, " postId after convert");
