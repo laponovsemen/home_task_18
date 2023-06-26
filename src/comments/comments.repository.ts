@@ -56,8 +56,8 @@ export class CommentsRepository{
     LEFT JOIN 
     public."UserTable" u
     ON c."commentatorId" = u."id"
-    WHERE c."id" =  $1 
-    `, [commentId])
+    WHERE c."id" =  $1 AND u."isBanned" = $2
+    `, [commentId, false])
     const foundComment = foundCommentQuery[0]
     console.log(foundCommentQuery , " foundCommentQuery")
 

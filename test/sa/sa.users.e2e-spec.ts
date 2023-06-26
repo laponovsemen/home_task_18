@@ -756,6 +756,8 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .get(`/blogs`)
       .expect(200)
 
+      console.log(allBlogsBeforeBan.body)
+
     expect(allBlogsBeforeBan.body.items.length).toEqual(2)
     const blogId = createdBlog.body.id
 

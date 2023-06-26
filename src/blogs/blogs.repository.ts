@@ -21,21 +21,21 @@ export class BlogsRepository {
   ) {}
   async getAllBlogs(blogsPagination: paginationCriteriaType) {
     let filter : {name? : any} = {}
-    if (blogsPagination.searchNameTerm) {
-      filter.name = blogsPagination.searchNameTerm ?? ''
-    }
+
+    filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%'
+
     const pageSize = blogsPagination.pageSize;
     const sqlCountQuery = await this.dataSource.query(`
     SELECT COUNT(*) 
     FROM public."BlogsTable"
-    WHERE public."BlogsTable"."blogBanId" = null AND public."BlogsTable"."name" Like $1
-    `, [filter.name])
+    WHERE "blogBanId" IS NULL  AND "name" ILike $1
+    `,[filter.name])
     const totalCount = parseInt(sqlCountQuery[0].count, 10)
 
     console.log(totalCount)
     console.log(sqlCountQuery)
     const pagesCount = Math.ceil(totalCount / pageSize);
-    console.log(pagesCount)
+    console.log(pagesCount, "pagesCount")
     const page = blogsPagination.pageNumber;
     const sortBy = blogsPagination.sortBy;
     const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
@@ -45,9 +45,9 @@ export class BlogsRepository {
 
     const result =await this.dataSource.query(`
     SELECT *
-   FROM public."BlogsTable"
-    WHERE public."BlogsTable"."blogBanId" = null AND public."BlogsTable"."name" Like $1
-    `, [filter.name])
+    FROM public."BlogsTable"
+    WHERE "blogBanId" IS NULL  AND "name" ILike $1
+    `,[filter.name])
 
     if (result) {
       const items = result.map((item) => {
@@ -233,7 +233,7 @@ export class BlogsRepository {
     }
     const foundBlogQuery = await this.dataSource.query(`
     SELECT * FROM public."BlogsTable"
-    WHERE id = $1
+    WHERE "id" = $1 AND "blogBanId" IS NULL
     `, [blogId])
     if(foundBlogQuery.length === 0){
       return null
@@ -350,8 +350,55 @@ export class BlogsRepository {
 
 
   async changeBanStatusOfBlog(DTO: BanBlogDTO, blogId: string) {
-    return await this.dataSource.query(`
-    SELECT COUNT(*) FROM public."BlogsTable"
-    `)
+    const isBanned = DTO.isBanned
+    if (isBanned){
+      
+    }
+    const ban =  await this.dataSource.query(`
+    INSERT INTO public."BlogBanTable"(
+    id, "isBanned", "banDate")
+    VALUES ($1, $2, $3);
+    `, [])
+  }
+
+  async BanBlog(DTO: BanBlogDTO, blogId: string) {
+    const banDate = new Date().toISOString()
+
+    const ban =  await this.dataSource.query(`
+    INSERT INTO public."BlogBanTable"
+    ("isBanned", "banDate")
+    VALUES ($1, $2)
+    RETURNING "id";
+    `, [true, banDate])
+
+    const updateBlog = await this.dataSource.query(`UPDATE public."BlogsTable"
+    SET "blogBanId"= $2
+        WHERE "id" = $1;
+        
+    `, [blogId, ban[0].id])
+    console.log(ban, " ban")
+    console.log(updateBlog, " updateBlog")
+    console.log(ban[0].id, " ban[0].id")
+
+    return
+  }
+
+  async UnbanBlog( blogId: string, banId : string) {
+
+    const unban = await this.dataSource.query(`
+    DELETE  public."BlogBanTable"
+    WHERE "id" = $1
+    `, [banId])
+
+    const updateBlog = await this.dataSource.query(`UPDATE public."BlogsTable"
+    SET "blogBanId"= $2
+        WHERE "id" = $1;
+        
+    console.log(ban, " ban")
+    console.log(updateBlog, " updateBlog")
+        
+    `, [blogId, null])
+
+    return
   }
 }

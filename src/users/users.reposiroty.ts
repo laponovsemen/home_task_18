@@ -252,7 +252,7 @@ export class UsersRepository {
     return  this.dataSource.query(`UPDATE public."UserTable"
     SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
         WHERE id = $1;
-    `,[userId, banDate, banReason,isBanned])
+    `,[userId, banDate, banReason,true])
   }
 
   async unbanUserDB(userId: string, DTO: BanUserDTO) {
@@ -262,7 +262,7 @@ export class UsersRepository {
     return await this.dataSource.query(`UPDATE public."UserTable"
     SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
         WHERE id = $1;
-    `,[userId, null, null,isBanned])
+    `,[userId, null, null,false])
   }
 
 

@@ -103,7 +103,7 @@ export class BansRepository {
       public."UserTable" u
       ON b."userId" = u."id"
       
-    WHERE "isBanned" = $1 AND "blogId" = $2
+    WHERE b."isBanned" = $1 AND "blogId" = $2
     ORDER BY $3;
     `, [true, blogId, `${sortBy} ${sortDirection.toUpperCase()}`])
 

@@ -128,7 +128,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     expect(createdBlogRes.status).toBe(201)
     expect(createdBlogRes.body).toEqual({
-        "createdAt": expect.any(Date.toString()),
+        "createdAt": expect.any(String),
          "description": createBlogDto.description,
          "id": expect.any(String),
          "isMembership": false,
