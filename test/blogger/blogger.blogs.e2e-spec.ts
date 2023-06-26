@@ -519,6 +519,8 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .auth(loginRes1.body.accessToken, {type: 'bearer'})
           .send(createBlogDto1)
 
+      const blogId1 = createdBlogRes1.body.id
+
     const ban = await request(server)
           .put(`/blogger/users/${user1.id}/ban`)
             .auth(accessToken1, {type: 'bearer'})
@@ -527,6 +529,83 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
               "banReason":"length_21-weqweqweqwq",
               "blogId": createdBlogRes1.body.id
           }).expect(204);
+
+
+
+      const createdPost = await request(server)
+          .post(`/blogger/blogs/${blogId1}/posts`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content",
+              "shortDescription":"shortDescription",
+              "title":"title",
+              "blogId": blogId1
+          })
+          .expect(201)
+
+      expect(createdPost.body).toEqual({
+          id : expect.any(String),
+          content:"content",
+          blogName: "string",
+          createdAt: expect.any(String),
+          extendedLikesInfo:  {
+               dislikesCount: 0,
+              likesCount : 0,
+              myStatus: "None",
+              newestLikes: [],
+                 },
+          shortDescription:"shortDescription",
+          title:"title",
+          blogId: blogId1
+      })
+
+      const postId1 = createdPost.body.id
+
+      const updatedPost = await request(server)
+          .put(`/blogger/blogs/${blogId1}/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content after update",
+              "shortDescription":"shortDescription after update",
+              "title":"title updated",
+              "blogId": blogId1
+          })
+          .expect(204)
+
+      await request(server)
+          .put(`/blogger/blogs/${blogId1}/posts/${postId1}`)
+          .auth(loginRes2.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content after update",
+              "shortDescription":"shortDescription after update",
+              "title":"title updated",
+              "blogId": blogId1
+          })
+          .expect(403)
+
+      await request(server)
+          .put(`/blogger/blogs/2281337/posts/${postId1}`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content after update",
+              "shortDescription":"shortDescription after update",
+              "title":"title updated",
+              "blogId": blogId1
+          })
+          .expect(404)
+      await request(server)
+          .put(`/blogger/blogs/${blogId1}/posts/2281337`)
+          .auth(loginRes1.body.accessToken, {type: 'bearer'})
+          .send({
+              "content":"content after update",
+              "shortDescription":"shortDescription after update",
+              "title":"title updated",
+              "blogId": blogId1
+          })
+          .expect(404)
+
+
+
 
 
 

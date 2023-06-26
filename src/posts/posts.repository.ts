@@ -145,8 +145,8 @@ export class PostsRepository {
     }
     const updatesPost = await this.dataSource.query(`
     UPDATE public."APIPostTable"
-    SET "title" = $1, "shortDescription" = $2, "content" = $3
-    WHERE "id" = $4;
+    SET "title" = $2 , "shortDescription" = $3 , "content" = $4
+    WHERE "id" = $1;
     `, [postId, DTO.title, DTO.shortDescription, DTO.content])
 
     return true
