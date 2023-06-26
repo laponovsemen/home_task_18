@@ -109,8 +109,9 @@ export class BansRepository {
       ON b."userId" = u."id"
       
     WHERE b."isBanned" = $1 AND "blogId" = $2
-    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()};
-    `, [true, blogId])
+    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+    LIMIT $3 OFFSET $4;
+    `, [true, blogId, pageSize, ToSkip])
 
 
     const items = result.map((item) => {
