@@ -62,8 +62,8 @@ export class BlogsQueryRepository {
     ON b."blogOwnerId" = u."id"
     LEFT JOIN public."BlogBanTable" bb
     ON b."blogBanId" = bb."id"
-    WHERE "blogBanId" IS NULL  AND "name" ILike $1
-    ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()} COLLATE "C"
+    WHERE "name" ILike $1
+    ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()}
     LIMIT $2 OFFSET $3
     `,[filter.name, pageSize, ToSkip])
 
