@@ -799,6 +799,11 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .get(`/blogs/${blogId}`)
           .expect(200)
 
+      const allBlogsAfterBan2 = await request(server)
+          .get(`/blogs`)
+          .expect(200)
+
+      expect(allBlogsAfterBan2.body.items.length).toEqual(2)
       expect(getBlogById.body).toEqual({
               "createdAt": expect.any(String),
              "description": "stringstring",
