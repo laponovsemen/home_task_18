@@ -113,8 +113,10 @@ export class CommentsQueryRepository{
     ON b."id" = p."blogId"
     RIGHT JOIN public."APICommentTable" c
     ON c."postId" = p."id"
-    WHERE b."blogOwnerId" = $1;
-    `, [userId])
+    WHERE b."blogOwnerId" = $1
+    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
+    LIMIT $2 OFFSET $3;
+    `, [userId, pageSize, ToSkip])
       console.log(result, " result in getListOfCommentsByPostIds");
       console.log(result, "blyat");
 
