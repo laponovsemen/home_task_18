@@ -405,9 +405,22 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             likesInfo: {
                 dislikesCount: 0,
                 likesCount: 1,
-                myStatus : "Like"
+                myStatus: "Like"
             },
-
         })
+            await request(server)
+                .get(`/comments/2281337`)
+                .auth(accessToken, {type: 'bearer'})
+                .expect(404)
+
+        await request(server)
+            .get(`/comments/2281337`)
+            .expect(404)
+        await request(server)
+            .get(`/comments/${commentId}`)
+            .expect(200)
+
+
     }, 60000)
+
 })

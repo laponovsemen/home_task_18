@@ -69,10 +69,10 @@ export class CommentsRepository{
       const foundCommentFrame = this.common.SQLCommentMapping(foundComment)
       const likesCount = await this.likeRepository.findLikesCountForSpecificComment(commentId)
       const dislikesCount = await this.likeRepository.findDisikesCountForSpecificComment(commentId)
-      const [myLike] = await this.likeRepository.findMyStatusForSpecificComment(commentId, userId)
+      const myLike = await this.likeRepository.findMyStatusForSpecificComment(commentId, userId)
       foundCommentFrame.likesInfo.likesCount = likesCount
       foundCommentFrame.likesInfo.dislikesCount = dislikesCount
-      foundCommentFrame.likesInfo.myStatus = myLike ? myLike.status : "None"
+      foundCommentFrame.likesInfo.myStatus = myLike ? myLike : "None"
       //console.log(foundPostFrame);
       //console.log(foundPostFrame, "foundPostFrame");
       console.log(myLike, "myLike");

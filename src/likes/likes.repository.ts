@@ -183,7 +183,7 @@ export class LikeRepository{
     `, [parentTypeEnum.comment, commentId, userId])
 
     console.log(result, "result");
-    return result
+    return result[0].status
 
   }
 
