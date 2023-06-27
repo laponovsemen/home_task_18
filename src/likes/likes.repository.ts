@@ -97,7 +97,7 @@ export class LikeRepository{
     WHERE "parentId" = $1 AND "userId" = $2 AND "parentType" = $3;
     `, [postId, userId, parentTypeEnum.post])
     console.log(result, "result");
-    return result[0]
+    return result[0].status
   }
   async findMyStatusForComment(commentId: string, userIdAsString: string) {
     if(!userIdAsString){
