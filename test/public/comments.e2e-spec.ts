@@ -441,6 +441,14 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             .get(`/comments/${commentId}`)
             .auth(accessToken, {type: 'bearer'})
             .expect(200)
+
+        const likedCommentAfterUpdatethroughPostCotroller = await request(server)
+                .get(`/posts/${postId}/comments`)
+                .auth(accessToken, {type: 'bearer'})
+                .expect(200)
+
+        expect(likedCommentAfterUpdatethroughPostCotroller.body).toEqual({})
+
         expect(likedCommentAfterUpdate.body).toEqual({
             commentatorInfo: {
                 userId: expect.any(String),

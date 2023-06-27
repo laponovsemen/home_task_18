@@ -198,18 +198,20 @@ export class PostsRepository {
 
   async getAllCommentsForSpecificPosts(paginationCriteria: paginationCriteriaType, id: string) {
     const foundPost = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    if (!foundPost) {
+    SELECT * FROM public."APIPostTable"
+    WHERE "id" = $1 ;
+    `, [id])
+    if (!foundPost[0]) {
       console.log("post not found")
       return null
     } else {
       const pageSize = paginationCriteria.pageSize;
-      const totalCount = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+
+      const totalCountQuery = await this.dataSource.query(`
+            SELECT CAST(COUNT(*) AS INTEGER) FROM public."APICommentTable"
+            WHERE "postId" = $1 AND "isHiden" = $2
+    `, [id, false])
+      const totalCount =totalCountQuery[0].count
       const pagesCount = Math.ceil(totalCount / pageSize);
       const page = paginationCriteria.pageNumber;
       const sortBy = paginationCriteria.sortBy;
@@ -218,11 +220,18 @@ export class PostsRepository {
         paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
       const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+            SELECT * 
+            FROM 
+            public."APICommentTable" c
+            LEFT JOIN 
+            public."UserTable" u
+            ON c."commentatorId" = u."id"
+            WHERE "postId" = $1 AND "isHiden" = $2
+            ORDER BY c."${sortBy}" ${sortDirection.toUpperCase()}
+            LIMIT $3 OFFSET $4
+    `, [id, false, pageSize, ToSkip])
       const items = result.map((item) => {
-        return this.common.mongoCommentSlicing(item)
+        return this.common.SQLCommentMapping(item)
       });
       return {
         pagesCount,
