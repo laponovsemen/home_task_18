@@ -319,9 +319,9 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       const ban = await request(server)
           .put(`/sa/users/${res.body.id}/ban`)
           .send({
-              loginOrEmail: res.body.login,
+              loginOrEmail: "loginMain",
               password: "passwordpassword"
-          }).expect(204)
+          }).expect(401)
 
 
       const allUsersAfterBan = await request(server)
@@ -329,7 +329,17 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           .set(authE2eSpec, basic)
           .expect(200)
 
-      expect(allUsersAfterBan.body.items.length).toEqual(0)
+      expect(allUsersAfterBan.body.items[0].banInfo.isBanned).toEqual(true)
+
+
+
+
+      const loginOfBannedUser = await request(server)
+          .put(`/auth/login`)
+          .send({
+              loginOrEmail: res.body.login,
+              password: "passwordpassword"
+          }).expect(429)
 
       const unban = await request(server)
           .put(`/sa/users/${res.body.id}/ban`)

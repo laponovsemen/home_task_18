@@ -128,14 +128,16 @@ export class CommentsRepository{
 
   async makeCommentsHiden(userId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APICommentTable"
+    SET "isHiden" = $2
+    WHERE "userId" = $1;
+    `, [userId, true])
   }
   async makeCommentsVisible(userId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APICommentTable"
+    SET "isHiden" = $2
+    WHERE "userId" = $1;
+    `, [userId, false])
   }
 }
