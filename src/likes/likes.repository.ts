@@ -21,16 +21,16 @@ export class LikeRepository{
     const myLike = await this.findMyStatusForSpecificPost(postId, Id)
     const status = DTO.likeStatus
     if (!myLike) {
-      const dateOfCreation = new Date()
-      const parentId = new ObjectId(postId)
+      const dateOfCreation = new Date().toISOString()
+      const parentId = postId
       const parentType = parentTypeEnum.post
       const addedAt = dateOfCreation
-      const userId = new ObjectId(Id)
+      const userId = Id
 
       await this.dataSource.query(`
      INSERT INTO public."APILikeTable"(
     "parentId", "parentType", "addedAt", "userId", "login", "status", "isHiden")
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+    VALUES ($1, $2, $3, $4, $5, $6, $7);
     `, [parentId, parentType, addedAt, userId, login, status, false])
       return true
     } else {
@@ -93,7 +93,7 @@ export class LikeRepository{
     WHERE "parentId" = $1 AND "userId" = $2 AND "parentType" = $3;
     `, [postId, userId, parentTypeEnum.post])
     console.log(result, "result");
-    return result
+    return result[0]
   }
   async findMyStatusForComment(commentId: string, userIdAsString: string) {
     if(!userIdAsString){

@@ -88,7 +88,7 @@ export class PostsRepository {
       foundPostFrame.extendedLikesInfo.likesCount = likesCount
       foundPostFrame.extendedLikesInfo.dislikesCount = dislikesCount
       foundPostFrame.extendedLikesInfo.newestLikes = newestLikes
-      foundPostFrame.extendedLikesInfo.myStatus = myLike ? myLike.status : "None"
+      foundPostFrame.extendedLikesInfo.myStatus = myLike ? myLike : "None"
       console.log(foundPostFrame);
       console.log(foundPostFrame, "foundPostFrame");
       console.log(myLike , "myLike");
