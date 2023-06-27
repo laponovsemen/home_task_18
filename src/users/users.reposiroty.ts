@@ -121,10 +121,19 @@ export class UsersRepository {
 
 
   async deleteUserById(id: string) {
-    const foundUserQuery = await this.dataSource.query(`
+
+    let foundUserQuery
+    try {
+      foundUserQuery = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
     WHERE "id" = $1;
     `, [id])
+
+    } catch (e) {
+      console.log(e)
+      return null
+    }
+
     const foundUser = foundUserQuery[0]
     if(!foundUser){
       return false
