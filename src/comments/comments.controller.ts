@@ -52,11 +52,13 @@ export class CommentsController {
     const token = req.headers.authorization
     const userFromToken = await this.authService.getUserByToken(token)
     const commentToUpdate = await this.commentsService.getCommentById(commentId, token)
+    console.log(commentToUpdate, " found comment to update in updateComment")
     if(!commentToUpdate){
       throw new NotFoundException()
     }
     const userIdFromDB = commentToUpdate.commentatorInfo.userId
-    if(userFromToken._id.toString() !== userIdFromDB.toString()){
+    console.log(userIdFromDB, " userIdFromDB  in updateComment")
+    if(userFromToken.id.toString() !== userIdFromDB.toString()){
       throw new ForbiddenException()
     }
 
@@ -80,7 +82,7 @@ export class CommentsController {
       throw new NotFoundException()
     }
     const userIdFromDB = commentToDelete.commentatorInfo.userId
-    if(userFromToken._id.toString() !== userIdFromDB.toString() ){
+    if(userFromToken.id.toString() !== userIdFromDB.toString() ){
       throw new ForbiddenException()
     }
 

@@ -59,15 +59,20 @@ export class PostsRepository {
   }
 
   async getPostById(postId: string, userId : string) {
-
+    console.log(isNaN(parseInt(postId, 10)), parseInt(postId, 10),postId, "parse")
     if (!postId) {
       return null
     }
-
-    const foundPostQuery = await this.dataSource.query(`
+    let foundPostQuery
+    try {
+      foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1 AND "isHiden" = $2;
     `, [postId, false])
+    } catch (error) {
+      console.log(error)
+      return null
+    }
 
     const foundPost = foundPostQuery[0]
     if (foundPostQuery.length === 0) {

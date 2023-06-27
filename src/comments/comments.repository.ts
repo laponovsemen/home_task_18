@@ -25,17 +25,11 @@ export class CommentsRepository{
     const comment = await this.dataSource.query(`
     INSERT INTO public."APICommentTable"("content", "commentatorId", "createdAt", "postId", "isHiden")
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING *;
+    RETURNING CAST("id" AS TEXT);
     `,[newComment.content, newComment.commentatorInfo.userId,newComment.createdAt, newComment.postId, newComment.isHiden])
 
-    const commentSelectQuery = await this.dataSource.query(` 
-    SELECT c."id", c."content", c."commentatorId", c."createdAt", c."postId", c."isHiden", u.login
-    FROM public."APICommentTable" AS c
-    LEFT JOIN 
-    public."UserTable" AS u 
-    ON c."commentatorId" = u."id"
-    `)
-    console.log(commentSelectQuery, "commentSelectQuery")
+
+    console.log(comment, " commentSelectQuery")
     return comment[0]
   }
 
@@ -43,7 +37,9 @@ export class CommentsRepository{
     if (!commentId) {
       return null
     }
-    const foundCommentQuery = await this.dataSource.query(`
+    let foundCommentQuery
+    try {
+      foundCommentQuery = await this.dataSource.query(`
     SELECT 
       cast(c."id" as TEXT),
       c."content",
@@ -58,6 +54,10 @@ export class CommentsRepository{
     ON c."commentatorId" = u."id"
     WHERE c."id" =  $1 AND u."isBanned" = $2
     `, [commentId, false])
+    } catch (e) {
+      console.log(e)
+      return null
+    }
     const foundComment = foundCommentQuery[0]
     console.log(foundCommentQuery , " foundCommentQuery")
 
@@ -83,10 +83,10 @@ export class CommentsRepository{
   }
 
   async deleteCommentById(commentId: string) {
-    const foundComment = await this.dataSource.query(`array_to_json(
-    SELECT * public."CommentTable"
+    const foundComment = await this.dataSource.query(`
+    SELECT *  FROM public."CommentTable"
     WHERE "id" = $1;
-    )`, [commentId])
+    `, [commentId])
 
     console.log(foundComment, " foundComment deleteCommentById")
     if (foundComment.length === 0){
@@ -101,12 +101,14 @@ export class CommentsRepository{
   }
 
   async updateCommentById(commentId: string, DTO: CommentForSpecifiedPostDTO) {
-    const content = DTO.content
+
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    return result.matchedCount === 1
+    UPDATE public."APICommentTable"
+    SET "content" = $2
+    WHERE "id" = $1;
+    `, [commentId, DTO.content])
+
+    return true
   }
 
   async getCommentByIdWithOutLikes(commentId: string) {

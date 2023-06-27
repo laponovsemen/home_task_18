@@ -50,6 +50,9 @@ export class BlogsQueryRepository {
     "name" COLLATE "C",
     b."description",
     b."websiteUrl",
+    json_build_object(
+    'userId', CAST(b."blogOwnerId" AS TEXT), 'userLogin', 
+    ) as "blogOwnerInfo" :: []
     b."isMembership",
     b."createdAt",
     CAST(b."blogOwnerId" AS TEXT),
@@ -63,7 +66,7 @@ export class BlogsQueryRepository {
     LEFT JOIN public."BlogBanTable" bb
     ON b."blogBanId" = bb."id"
     WHERE "name" ILike $1
-    ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()}
+    ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()} 
     LIMIT $2 OFFSET $3
     `,[filter.name, pageSize, ToSkip])
 

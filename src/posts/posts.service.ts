@@ -129,7 +129,7 @@ export class PostsService{
       return null
 
     }
-
+    const createdAt = new Date().toISOString()
     const newComment: APIComment ={
       content: content,
       commentatorInfo: {
@@ -137,7 +137,7 @@ export class PostsService{
         userLogin: user.login,
       },
       postId : postIdAsString,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt,
       isHiden : false
     }
     console.log(newComment);
@@ -145,13 +145,13 @@ export class PostsService{
 
     console.log(createdComment , " createdComment to return");
     return {
-      id: createdComment.id.toString(),
-      content: createdComment.content,
+      id: createdComment.id,
+      content: content,
       commentatorInfo: {
-        userId: createdComment.commentatorId,
-        userLogin: createdComment.commentatorLogin,
+        userId: newComment.commentatorInfo.userId.toString(),
+        userLogin: newComment.commentatorInfo.userLogin,
       },
-      createdAt: createdComment.createdAt,
+      createdAt: createdAt,
       likesInfo: {
         likesCount : 0,
         dislikesCount : 0,
