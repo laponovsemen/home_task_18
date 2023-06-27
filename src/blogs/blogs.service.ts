@@ -49,7 +49,7 @@ export class BlogsService {
         const myLike = await this.likeRepository.findMyStatusForSpecificPost(postId, userId)
         console.log(myLike , "myLike");
         //console.log(postId , "postId");
-        allPostsFrames.items[i].extendedLikesInfo.myStatus = myLike ? myLike.status : "None"
+        allPostsFrames.items[i].extendedLikesInfo.myStatus = myLike ? myLike : "None"
       }
 
       return allPostsFrames
