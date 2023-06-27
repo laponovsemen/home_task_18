@@ -175,7 +175,13 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
                    "extendedLikesInfo": {
                        "dislikesCount": 0,
                        "likesCount": 1,
-                       "newestLikes": [],
+                       "newestLikes": [
+                           {
+                               "addedAt": expect.any(String),
+                               "login": "login0",
+                               "userId": expect.any(String),
+                           }
+                       ],
                        "myStatus": "Like"
                        },
                     "id": expect.any(String),

@@ -73,7 +73,7 @@ export class LikeRepository{
    SELECT 
    "login",
    "addedAt",
-   "userId"
+   CAST("userId" AS TEXT)
     FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
     `, [parentTypeEnum.post, postId, StatusTypeEnum.Like, false])
