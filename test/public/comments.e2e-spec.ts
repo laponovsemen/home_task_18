@@ -265,29 +265,71 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
         await app.close();
     });
     it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
-        request(app).delete("/testing/all-data").set(auth, basic)
-        const createdBlog = await request(app)
-            .post("/blogs")
+
+        request(server).delete("/testing/all-data").set(auth, basic)
+        const createUserDto: UserDTO = {
+            login: `login`,
+            password: "password",
+            email: `simsbury65@gmail.com`
+        };
+        const res = await request(server)
+            .post("/sa/users")
             .set(auth, basic)
-            .send({
-                name: "string", //maxLength: 15
-                description: "string",// maxLength: 500
-                websiteUrl: "https://samurai.it-incubator.io/pc" // maxLength: 100 pattern: ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
-            })
-            .expect(201)
-        expect(createdBlog.body).toEqual({
+            .send(createUserDto);
+
+
+        expect(res.status).toBe(201);
+        expect(res.body).toEqual({
             id: expect.any(String),
-            name: "string", //maxLength: 15
-            description: "string",// maxLength: 500
-            websiteUrl: "https://samurai.it-incubator.io/pc",// maxLength: 100 pattern
-            createdAt: expect.any(String),
-            isMembership: false
+            login: createUserDto.login,
+            "email": createUserDto.email,
+            "createdAt": expect.any(String),
+            "banInfo": {
+                "banDate": null,
+                "banReason": null,
+                "isBanned": false
+            }
+        });
+
+        const loginRes = await request(server)
+            .post("/auth/login")
+            .send({
+                loginOrEmail: res.body.login,
+                password: "password"
+            });
+
+        expect(loginRes.status).toBe(200);
+        expect(loginRes.body).toEqual({ accessToken: expect.any(String) });
+        const { accessToken } = loginRes.body;
+
+        const createBlogDto: BlogDTO = {
+            name : "string",
+            description: "stringasdstring",
+            websiteUrl : "simsbury65@gmail.com"
+        }
+
+        const createdBlogRes = await request(server)
+            .post(`/blogger/blogs`)
+            .auth(accessToken, {type: 'bearer'})
+            .send(createBlogDto)
+
+
+
+        expect(createdBlogRes.status).toBe(201)
+        expect(createdBlogRes.body).toEqual({
+            "createdAt": expect.any(String),
+            "description": createBlogDto.description,
+            "id": expect.any(String),
+            "isMembership": false,
+            "name": createBlogDto.name,
+            "websiteUrl": createBlogDto.websiteUrl,
         })
 
-        const blogId = createdBlog.body.id
+        const blogId = createdBlogRes.body.id
 
-        const createdPost = await request(app).post(`/posts`)
-            .set(auth, basic)
+
+        const createdPost = await request(server).post(`/blogger/blogs/${blogId}/posts`)
+            .auth(accessToken, {type: 'bearer'})
             .send({
                 title: `string`, //    maxLength: 30
                 shortDescription: "string", //maxLength: 100
@@ -296,10 +338,10 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             })
             .expect(201)
         const postId = createdPost.body.id
-
+        console.log(createdPost.body, " createdPost in test")
         for(let i = 0; i < 4 ; i++){
-            await request(app)
-                .post("/users")
+            await request(server)
+                .post("/sa/users")
                 .set(auth, basic)
                 .send({
                     login: `login${i}`,
@@ -310,7 +352,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
 
 
 
-        const login = await request(app)
+        const login = await request(server)
             .post("/auth/login")
             .set(auth, basic)
             .send({
@@ -325,7 +367,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
         expect(JWT).toEqual(expect.any(String))
 
         //console.log(JWT)
-        const createdComment = await request(app)
+        const createdComment = await request(server)
             .post(`/posts/${postId}/comments`)
             .set(auth, JWTAuth)
             .send({
@@ -349,14 +391,14 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
                 },
             })
         const commentId = createdComment.body.id
-        await request(app)
+        await request(server)
             .put(`/comments/${commentId}/like-status`)
             .set(auth, JWTAuth)
             .send({
                 likeStatus: "Like"
             }).expect(204)
 
-        const likedComment = await request(app)
+        const likedComment = await request(server)
             .get(`/comments/${commentId}`)
             .set(auth, JWTAuth)
             .expect(200)
@@ -378,28 +420,68 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
 
     }, 60000)
     it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
-        request(app).delete("/testing/all-data").set(auth, basic)
-        const createdBlog = await request(app)
-            .post("/blogs")
+        request(server).delete("/testing/all-data").set(auth, basic)
+        const createUserDto: UserDTO = {
+            login: `login`,
+            password: "password",
+            email: `simsbury65@gmail.com`
+        };
+        const res = await request(server)
+            .post("/sa/users")
             .set(auth, basic)
-            .send({
-                name: "string", //maxLength: 15
-                description: "string",// maxLength: 500
-                websiteUrl: "https://samurai.it-incubator.io/pc" // maxLength: 100 pattern: ^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$
-            })
-            .expect(201)
-        expect(createdBlog.body).toEqual({
+            .send(createUserDto);
+
+
+        expect(res.status).toBe(201);
+        expect(res.body).toEqual({
             id: expect.any(String),
-            name: "string", //maxLength: 15
-            description: "string",// maxLength: 500
-            websiteUrl: "https://samurai.it-incubator.io/pc",// maxLength: 100 pattern
-            createdAt: expect.any(String),
-            isMembership: false
+            login: createUserDto.login,
+            "email": createUserDto.email,
+            "createdAt": expect.any(String),
+            "banInfo": {
+                "banDate": null,
+                "banReason": null,
+                "isBanned": false
+            }
+        });
+
+        const loginRes = await request(server)
+            .post("/auth/login")
+            .send({
+                loginOrEmail: res.body.login,
+                password: "password"
+            });
+
+        expect(loginRes.status).toBe(200);
+        expect(loginRes.body).toEqual({ accessToken: expect.any(String) });
+        const { accessToken } = loginRes.body;
+
+        const createBlogDto: BlogDTO = {
+            name : "string",
+            description: "stringasdstring",
+            websiteUrl : "simsbury65@gmail.com"
+        }
+
+        const createdBlogRes = await request(server)
+            .post(`/blogger/blogs`)
+            .auth(accessToken, {type: 'bearer'})
+            .send(createBlogDto)
+
+
+
+        expect(createdBlogRes.status).toBe(201)
+        expect(createdBlogRes.body).toEqual({
+            "createdAt": expect.any(String),
+            "description": createBlogDto.description,
+            "id": expect.any(String),
+            "isMembership": false,
+            "name": createBlogDto.name,
+            "websiteUrl": createBlogDto.websiteUrl,
         })
 
-        const blogId = createdBlog.body.id
+        const blogId = createdBlogRes.body.id
 
-        const createdPost = await request(app).post(`/posts`)
+        const createdPost = await request(server).post(`/posts`)
             .set(auth, basic)
             .send({
                 title: `string`, //    maxLength: 30
@@ -410,7 +492,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             .expect(201)
         const postId = createdPost.body.id
 
-        await request(app)
+        await request(server)
             .post("/users")
             .set(auth, basic)
             .send({
@@ -420,7 +502,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             }).expect(201)
 
 
-        const login = await request(app)
+        const login = await request(server)
             .post("/auth/login")
             .set(auth, basic)
             .send({
@@ -435,7 +517,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
         expect(JWT).toEqual(expect.any(String))
 
         //console.log(JWT)
-        const createdComment = await request(app)
+        const createdComment = await request(server)
             .post(`/posts/${postId}/comments`)
             .set(auth, JWTAuth)
             .send({
@@ -459,14 +541,14 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
                 },
             })
         const commentId = createdComment.body.id
-        await request(app)
+        await request(server)
             .put(`/comments/${commentId}/like-status`)
             .set(auth, JWTAuth)
             .send({
                 likeStatus: "Like"
             }).expect(204)
 
-        const likedComment = await request(app)
+        const likedComment = await request(server)
             .get(`/comments/${commentId}`)
             .set(auth, JWTAuth)
             .expect(200)

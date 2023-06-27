@@ -114,24 +114,16 @@ export class LikeRepository{
     console.log(result, "result");
     return result
   }
-  async findMyStatusForComment(commentId: ObjectId, userIdAsString: string) {
-    const userId = this.common.tryConvertToObjectId(userIdAsString)
-    if(!userId){
+  async findMyStatusForComment(commentId: string, userIdAsString: string) {
+    if(!userIdAsString){
       return null
     }
-    const filter = {
-      $and:
-        [
-          { parentId: commentId },
-          { parentType: parentTypeEnum.comment },
-          { userId: new ObjectId(userId) }
-        ]
-    }
+
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-    console.log(result);
+    SELECT * FROM public."APILikeTable"
+    WHERE "parentId" = $1 AND "parentType" = $2 AND "userId" = $3;
+    `, [commentId, parentTypeEnum.comment, userIdAsString])
+    console.log(result, " MY STATUS IN findMyStatusForComment");
     return result
   }
 
@@ -143,7 +135,7 @@ export class LikeRepository{
   }
 
   async likeComment(DTO: LikeStatusDTO, userIdFromToken: string, login: string, commentId: string) {
-    const myLike = await this.findMyStatusForComment(new ObjectId(commentId), userIdFromToken)
+    const myLike = await this.findMyStatusForComment(commentId, userIdFromToken)
     const status = DTO.likeStatus
     if (!myLike) {
       const dateOfCreation = new Date()
