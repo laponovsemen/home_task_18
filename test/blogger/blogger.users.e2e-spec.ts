@@ -319,8 +319,8 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       const ban = await request(server)
           .put(`/sa/users/${res.body.id}/ban`)
           .send({
-              loginOrEmail: "loginMain",
-              password: "passwordpassword"
+              "isBanned": true,
+              "banReason": "stringstringstringst"
           }).expect(401)
 
 
@@ -344,8 +344,8 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       const unban = await request(server)
           .put(`/sa/users/${res.body.id}/ban`)
           .send({
-              loginOrEmail: res.body.login,
-              password: "passwordpassword"
+              "isBanned": false,
+              "banReason": "stringstringstringst"
           }).expect(204)
 
 

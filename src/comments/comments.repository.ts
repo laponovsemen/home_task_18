@@ -130,14 +130,14 @@ export class CommentsRepository{
     await this.dataSource.query(`
     UPDATE public."APICommentTable"
     SET "isHiden" = $2
-    WHERE "userId" = $1;
+    WHERE "commentatorId" = $1;
     `, [userId, true])
   }
   async makeCommentsVisible(userId: string) {
     await this.dataSource.query(`
     UPDATE public."APICommentTable"
     SET "isHiden" = $2
-    WHERE "userId" = $1;
+    WHERE "commentatorId" = $1;
     `, [userId, false])
   }
 }
