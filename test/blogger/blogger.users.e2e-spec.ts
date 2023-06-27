@@ -192,7 +192,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login0",
+                     "login": "login10",
                    },
             {
                 "banInfo":  {
@@ -201,7 +201,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login1",
+                     "login": "login9",
                    },
             {
                  "banInfo":  {
@@ -210,7 +210,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login2",
+                     "login": "login8",
                    },
             {
                 "banInfo":  {
@@ -219,25 +219,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login3",
-                   },
-            {
-                 "banInfo":  {
-                       "banDate": expect.any(String),
-                           "banReason": "stringstringstringst",
-                           "isBanned": true,
-                         },
-                 "id": expect.any(String),
-                     "login": "login4",
-                   },
-            {
-                 "banInfo":  {
-                       "banDate": expect.any(String),
-                           "banReason": "stringstringstringst",
-                           "isBanned": true,
-                         },
-                 "id": expect.any(String),
-                     "login": "login5",
+                     "login": "login7",
                    },
             {
                  "banInfo":  {
@@ -255,7 +237,25 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login7",
+                     "login": "login5",
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": expect.any(String),
+                           "banReason": "stringstringstringst",
+                           "isBanned": true,
+                         },
+                 "id": expect.any(String),
+                     "login": "login4",
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": expect.any(String),
+                           "banReason": "stringstringstringst",
+                           "isBanned": true,
+                         },
+                 "id": expect.any(String),
+                     "login": "login3",
                    },
             {
                 "banInfo":  {
@@ -264,7 +264,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                 "id": expect.any(String),
-                     "login": "login8",
+                     "login": "login2",
                    },
             {
                  "banInfo":  {
@@ -273,17 +273,9 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                            "isBanned": true,
                          },
                  "id": expect.any(String),
-                     "login": "login9",
+                     "login": "login1",
                    },
-            {
-                 "banInfo":  {
-                       "banDate": expect.any(String),
-                           "banReason": "stringstringstringst",
-                           "isBanned": true,
-                         },
-                 "id": expect.any(String),
-                     "login": "login10",
-                   },
+
          ],
           "page": 1,
           "pageSize": 10,
@@ -292,6 +284,67 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
            })
 
 
+
+  }, 10000);
+  it("create user, login, create blog, ", async () => {
+
+    await request(server).delete("/testing/all-data");
+
+      const createMainUserDto: UserDTO = {
+          login: `loginMain`,
+          password: "passwordpassword",
+          email: `simsbury65@gmail.com`
+      };
+      const res = await request(server)
+          .post("/sa/users")
+          .set(authE2eSpec, basic)
+          .send(createMainUserDto);
+
+
+      const loginMainRes = await request(server)
+          .post("/auth/login")
+          .send({
+              loginOrEmail: res.body.login,
+              password: "passwordpassword"
+          });
+
+      const allUsersBeforeBan = await request(server)
+          .get(`/sa/users`)
+          .set(authE2eSpec, basic)
+          .expect(200)
+
+      expect(allUsersBeforeBan.body.items.length).toEqual(1)
+
+
+      const ban = await request(server)
+          .put(`/sa/users/${res.body.id}/ban`)
+          .send({
+              loginOrEmail: res.body.login,
+              password: "passwordpassword"
+          }).expect(204)
+
+
+      const allUsersAfterBan = await request(server)
+          .get(`/sa/users`)
+          .set(authE2eSpec, basic)
+          .expect(200)
+
+      expect(allUsersAfterBan.body.items.length).toEqual(0)
+
+      const unban = await request(server)
+          .put(`/sa/users/${res.body.id}/ban`)
+          .send({
+              loginOrEmail: res.body.login,
+              password: "passwordpassword"
+          }).expect(204)
+
+
+      const allUsersAfterUnBan = await request(server)
+          .get(`/sa/users`)
+          .set(authE2eSpec, basic)
+          .expect(200)
+
+      expect(allUsersAfterUnBan.body.items.length).toEqual(1)
 
   }, 10000);
 

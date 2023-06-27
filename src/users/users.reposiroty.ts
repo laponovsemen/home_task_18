@@ -282,16 +282,16 @@ export class UsersRepository {
     const searchEmailTerm = paginationCriteria.searchEmailTerm ?? '%'
     let banQuery = ``
     if(searchBanTerm === 'banned'){
-      banQuery = 'AND public."UserTable"."isBanned" = false;'
+      banQuery = 'AND "isBanned" = false;'
     }else if(searchBanTerm === 'notBanned'){
-      banQuery = 'AND public."UserTable"."isBanned" = true;'
+      banQuery = 'AND "isBanned" = true;'
     }
 const query = `
     SELECT COUNT(*) FROM public."UserTable"
     WHERE 
-         public."UserTable"."login" LIKE $1 
+         "login" LIKE $1 
     AND
-        (public."UserTable"."email" LIKE $2 );
+        "email" LIKE $2 ;
         
     `
   const resultQuery = query + banQuery;
@@ -313,9 +313,9 @@ const query = `
     const selectQuery = `
     SELECT * FROM public."UserTable"
     WHERE 
-        public."UserTable"."login" LIKE $1
+        "login" LIKE $1
     AND
-        public."UserTable"."email" LIKE $2
+        "email" LIKE $2
     `
 
     console.log(sortBy, ' sortBy')
