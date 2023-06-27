@@ -456,6 +456,52 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             },
         })
 
+
+        const user2 = await request(server)
+            .post("/sa/users")
+            .set(auth, basic)
+            .send({
+                login: `newlogin`,
+            password: "newpassword",
+            email: `simsbury65@gmail.com`
+            });
+
+
+        expect(user2.status).toBe(201);
+        expect(user2.body).toEqual({
+            id: expect.any(String),
+            login: `newlogin`,
+            "email": createUserDto.email,
+            "createdAt": expect.any(String),
+            "banInfo": {
+                "banDate": null,
+                "banReason": null,
+                "isBanned": false
+            }
+        });
+
+        const loginRes2 = await request(server)
+            .post("/auth/login")
+            .send({
+                loginOrEmail: `newlogin`,
+                password: "newpassword"
+            });
+
+        await request(server)
+            .delete(`/comments/${commentId}`)
+            .set("Authorization", `Bearer ${loginRes2.body.accessToken}`)
+            .expect(403)
+
+        await request(server)
+            .put(`/comments/${commentId}`)
+            .set("Authorization", `Bearer ${loginRes2.body.accessToken}`)
+            .send({content : "stringstringstringstring3"})
+            .expect(403)
+
+
+
+
+
         await request(server)
             .delete(`/comments/${commentId}`)
             .auth(accessToken, {type: 'bearer'})
