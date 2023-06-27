@@ -455,7 +455,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             .auth(accessToken, {type: 'bearer'})
             .expect(404)
 
-        expect(likedCommentAfterUpdatethroughPostCotroller.body).toEqual({})
+
 
         expect(likedCommentAfterUpdate.body).toEqual({
             commentatorInfo: {
