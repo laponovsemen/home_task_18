@@ -53,8 +53,8 @@ export class LikeRepository{
   async findLikesCountForSpecificPost(postId: string) {
     const likes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
-    `, [parentTypeEnum.post, postId, StatusTypeEnum.Like])
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    `, [parentTypeEnum.post, postId, StatusTypeEnum.Like, false])
     return likes[0].count
 
   }
@@ -62,8 +62,8 @@ export class LikeRepository{
   async findDisikesCountForSpecificPost(postId: string) {
     const dislikes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
-    `, [parentTypeEnum.post, postId, StatusTypeEnum.Dislike])
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    `, [parentTypeEnum.post, postId, StatusTypeEnum.Dislike, false])
     return dislikes[0].count
   }
 
@@ -149,8 +149,8 @@ export class LikeRepository{
   async findLikesCountForSpecificComment(commentId: string) {
     const likes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
-    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Like])
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Like, false])
     console.log(likes[0].count, " findLikesCountForSpecificComment")
     return likes[0].count
   }
@@ -158,8 +158,8 @@ export class LikeRepository{
   async findDisikesCountForSpecificComment(commentId: string) {
     const dislikes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
-    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Dislike])
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Dislike, false])
     console.log(dislikes[0].count, " findDisikesCountForSpecificComment")
     return dislikes[0].count
   }
