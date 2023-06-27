@@ -456,6 +456,16 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             },
         })
 
+        await request(server)
+            .delete(`/comments/${commentId}`)
+            .auth(accessToken, {type: 'bearer'})
+            .expect(204)
+
+        await request(server)
+            .get(`/comments/${commentId}`)
+            .auth(accessToken, {type: 'bearer'})
+            .expect(404)
+
     }, 60000)
 
 })
