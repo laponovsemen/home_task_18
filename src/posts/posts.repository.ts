@@ -220,7 +220,12 @@ export class PostsRepository {
         paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
       const result = await this.dataSource.query(`
-            SELECT * 
+            SELECT 
+            CAST(c."id" AS TEXT),
+            "content",
+            CAST(c."commentatorId" AS TEXT),
+            u."login",
+            c."createdAt"
             FROM 
             public."APICommentTable" c
             LEFT JOIN 
@@ -249,10 +254,16 @@ export class PostsRepository {
     if(!postIdAsString){
       return null
     }
-    const foundPostQuery = await this.dataSource.query(`
+    let foundPostQuery
+    try{
+      foundPostQuery= await this.dataSource.query(`
     SELECT *  FROM public."APIPostTable"
     WHERE "id" = $1;
     `, [postIdAsString])
+    } catch (e) {
+      console.log(e)
+      return null
+    }
     const foundPost = foundPostQuery[0]
     return foundPost
   }
