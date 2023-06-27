@@ -420,6 +420,41 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             .get(`/comments/${commentId}`)
             .expect(200)
 
+        await request(server)
+            .put(`/comments/2281337`)
+            .auth(accessToken, {type: 'bearer'})
+            .send({content : "stringstringstringstring"})
+            .expect(404)
+
+        await request(server)
+            .delete(`/comments/2281337`)
+            .auth(accessToken, {type: 'bearer'})
+            .expect(404)
+
+        await request(server)
+            .put(`/comments/${commentId}`)
+            .auth(accessToken, {type: 'bearer'})
+            .send({content : "stringstringstringstring2"})
+            .expect(204)
+
+        const likedCommentAfterUpdate = await request(server)
+            .get(`/comments/${commentId}`)
+            .auth(accessToken, {type: 'bearer'})
+            .expect(200)
+        expect(likedCommentAfterUpdate.body).toEqual({
+            commentatorInfo: {
+                userId: expect.any(String),
+                userLogin: "login",
+            },
+            content: "stringstringstringstring2",
+            createdAt: expect.any(String),
+            id: commentId,
+            likesInfo: {
+                dislikesCount: 0,
+                likesCount: 1,
+                myStatus: "Like"
+            },
+        })
 
     }, 60000)
 
