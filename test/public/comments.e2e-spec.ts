@@ -267,11 +267,13 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
     it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
 
         request(server).delete("/testing/all-data").set(auth, basic)
+
         const createUserDto: UserDTO = {
             login: `login`,
             password: "password",
             email: `simsbury65@gmail.com`
         };
+
         const res = await request(server)
             .post("/sa/users")
             .set(auth, basic)
@@ -338,7 +340,9 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
             })
             .expect(201)
         const postId = createdPost.body.id
+
         console.log(createdPost.body, " createdPost in test")
+
         for(let i = 0; i < 4 ; i++){
             await request(server)
                 .post("/sa/users")
@@ -352,174 +356,12 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
 
 
 
-        const login = await request(server)
-            .post("/auth/login")
-            .set(auth, basic)
-            .send({
-                loginOrEmail: "login",
-                password: "password",
-            }).expect(200)
-
-        const JWT = login.body.accessToken
-        const JWTAuth = "Bearer ".concat(JWT)
-        console.log(JWTAuth)
-
-        expect(JWT).toEqual(expect.any(String))
+        expect(accessToken).toEqual(expect.any(String))
 
         //console.log(JWT)
         const createdComment = await request(server)
             .post(`/posts/${postId}/comments`)
-            .set(auth, JWTAuth)
-            .send({
-                content: "stringstringstringst"
-            }).expect(201)
-
-        expect(createdComment.body).toEqual(
-            {
-                commentatorInfo:
-                    {
-                        userId: expect.any(String),
-                        userLogin: expect.any(String)
-                    },
-                content: "stringstringstringst",
-                createdAt: expect.any(String),
-                id: expect.any(String),
-                likesInfo: {
-                    dislikesCount: 0,
-                    likesCount: 0,
-                    myStatus: "None",
-                },
-            })
-        const commentId = createdComment.body.id
-        await request(server)
-            .put(`/comments/${commentId}/like-status`)
-            .set(auth, JWTAuth)
-            .send({
-                likeStatus: "Like"
-            }).expect(204)
-
-        const likedComment = await request(server)
-            .get(`/comments/${commentId}`)
-            .set(auth, JWTAuth)
-            .expect(200)
-        expect(likedComment.body).toEqual({
-            commentatorInfo: {
-                userId: expect.any(String),
-                userLogin: "login",
-            },
-            content: "stringstringstringst",
-            createdAt: expect.any(String),
-            id: commentId,
-            likesInfo: {
-                dislikesCount: 0,
-                likesCount: 1,
-                myStatus : "Like"
-            },
-
-        })
-
-    }, 60000)
-    it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
-        request(server).delete("/testing/all-data").set(auth, basic)
-        const createUserDto: UserDTO = {
-            login: `login`,
-            password: "password",
-            email: `simsbury65@gmail.com`
-        };
-        const res = await request(server)
-            .post("/sa/users")
-            .set(auth, basic)
-            .send(createUserDto);
-
-
-        expect(res.status).toBe(201);
-        expect(res.body).toEqual({
-            id: expect.any(String),
-            login: createUserDto.login,
-            "email": createUserDto.email,
-            "createdAt": expect.any(String),
-            "banInfo": {
-                "banDate": null,
-                "banReason": null,
-                "isBanned": false
-            }
-        });
-
-        const loginRes = await request(server)
-            .post("/auth/login")
-            .send({
-                loginOrEmail: res.body.login,
-                password: "password"
-            });
-
-        expect(loginRes.status).toBe(200);
-        expect(loginRes.body).toEqual({ accessToken: expect.any(String) });
-        const { accessToken } = loginRes.body;
-
-        const createBlogDto: BlogDTO = {
-            name : "string",
-            description: "stringasdstring",
-            websiteUrl : "simsbury65@gmail.com"
-        }
-
-        const createdBlogRes = await request(server)
-            .post(`/blogger/blogs`)
             .auth(accessToken, {type: 'bearer'})
-            .send(createBlogDto)
-
-
-
-        expect(createdBlogRes.status).toBe(201)
-        expect(createdBlogRes.body).toEqual({
-            "createdAt": expect.any(String),
-            "description": createBlogDto.description,
-            "id": expect.any(String),
-            "isMembership": false,
-            "name": createBlogDto.name,
-            "websiteUrl": createBlogDto.websiteUrl,
-        })
-
-        const blogId = createdBlogRes.body.id
-
-        const createdPost = await request(server).post(`/posts`)
-            .set(auth, basic)
-            .send({
-                title: `string`, //    maxLength: 30
-                shortDescription: "string", //maxLength: 100
-                content: "string", // maxLength: 1000
-                blogId: blogId
-            })
-            .expect(201)
-        const postId = createdPost.body.id
-
-        await request(server)
-            .post("/users")
-            .set(auth, basic)
-            .send({
-                login: "login",
-                password: "password",
-                email: "simsbury65@gmail.com"
-            }).expect(201)
-
-
-        const login = await request(server)
-            .post("/auth/login")
-            .set(auth, basic)
-            .send({
-                loginOrEmail: "login",
-                password: "password",
-            }).expect(200)
-
-        const JWT = login.body.accessToken
-        const JWTAuth = "Bearer ".concat(JWT)
-        console.log(JWTAuth)
-
-        expect(JWT).toEqual(expect.any(String))
-
-        //console.log(JWT)
-        const createdComment = await request(server)
-            .post(`/posts/${postId}/comments`)
-            .set(auth, JWTAuth)
             .send({
                 content: "stringstringstringst"
             }).expect(201)
@@ -543,14 +385,14 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
         const commentId = createdComment.body.id
         await request(server)
             .put(`/comments/${commentId}/like-status`)
-            .set(auth, JWTAuth)
+            .auth(accessToken, {type: 'bearer'})
             .send({
                 likeStatus: "Like"
             }).expect(204)
 
         const likedComment = await request(server)
             .get(`/comments/${commentId}`)
-            .set(auth, JWTAuth)
+            .auth(accessToken, {type: 'bearer'})
             .expect(200)
         expect(likedComment.body).toEqual({
             commentatorInfo: {
@@ -565,8 +407,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
                 likesCount: 1,
                 myStatus : "Like"
             },
+
         })
     }, 60000)
-
-
 })

@@ -61,7 +61,7 @@ export class PostsService{
       //console.log(userId, " id of user ");
       for(let i = 0; i < allPostsFrames.items.length; i++){
         const post = allPostsFrames.items[i]
-        const postId = new ObjectId(post.id)
+        const postId = post.id
 
         const myLike = await this.likeRepository.findMyStatusForSpecificPost(postId, userId)
         console.log(myLike , "myLike");

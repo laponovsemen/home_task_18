@@ -18,7 +18,7 @@ export class LikeRepository{
   }
 
   async likePost(DTO: LikeStatusDTO, Id: string, login : string, postId: string) {
-    const myLike = await this.findMyStatusForSpecificPost(new ObjectId(postId), Id)
+    const myLike = await this.findMyStatusForSpecificPost(postId, Id)
     const status = DTO.likeStatus
     if (!myLike) {
       const dateOfCreation = new Date()
@@ -27,20 +27,11 @@ export class LikeRepository{
       const addedAt = dateOfCreation
       const userId = new ObjectId(Id)
 
-
-      const newLikeToCreate: APILike = {
-        parentId: parentId,
-        parentType: parentType,
-        addedAt: addedAt,
-        userId: userId,
-        login: login,
-        status: status,
-        isHiden : false
-      }
       await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+     INSERT INTO public."APILikeTable"(
+    "parentId", "parentType", "addedAt", "userId", "login", "status", "isHiden")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+    `, [parentId, parentType, addedAt, userId, login, status, false])
       return true
     } else {
 
@@ -52,9 +43,10 @@ export class LikeRepository{
 
   async changeMyLikeStatus(status : StatusTypeEnum, userId : string, parentId: string, parentType: parentTypeEnum){
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APILikeTable"
+    SET status = $1
+    WHERE "userId" = $2 AND "parentId" = $3 AND "parentType" = $4;
+    `, [status, userId, parentId, parentType])
 
   }
 
@@ -86,31 +78,20 @@ export class LikeRepository{
     return newestLikesToUpdate
   }
 
-  async findMyStatusForSpecificPost(postId: ObjectId, userIdAsString: string) {
-    console.log(userIdAsString, "userIdAsString")
-    const userId = this.common.tryConvertToObjectId(userIdAsString)
-    console.log(userId, "after user id");
+  async findMyStatusForSpecificPost(postId: string, userId: string) {
+    console.log(userId, "userIdAsString")
     if(!userId){
       console.log(userId, "нету юзер ай ди");
       return null
 
     }
     console.log("before filter");
-    console.log({
-      parentId: postId,
-      parentType: parentTypeEnum.post,
-      userId: userId
-    }, "filter");
-    const filter = {
-      parentId: postId,
-      parentType: parentTypeEnum.post,
-      userId: userId
-    }
+
 
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    SELECT * FROM public."APILikeTable"
+    WHERE "parentId" = $1 AND "userId" = $2 AND "parentType" = $3;
+    `, [postId, userId, parentTypeEnum.post])
     console.log(result, "result");
     return result
   }
@@ -135,29 +116,20 @@ export class LikeRepository{
   }
 
   async likeComment(DTO: LikeStatusDTO, userIdFromToken: string, login: string, commentId: string) {
-    const myLike = await this.findMyStatusForComment(commentId, userIdFromToken)
+    const [myLike] = await this.findMyStatusForComment(commentId, userIdFromToken)
     const status = DTO.likeStatus
     if (!myLike) {
       const dateOfCreation = new Date()
-      const parentId = new ObjectId(commentId)
+      const parentId = commentId
       const parentType = parentTypeEnum.comment
       const addedAt = dateOfCreation
-      const userId = new ObjectId(userIdFromToken)
+      const userId = userIdFromToken
 
-
-      const newLikeToCreate: APILike = {
-        parentId: parentId,
-        parentType: parentType,
-        addedAt: addedAt,
-        userId: userId,
-        login: login,
-        status: status,
-        isHiden : false
-      }
       await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+      INSERT INTO public."APILikeTable"(
+     "parentId", "parentType", "addedAt", "userId", "login", "status", "isHiden")
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
+    `, [parentId, parentType, addedAt, userId, login, status, false])
       return true
     } else {
 
@@ -172,6 +144,7 @@ export class LikeRepository{
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
     `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Like])
+    console.log(likes[0].count, " findLikesCountForSpecificComment")
     return likes[0].count
   }
 
@@ -180,6 +153,7 @@ export class LikeRepository{
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
     `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Dislike])
+    console.log(dislikes[0].count, " findDisikesCountForSpecificComment")
     return dislikes[0].count
   }
 
@@ -215,14 +189,16 @@ export class LikeRepository{
 
   async makeLikesHiden(userId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APILikeTable"
+    SET "isHiden" = $2
+    WHERE "userId" = $1;
+    `, [userId, true])
   }
   async makeLikesVisible(userId: string) {
     await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    UPDATE public."APILikeTable"
+    SET "isHiden" = $2
+    WHERE "userId" = $1;
+    `, [userId, false])
   }
 }

@@ -112,10 +112,12 @@ export class CommentsRepository{
   }
 
   async getCommentByIdWithOutLikes(commentId: string) {
-    return await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const query = await this.dataSource.query(`
+    SELECT * FROM public."APICommentTable"
+    WHERE "id" = $1
+    `, [commentId])
+    console.log(query, " query in getCommentByIdWithOutLikes")
+    return query[0]
   }
 
   async makeCommentsHiden(userId: string) {

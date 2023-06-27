@@ -39,6 +39,7 @@ export class LikeService{
       return null
     }
     console.log(token, " - token");
+    console.log(foundComment, " - foundComment");
     const payload = this.jwtService.decode(token)
     if(typeof payload === "string"){
       return null

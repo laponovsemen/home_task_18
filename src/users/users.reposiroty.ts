@@ -218,10 +218,16 @@ export class UsersRepository {
   }
 
   async findUserByLogin(login: string) {
-    return await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    console.log(login, "login in findUserById");
+    if(!login){
+      return null
+    }
+    const [result] = await this.dataSource.query(`
+    SELECT *  FROM public."UserTable"
+    WHERE "login" = $1
+    `, [login] )
+    console.log(result, "result findUserById findUserById");
+    return result
   }
 
   async findUserById(userId: string) {

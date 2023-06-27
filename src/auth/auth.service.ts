@@ -106,7 +106,8 @@ export class AuthService implements OnModuleInit{
     }
     const veriable = accessToken.split(" ")[1]
     console.log(veriable, "veriable");
-    const payload = this.jwtService.decode(accessToken.split(" ")[1] )
+    const payload = this.jwtService.decode(accessToken.split(" ")[1])
+    console.log(payload, "payload")
     //if (typeof payload === "string") return undefined;
     if (!payload) return null;
     const userId = (payload as payloadType).userId
