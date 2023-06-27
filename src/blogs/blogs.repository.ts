@@ -133,11 +133,18 @@ export class BlogsRepository {
     }
   }
   async getAllPostsForSpecificBlog(paginationCriteria: paginationCriteriaType, blogId: string,) {
-    const countBlogsQuery = await this.dataSource.query(`
+
+    let countBlogsQuery
+        try {
+          countBlogsQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS INTEGER) 
     FROM public."APIPostTable"
      WHERE "blogId" = $1
     `, [blogId])
+        } catch (e) {
+          console.log(e)
+          return null
+        }
 
     const pageSize = paginationCriteria.pageSize;
     const totalCount = countBlogsQuery[0].count
