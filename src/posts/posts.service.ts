@@ -111,7 +111,7 @@ export class PostsService{
         const myLike = await this.likeRepository.findMyStatusForSpecificComment(commentId, userId)
         console.log(myLike, "myLike");
         //console.log(postId , "postId");
-        allCommentsFrames.items[i].likesInfo.myStatus = myLike ? myLike.status : "None"
+        allCommentsFrames.items[i].likesInfo.myStatus = myLike ? myLike : "None"
       }
 
       return allCommentsFrames
