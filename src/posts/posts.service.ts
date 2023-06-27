@@ -95,6 +95,7 @@ export class PostsService{
       const commentId = comment.id
       allCommentsFrames.items[i].likesInfo.likesCount = await this.likeRepository.findLikesCountForSpecificComment(commentId)
       allCommentsFrames.items[i].likesInfo.dislikesCount = await this.likeRepository.findDisikesCountForSpecificComment(commentId)
+      allCommentsFrames.items[i].likesInfo.myStatus = "None"
     }
     if (!user) {
       //console.log("i am out");

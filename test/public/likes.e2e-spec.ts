@@ -206,7 +206,11 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
                    "shortDescription": "shortDescription",
                    "title": "title",
                  })
-
+        const getAllPost = await request(server)
+            .get(`/posts`)
+            .auth(accessToken0, {type: 'bearer'})
+            .expect(200)
+        expect(getAllPost).toEqual({})
 
 
     }, 60000)

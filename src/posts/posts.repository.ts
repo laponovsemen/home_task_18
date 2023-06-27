@@ -100,8 +100,9 @@ export class PostsRepository {
 
     const pageSize = paginationCriteria.pageSize;
     const totalCount = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
+    SELECT CAST(COUNT(*) AS INTEGER) 
+    FROM public."APIPostTable"
+     
     `)
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
@@ -110,8 +111,10 @@ export class PostsRepository {
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
     const result = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
+    SELECT *  
+    FROM public."APIPostTable"
+    ORDER BY "${sortBy}" ${sortDirection}
+    LIMIT ${pageSize} OFFSET ${ToSkip}
     `)
     const items = result.map((item) => {
       return this.common.SQLPostMapping(item)
