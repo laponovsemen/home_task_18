@@ -108,7 +108,7 @@ export class CommentsQueryRepository{
         CAST("commentatorId" AS TEXT) 
         FROM public."UserTable" u
     RIGHT JOIN public."BlogsTable" b
-    ON b."blogOwnerId" = u."id"
+    ON c."commentatorId" = u."id"
     RIGHT JOIN public."APIPostTable" p
     ON b."id" = p."blogId"
     RIGHT JOIN public."APICommentTable" c
