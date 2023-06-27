@@ -82,7 +82,7 @@ export class CommentsQueryRepository{
       //console.log(listOfPostsForBlogs, "list of posts nhui");
       const result = await this.dataSource.query(`
     SELECT CAST(c."id" AS TEXT),
-        "login",
+        u."login",
         "email",
         "password",
         c."createdAt",
