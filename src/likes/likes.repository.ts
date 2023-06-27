@@ -70,7 +70,11 @@ export class LikeRepository{
   async findNewestLikesForSpecificPost(postId: string) {
 
     const newestLikesToUpdate = await this.dataSource.query(`
-   SELECT * FROM public."APILikeTable"
+   SELECT 
+   "login",
+   "addedAt",
+   "userId"
+    FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
     `, [parentTypeEnum.post, postId, StatusTypeEnum.Like, false])
 
@@ -89,7 +93,7 @@ export class LikeRepository{
 
 
     const result = await this.dataSource.query(`
-    SELECT * FROM public."APILikeTable"
+    SELECT "status" FROM public."APILikeTable"
     WHERE "parentId" = $1 AND "userId" = $2 AND "parentType" = $3;
     `, [postId, userId, parentTypeEnum.post])
     console.log(result, "result");
