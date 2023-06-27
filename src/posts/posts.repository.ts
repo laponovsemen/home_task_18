@@ -211,7 +211,7 @@ export class PostsRepository {
             SELECT CAST(COUNT(*) AS INTEGER) FROM public."APICommentTable"
             WHERE "postId" = $1 AND "isHiden" = $2
     `, [id, false])
-      const totalCount =totalCountQuery[0].count
+      const totalCount = totalCountQuery[0].count
       const pagesCount = Math.ceil(totalCount / pageSize);
       const page = paginationCriteria.pageNumber;
       const sortBy = paginationCriteria.sortBy;
