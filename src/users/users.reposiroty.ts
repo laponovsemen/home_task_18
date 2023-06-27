@@ -98,7 +98,8 @@ export class UsersRepository {
 
 
     const newlyCreatedUser: User = await this.dataSource.query(`
-        SELECT * FROM public."UserTable"
+        SELECT * 
+        FROM public."UserTable"
         WHERE "login" = $1 AND "email" = $2 AND "password" = $3;
       
     `, [login, email, password])

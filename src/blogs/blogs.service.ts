@@ -31,6 +31,7 @@ export class BlogsService {
       allPostsFrames.items[i].extendedLikesInfo.dislikesCount = await this.likeRepository.findDisikesCountForSpecificPost(postId)
       // @ts-ignore
       allPostsFrames.items[i].extendedLikesInfo.newestLikes = await this.likeRepository.findNewestLikesForSpecificPost(postId)
+      allPostsFrames.items[i].extendedLikesInfo.myStatus = "None"
 
     }
     if(!user){

@@ -75,7 +75,8 @@ export class LikeRepository{
    "addedAt",
    CAST("userId" AS TEXT)
     FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
+    WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4
+    ORDER BY "addedAt" DESC;
     `, [parentTypeEnum.post, postId, StatusTypeEnum.Like, false])
 
     //console.log(newestLikesToUpdate, " newestLikesToUpdate")

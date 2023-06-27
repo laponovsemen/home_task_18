@@ -112,10 +112,16 @@ export class CommentsRepository{
   }
 
   async getCommentByIdWithOutLikes(commentId: string) {
-    const query = await this.dataSource.query(`
+    let query
+    try {
+      query = await this.dataSource.query(`
     SELECT * FROM public."APICommentTable"
     WHERE "id" = $1
     `, [commentId])
+    } catch (e) {
+      console.log(e)
+      return null
+    }
     console.log(query, " query in getCommentByIdWithOutLikes")
     return query[0]
   }

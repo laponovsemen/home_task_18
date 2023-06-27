@@ -154,6 +154,24 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
 
         const postId = post.body.id
 
+        await request(server)
+            .put(`/posts/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
+            .auth(accessToken0, {type: 'bearer'})
+            .send({
+                likeStatus: "Like"
+            })
+            .expect(404)
+
+        await request(server)
+            .put(`/comments/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
+            .auth(accessToken0, {type: 'bearer'})
+            .send({
+                likeStatus: "Like"
+            })
+            .expect(404)
+
+
+
         const like = await request(server)
             .put(`/posts/${postId}/like-status`)
             .auth(accessToken0, {type: 'bearer'})
