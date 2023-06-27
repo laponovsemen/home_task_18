@@ -84,7 +84,7 @@ export class CommentsRepository{
 
   async deleteCommentById(commentId: string) {
     const foundComment = await this.dataSource.query(`
-    SELECT *  FROM public."CommentTable"
+    SELECT *  FROM public."APICommentTable"
     WHERE "id" = $1;
     `, [commentId])
 
@@ -94,7 +94,7 @@ export class CommentsRepository{
     }
 
     const deletedComment = await this.dataSource.query(`
-    DELETE FROM public."CommentTable"
+    DELETE FROM public."APICommentTable"
     WHERE "id" = $1;
     `, [commentId])
     return true
