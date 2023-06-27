@@ -99,11 +99,12 @@ export class PostsRepository {
   async getAllPosts(paginationCriteria: paginationCriteriaType) {
 
     const pageSize = paginationCriteria.pageSize;
-    const totalCount = await this.dataSource.query(`
+    const totalCountQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS INTEGER) 
     FROM public."APIPostTable"
      
     `)
+    const totalCount = totalCountQuery[0].count
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;

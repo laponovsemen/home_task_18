@@ -401,12 +401,9 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
             ],
             "page": 1,
             "pageSize": 10,
-            "pagesCount": null,
-            "totalCount": [
-                {
-                    "count": 10,
-                },
-           ],
+            "pagesCount": 1,
+            "totalCount": 6,
+
          }
 
     )
