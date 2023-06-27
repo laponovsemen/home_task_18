@@ -144,73 +144,272 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
             shortDescription : "shortDescription",
             content : "content",
         }
+        for (let i = 0; i < 10; i++) {
+            const post = await request(server)
+                .post(`/blogger/blogs/${blogId}/posts`)
+                .auth(accessToken1, {type: 'bearer'})
+                .send(createPostDTO1)
 
-        const post = await request(server)
-            .post(`/blogger/blogs/${blogId}/posts`)
-            .auth(accessToken1, {type: 'bearer'})
-            .send(createPostDTO1)
+            expect(post.status).toBe(201)
 
-        expect(post.status).toBe(201)
+            const postId = post.body.id
 
-        const postId = post.body.id
-
-        await request(server)
-            .put(`/posts/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
-            .auth(accessToken0, {type: 'bearer'})
-            .send({
-                likeStatus: "Like"
-            })
-            .expect(404)
-
-        await request(server)
-            .put(`/comments/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
-            .auth(accessToken0, {type: 'bearer'})
-            .send({
-                likeStatus: "Like"
-            })
-            .expect(404)
-
-
-
-        const like = await request(server)
-            .put(`/posts/${postId}/like-status`)
-            .auth(accessToken0, {type: 'bearer'})
-            .send({
-                likeStatus: "Like"
-            })
-            .expect(204)
-
-        const getPost = await request(server)
-                .get(`/posts/${postId}`)
+            await request(server)
+                .put(`/posts/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
                 .auth(accessToken0, {type: 'bearer'})
-                .expect(200)
+                .send({
+                    likeStatus: "Like"
+                })
+                .expect(404)
 
-            expect(getPost.body).toEqual({
-               "blogId": expect.any(String),
-                   "blogName": "string",
-                   "content": "content",
-                   "createdAt": expect.any(String),
-                   "extendedLikesInfo": {
-                       "dislikesCount": 0,
-                       "likesCount": 1,
-                       "newestLikes": [
-                           {
-                               "addedAt": expect.any(String),
-                               "login": "login0",
-                               "userId": expect.any(String),
-                           }
-                       ],
-                       "myStatus": "Like"
-                       },
-                    "id": expect.any(String),
-                   "shortDescription": "shortDescription",
-                   "title": "title",
-                 })
+            await request(server)
+                .put(`/comments/602afe92-7d97-4395-b1b9-6cf98b351bbe/like-status`)
+                .auth(accessToken0, {type: 'bearer'})
+                .send({
+                    likeStatus: "Like"
+                })
+                .expect(404)
+
+
+
+            const like = await request(server)
+                .put(`/posts/${postId}/like-status`)
+                .auth(accessToken0, {type: 'bearer'})
+                .send({
+                    likeStatus: "Like"
+                })
+                .expect(204)
+
+        }
+
         const getAllPost = await request(server)
             .get(`/posts`)
             .auth(accessToken0, {type: 'bearer'})
             .expect(200)
-        expect(getAllPost).toEqual({})
+        expect(getAllPost.body).toEqual({
+            "items": [
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+                {
+                    "blogId": expect.any(String),
+                    "blogName": "string",
+                    "content": "content",
+                    "createdAt": expect.any(String),
+                    "extendedLikesInfo": {
+                        "dislikesCount": 0,
+                        "likesCount": 1,
+                        "myStatus": "Like",
+                        "newestLikes": [
+                            {
+                                "addedAt": expect.any(String),
+                                "login": "login0",
+                                "userId": expect.any(String),
+                            },
+                        ],
+                    },
+                    "id": expect.any(String),
+                    "shortDescription": "shortDescription",
+                    "title": "title",
+                },
+            ],
+            "page": 1,
+            "pageSize": 10,
+            "pagesCount": null,
+            "totalCount": [
+                {
+                    "count": 10,
+                },
+           ],
+         }
+
+    )
 
 
     }, 60000)
