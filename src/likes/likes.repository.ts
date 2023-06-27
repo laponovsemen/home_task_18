@@ -59,7 +59,7 @@ export class LikeRepository{
 
   }
 
-  async findDisikesCountForSpecificPost(postId: ObjectId) {
+  async findDisikesCountForSpecificPost(postId: string) {
     const dislikes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3;
