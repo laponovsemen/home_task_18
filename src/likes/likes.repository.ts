@@ -84,6 +84,7 @@ export class LikeRepository{
 
   async findMyStatusForSpecificPost(postId: string, userId: string) {
     console.log(userId, "userIdAsString")
+    console.log(postId, "postId")
     if(!userId){
       console.log(userId, "нету юзер ай ди");
       return null
@@ -97,7 +98,7 @@ export class LikeRepository{
     WHERE "parentId" = $1 AND "userId" = $2 AND "parentType" = $3;
     `, [postId, userId, parentTypeEnum.post])
     console.log(result, "result");
-    return result[0].status
+    return result[0] ? result[0].status : null
   }
   async findMyStatusForComment(commentId: string, userIdAsString: string) {
     if(!userIdAsString){

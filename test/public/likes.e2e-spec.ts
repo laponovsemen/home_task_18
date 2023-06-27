@@ -60,7 +60,7 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
         await app.close();
     });
     it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
-        request(server).delete("/testing/all-data").set(auth, basic)
+        await request(server).delete("/testing/all-data").set(auth, basic)
 
         const users = [];
         for (let i = 0; i <= 2; i++) {
@@ -182,7 +182,6 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
                    "shortDescription": "shortDescription",
                    "title": "title",
                  })
-
 
 
 
