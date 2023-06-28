@@ -84,11 +84,10 @@ export class UsersRepository {
   }
 
   async createUser(DTO: any) {
-    const dateOfCreation = new Date()
     const login = DTO.login
     const password = DTO.password
     const email = DTO.email
-    const createdAt = dateOfCreation
+    const createdAt = new Date().toISOString()
     const result = await this.dataSource.query(`
         INSERT INTO public."UserTable"(
          "login", "email", "password", "createdAt", "isConfirmed", "code", "codeDateOfExpiary", "banDate", "banReason", "isBanned")
