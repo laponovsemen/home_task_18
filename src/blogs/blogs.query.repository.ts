@@ -50,9 +50,6 @@ export class BlogsQueryRepository {
     "name" COLLATE "C",
     b."description",
     b."websiteUrl",
-    json_build_object(
-    'userId', CAST(b."blogOwnerId" AS TEXT), 'userLogin', 
-    ) as "blogOwnerInfo" :: []
     b."isMembership",
     b."createdAt",
     CAST(b."blogOwnerId" AS TEXT),
