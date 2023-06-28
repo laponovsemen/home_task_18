@@ -278,8 +278,8 @@ export class UsersRepository {
 
   async getAllUsersSA(paginationCriteria: paginationCriteriaType) {
     const searchBanTerm = paginationCriteria.banStatus
-    const searchLoginTerm = paginationCriteria.searchLoginTerm ?? '%'
-    const searchEmailTerm = paginationCriteria.searchEmailTerm ?? '%'
+    const searchLoginTerm = paginationCriteria.searchLoginTerm ? `%${paginationCriteria.searchLoginTerm}%` : '%%'
+    const searchEmailTerm = paginationCriteria.searchEmailTerm ? `%${paginationCriteria.searchEmailTerm}%` : '%%'
     let banQuery = ``
     if(searchBanTerm === 'banned'){
       banQuery = 'AND "isBanned" = false;'
