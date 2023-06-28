@@ -107,12 +107,13 @@ export class CommentsQueryRepository{
         CAST("postId" AS TEXT),
         CAST("commentatorId" AS TEXT) 
         FROM public."UserTable" u
-    RIGHT JOIN public."BlogsTable" b
+    RIGHT JOIN public."APICommentTable" b
     ON c."commentatorId" = u."id"
-    RIGHT JOIN public."APIPostTable" p
-    ON b."id" = p."blogId"
-    RIGHT JOIN public."APICommentTable" c
+    RIGHT JOIN public."APIPostTable" c
     ON c."postId" = p."id"
+    RIGHT JOIN public."blogTable" p
+    ON b."id" = p."blogId"
+    
     WHERE b."blogOwnerId" = $1
     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
     LIMIT $2 OFFSET $3;
