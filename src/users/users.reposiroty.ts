@@ -97,16 +97,8 @@ export class UsersRepository {
     `, [login, email, password, createdAt, true, null, null, null, null, false])
 
 
-    const newlyCreatedUser: User = await this.dataSource.query(`
-        SELECT * 
-        FROM public."UserTable"
-        WHERE "login" = $1 AND "email" = $2 AND "password" = $3;
-      
-    `, [login, email, password])
-        console.log(newlyCreatedUser)
-
     return {
-      id: newlyCreatedUser[0].id.toString(),
+      id: result[0].id.toString(),
       login,
       email,
       createdAt,
