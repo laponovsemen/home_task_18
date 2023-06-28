@@ -291,8 +291,7 @@ const query = `
     WHERE 
          "login" ILIKE $1 
     OR
-        "email" ILIKE $2 ;
-        
+        "email" ILIKE $2 
     `
   const resultQuery = query + banQuery;
 
