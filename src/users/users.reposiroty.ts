@@ -287,7 +287,7 @@ export class UsersRepository {
       banQuery = 'AND "isBanned" = true;'
     }
 const query = `
-    SELECT COUNT(*) FROM public."UserTable"
+    SELECT CAST(COUNT(*) AS INTEGER) FROM public."UserTable"
     WHERE 
          "login" ILIKE $1 
     OR
