@@ -282,9 +282,9 @@ export class UsersRepository {
     const searchEmailTerm = paginationCriteria.searchEmailTerm ? `%${paginationCriteria.searchEmailTerm}%` : '%%'
     let banQuery = ``
     if(searchBanTerm === 'banned'){
-      banQuery = `AND "isBanned" = false`
+      banQuery = `AND "isBanned" = TRUE`
     }else if(searchBanTerm === 'notBanned'){
-      banQuery = `AND "isBanned" = true`
+      banQuery = `AND "isBanned" = FALSE`
     }
 const query = `
     SELECT CAST(COUNT(*) AS INTEGER) FROM public."UserTable"
