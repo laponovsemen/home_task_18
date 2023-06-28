@@ -106,12 +106,12 @@ export class CommentsQueryRepository{
         c."isHiden",
         CAST("postId" AS TEXT),
         CAST("commentatorId" AS TEXT) 
-        FROM public."UserTable" u
-    RIGHT JOIN public."APICommentTable" b
+        FROM public."APICommentTable" c
+    RIGHT JOIN public."UserTable" u
     ON c."commentatorId" = u."id"
-    RIGHT JOIN public."APIPostTable" c
+    RIGHT JOIN public."APIPostTable" p
     ON c."postId" = p."id"
-    RIGHT JOIN public."blogTable" p
+    RIGHT JOIN public."BlogsTable" b
     ON b."id" = p."blogId"
     
     WHERE b."blogOwnerId" = $1

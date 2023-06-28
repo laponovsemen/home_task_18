@@ -445,7 +445,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
            "totalCount": 2,
          })
   }, 200000);
-  it("create user, login, create blog, create another user , create posts for specific blog, comment them and get them", async () => {
+  it("create user, login, create blog, create another user , create posts for specific blog, comment them and ", async () => {
 
     await request(server).delete("/testing/all-data");
 
