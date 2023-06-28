@@ -677,7 +677,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         blogId:createdBlog.body.id})
       .expect(204)
   })
-  it("shoud create user , create blog and ban blog", async ()=> {
+  it("shoud create user , create blog and ban blog sf", async ()=> {
     await request(server).delete("/testing/all-data")
     const user = await request(server)
       .post("/sa/users")
@@ -834,8 +834,163 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
             .get(`/sa/blogs`)
             .set(authE2eSpec, basic)
             .expect(200)
-      expect(allBlogsBySA.body).toEqual({})
-  },10000)
+      //expect(allBlogsBySA.body).toEqual({})
+
+      for (let i = 0; i < 10; i++) {
+          await request(server)
+              .post(`/sa/users`)
+              .set(authE2eSpec, basic)
+              .send({
+                  "login": `kiCwSR${i}`,
+                  "password": `string${i}`,
+                  "email" : "simsbury65@gmail.com"
+              })
+              .expect(201)
+      }
+
+        const getAllUsersBeforeBan = await request(server)
+            .get(`/sa/users`)
+            .set(authE2eSpec, basic)
+            .expect(200)
+      expect(getAllUsersBeforeBan.body).toEqual({
+             "items":  [
+                {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                    "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo": {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                   "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo": {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+           {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                 "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+            {
+                 "banInfo":  {
+                       "banDate": null,
+                           "banReason": null,
+                           "isBanned": false,
+                         },
+                "createdAt": expect.any(String),
+                     "email": "simsbury65@gmail.com",
+                     "id": expect.any(String),
+                     "login": expect.any(String),
+                   },
+         ],
+         "page": 1,
+             "pageSize": 10,
+             "pagesCount": 2,
+             "totalCount": 12,
+           })
+
+      const userToBan = getAllUsersBeforeBan.body.items[0]
+      console.log(userToBan)
+
+      const BanOfUser = await request(server)
+          .put(`/sa/users/${userToBan.id}/ban`)
+          .set(authE2eSpec, basic)
+          .send({
+
+          "isBanned": true,
+          "banReason": "stringstringstringst"
+
+          })
+
+      const getAllUsersAfterBan = await request(server)
+          .get(`/sa/users?pageSize=15&pageNumber=1&sortDirection=asc&banStatus=banned`)
+          .set(authE2eSpec, basic)
+          .expect(200)
+      expect(getAllUsersAfterBan.body).toEqual({})
+
+  },20000)
 
 
 

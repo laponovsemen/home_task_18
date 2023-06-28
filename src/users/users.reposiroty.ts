@@ -280,22 +280,29 @@ export class UsersRepository {
     const searchBanTerm = paginationCriteria.banStatus
     const searchLoginTerm = paginationCriteria.searchLoginTerm ? `%${paginationCriteria.searchLoginTerm}%` : '%%'
     const searchEmailTerm = paginationCriteria.searchEmailTerm ? `%${paginationCriteria.searchEmailTerm}%` : '%%'
+    console.log(searchBanTerm, "searchBanTerm in getAllUsersSA")
+    console.log(searchLoginTerm, "searchLoginTerm in getAllUsersSA")
+    console.log(searchEmailTerm, "searchEmailTerm in getAllUsersSA")
+
+
     let banQuery = ``
     if(searchBanTerm === 'banned'){
       banQuery = `AND "isBanned" = TRUE`
     }else if(searchBanTerm === 'notBanned'){
       banQuery = `AND "isBanned" = FALSE`
     }
+
+    console.log(banQuery, "banQuery in getAllUsersSA")
 const query = `
     SELECT CAST(COUNT(*) AS INTEGER) FROM public."UserTable"
     WHERE 
-         "login" ILIKE $1 
+         ("login" ILIKE $1 
     OR
-        "email" ILIKE $2 
+        "email" ILIKE $2)
     `
   const resultQuery = query + banQuery;
 
-
+    console.log(resultQuery, 'resultQuery')
     const pageSize = paginationCriteria.pageSize;
     const totalCountQuery = await this.dataSource.query(resultQuery, [searchLoginTerm, searchEmailTerm])
     console.log(resultQuery, " resultQuery")
@@ -312,9 +319,9 @@ const query = `
     const selectQuery = `
     SELECT * FROM public."UserTable"
     WHERE 
-        "login" ILIKE $1
+        ("login" ILIKE $1
     OR
-        "email" ILIKE $2
+        "email" ILIKE $2)
     `
 
     console.log(sortBy, ' sortBy')
