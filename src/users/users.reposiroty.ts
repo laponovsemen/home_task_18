@@ -289,9 +289,9 @@ export class UsersRepository {
 const query = `
     SELECT COUNT(*) FROM public."UserTable"
     WHERE 
-         "login" LIKE $1 
-    AND
-        "email" LIKE $2 ;
+         "login" ILIKE $1 
+    OR
+        "email" ILIKE $2 ;
         
     `
   const resultQuery = query + banQuery;
@@ -313,9 +313,9 @@ const query = `
     const selectQuery = `
     SELECT * FROM public."UserTable"
     WHERE 
-        "login" LIKE $1
-    AND
-        "email" LIKE $2
+        "login" ILIKE $1
+    OR
+        "email" ILIKE $2
     `
 
     console.log(sortBy, ' sortBy')
