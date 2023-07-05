@@ -14,7 +14,6 @@ import {
 import { BlogsService } from "../blogs/blogs.service";
 import { Common } from "../common";
 import { paginationCriteriaType, PaginatorViewModelType } from "../appTypes";
-import {Blog, blogOwnerInfoModel} from "../mongo/mongooseSchemas";
 import { PostsService } from "./posts.service";
 import { IsNotEmpty, Length, Matches } from "class-validator";
 import { CommentForSpecifiedPostDTO, LikeStatusDTO, PostDTO } from "../input.classes";

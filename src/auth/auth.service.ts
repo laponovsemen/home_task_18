@@ -6,7 +6,6 @@ import { UsersRepository } from "../users/users.reposiroty";
 import { EmailAdapter } from "./email.adapter";
 import { Common } from "../common";
 import { emailDTO, UserDTO } from "../input.classes";
-import {User, UserViewClass} from "../mongo/mongooseSchemas";
 import { ObjectId } from "mongodb";
 import { SecurityDevicesRepository } from "../security.devices/security.devices.repository";
 import { randomUUID } from "crypto";
@@ -40,7 +39,7 @@ export class AuthService implements OnModuleInit{
 
 
   }
-  async signIn(user : UserViewClass, ip : string, title : string, deviceId : ObjectId) {
+  async signIn(user : any, ip : string, title : string, deviceId : ObjectId) {
 
     const payload = { userId : user.id, login : user.login,ip, title,deviceId };
     //console.log(user._id!.toHexString(), "user._id user._id");

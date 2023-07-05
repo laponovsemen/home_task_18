@@ -1,21 +1,18 @@
 import { InjectModel, Prop } from "@nestjs/mongoose";
-import {
-  APIPost,
-  Blog,
-  BlogDocument, NewestLike,
-  PostDocument
-} from "../mongo/mongooseSchemas";
-import { Model } from 'mongoose';
 import { paginationCriteriaType } from '../appTypes';
 import { Common } from '../common';
 import { ObjectId } from 'mongodb';
 import { Injectable } from "@nestjs/common";
 import {BanBlogDTO, BlogDTO} from "../input.classes";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Blog} from "../entities/blog-entity";
+import {APIPost} from "../entities/api-post-entity";
 
 @Injectable()
 export class BlogsRepository {
   constructor(
+      @InjectRepository(Blog) protected blogsTypeORMRepository : Repository<Blog>,
     protected readonly dataSource: DataSource,
     protected readonly common: Common,
   ) {}
@@ -191,7 +188,7 @@ export class BlogsRepository {
       };
     }
 
-  async createNewBlog(DTO: any, user: any) {
+  async createNewBlog(DTO: BlogDTO, user: any) {
     const blogOwnerInfo = {
       userId : user.userId,
       userLogin :user.login,
@@ -206,28 +203,13 @@ export class BlogsRepository {
       isBanned: false
     }
 
-    const blogToCreate : Blog = {
-      name,
-      description,
-      websiteUrl,
-      isMembership,
-      createdAt,
-      blogOwnerInfo,
-       banInfo
-    }
-    const createdBlog : Blog = await this.dataSource.query(`
-    INSERT INTO public."BlogsTable"(
-    "name", "description", "websiteUrl", "isMembership", "createdAt", "blogOwnerId", "blogBanId")
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING CAST("id" AS TEXT);
-    `, [name, description , websiteUrl, isMembership, createdAt, blogOwnerInfo.userId, null])
 
-    // const foundBlogAfterCreation = await this.dataSource.query(`
-    // SELECT cast("id" as TEXT) FROM public."BlogsTable"
-    // WHERE "name" = $1 AND "description" = $2 AND "websiteUrl" = $3
-    // `, [name, description, websiteUrl])
+    const blogToCreate  =  Blog.create(DTO, user)
+
+    const createdBlog : Blog = await this.blogsTypeORMRepository.save(blogToCreate)
+    console.log(createdBlog, "createdBlog to return")
     return {
-      id: createdBlog[0].id,
+      id: createdBlog.id,
       name,
       description,
       websiteUrl,
@@ -287,7 +269,7 @@ export class BlogsRepository {
     return
   }
   async createPostForSpecificBlog(DTO: any, id: string) {
-    const createdAt = new Date()
+    const createdAt = new Date().toISOString()
 
     const blogsQuery = await this.dataSource.query(`
     SELECT * FROM public."BlogsTable"
@@ -300,15 +282,16 @@ export class BlogsRepository {
     if(!blog){
       return null
     }
-    const newPost: APIPost = {
-      title: DTO.title, //    maxLength: 30
-      shortDescription: DTO.shortDescription, //maxLength: 100
-      content: DTO.content, // maxLength: 1000
-      blogId: id,
-      blogName : blog.name,
-      createdAt: createdAt,
-      isHiden: false
-    }
+    const  newPost = new APIPost()
+
+    newPost.title = DTO.title //    maxLength: 30
+    newPost.shortDescription = DTO.shortDescription //maxLength: 100
+    newPost.content = DTO.content // maxLength: 1000
+    newPost.blogId = id
+    newPost.blogName = blog.name
+    newPost.createdAt = createdAt
+    newPost.isHiden = false
+
     const createdPostForSpecificBlog = await this.dataSource.query(`
     INSERT INTO public."APIPostTable"(
      "title", "shortDescription", "content", "blogId", "blogName", "createdAt", "isHiden")
@@ -328,11 +311,10 @@ export class BlogsRepository {
     return this.common.SQLPostMapping(createdPostForSpecificBlog[0])
   }
   async deleteAllData(){
-    await this.dataSource.query(`
-    DELETE FROM public."BlogsTable"
-    WHERE 1 = 1;
-    `)
+    await this.blogsTypeORMRepository.delete({})
   }
+
+
 
   async getBlogByIdWithBloggerInfo(blogId) {
     //const blogId = this.common.tryConvertToObjectId(id)

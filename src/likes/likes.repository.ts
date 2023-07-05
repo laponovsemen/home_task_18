@@ -1,16 +1,20 @@
 import { LikeStatusDTO } from "../input.classes";
 import { ObjectId } from "mongodb";
 import { InjectModel } from "@nestjs/mongoose";
-import { APILike, LikesDocument, parentTypeEnum, StatusTypeEnum } from "../mongo/mongooseSchemas";
 import { Model, Types } from "mongoose";
 import { Injectable } from "@nestjs/common";
 import { Common } from "../common";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {APILike} from "../entities/api-like-entity";
+import {parentTypeEnum, StatusTypeEnum} from "../mongo/mongooseSchemas";
+import {InjectRepository} from "@nestjs/typeorm";
+import {APIComment} from "../entities/api-comment-entity";
 
 
 @Injectable()
 export class LikeRepository{
   constructor(protected readonly dataSource: DataSource,
+              @InjectRepository(APILike) protected likesTypeORMRepository : Repository<APILike>,
               protected readonly common : Common) {
   }
   async createNewLike(Like : APILike){
@@ -116,10 +120,7 @@ export class LikeRepository{
   }
 
   async deleteAllData(){
-    await this.dataSource.query(`
-    DELETE FROM public."APILikeTable"
-    WHERE 1 = 1;
-    `)
+    await this.likesTypeORMRepository.delete({})
   }
 
   async likeComment(DTO: LikeStatusDTO, userIdFromToken: string, login: string, commentId: string) {

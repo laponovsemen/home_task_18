@@ -8,12 +8,7 @@ import {
   Put,
   Query, Req, Res, UseGuards
 } from "@nestjs/common";
-import {
-  APIPost,
-  APIPostDTO,
-  Blog, WithMongoId,
-  WithPagination
-} from "../mongo/mongooseSchemas";
+
 import { Common } from '../common';
 import {
   BlogInsertModelType,
@@ -35,6 +30,7 @@ import { PostsService } from "../posts/posts.service";
 import { BanUserByBloggerCommand } from "./use-cases/ban-user-by-blogger-use-case";
 import { GetBannedUsersForSpecificBlogCommand } from "./use-cases/get-banned-users-for-specific-blog-use-case";
 import { BlogsQueryRepository } from "./blogs.query.repository";
+import {Blog} from "../entities/blog-entity";
 
 
 

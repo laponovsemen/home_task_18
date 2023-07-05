@@ -1,22 +1,23 @@
 import { InjectModel, Prop } from "@nestjs/mongoose";
-import {
-  APIPost,
-  Blog,
-  BlogDocument, NewestLike,
-  PostDocument
-} from "../mongo/mongooseSchemas";
+
 import { Model } from 'mongoose';
 import { paginationCriteriaType } from '../appTypes';
 import { Common } from '../common';
 import { ObjectId } from 'mongodb';
 import { Injectable } from "@nestjs/common";
 import { BanBlogDTO } from "../input.classes";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {Blog} from "../entities/blog-entity";
+import {APIPost} from "../entities/api-post-entity";
+import {User} from "../entities/user-entity";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(
       protected readonly dataSource: DataSource,
+      @InjectRepository(Blog) protected readonly bR: Repository<Blog>,
+
     protected readonly common: Common,
   ) {}
   async getAllBlogsSA(blogsPagination: paginationCriteriaType) {
@@ -198,15 +199,16 @@ export class BlogsQueryRepository {
       isBanned: false
     }
 
-    const blogToCreate : Blog = {
-      name,
-      description,
-      websiteUrl,
-      isMembership,
-      createdAt,
-      blogOwnerInfo,
-       banInfo
-    }
+    const blogToCreate  = new Blog()
+
+    blogToCreate.name = name
+    blogToCreate.description = description
+    blogToCreate.websiteUrl = websiteUrl
+    blogToCreate.isMembership = isMembership
+    blogToCreate.createdAt = createdAt
+    blogToCreate.blogOwnerId = blogOwnerInfo.userId
+    blogToCreate.blogBanId = null
+
     const createdBlog : Blog = await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
@@ -272,16 +274,8 @@ export class BlogsQueryRepository {
     if(!blog){
       return null
     }
-    const newPost: APIPost = {
-      title: DTO.title, //    maxLength: 30
-      shortDescription: DTO.shortDescription, //maxLength: 100
-      content: DTO.content, // maxLength: 1000
-      blogId: id,
-      blogName : blog.name,
-      createdAt: createdAt,
-      isHiden: false
+    const newPost = APIPost.create(DTO, blog.name)
 
-    }
     const createdPostForSpecificBlog = await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
@@ -298,21 +292,38 @@ export class BlogsQueryRepository {
 
   async getBlogByIdWithBloggerInfo(blogId) {
 
-    if (!blogId || !parseInt(blogId, 10)) {
-      return null
-    }
-    const foundBlogQuery = await this.dataSource.query(`
+    /*const foundBlogQuery = await this.dataSource.query(`
     SELECT b."id", b."name", b."description", b."websiteUrl", b."isMembership", b."createdAt", b."blogOwnerId", u."login"
     FROM public."BlogsTable" b
     LEFT JOIN 
     public."UserTable" u
     ON u."id" = b."blogOwnerId"
     WHERE b."id" = $1;
-    `, [parseInt(blogId, 10)])
-    const foundBlog = foundBlogQuery[0]
-    if (foundBlogQuery.length === 0) {
-      return null
-    }
+    `, [parseInt(blogId, 10)]);*/
+
+    console.log(await this.bR.findOne({where: {id: blogId}}))
+    const foundBlogs =  this.dataSource
+        .getRepository(Blog)
+        .createQueryBuilder("blog")
+        .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
+        .where('blog.id = :blogId', { blogId })
+        .getSql()
+
+    const foundBlog = await this.dataSource
+        .getRepository(Blog)
+        .createQueryBuilder("blog")
+        .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
+        .where('blog.id = :blogId', { blogId })
+        .getOne()
+
+
+
+
+        // .getOne()
+
+    console.log(foundBlog, " foundBlogQuery in getBlogByIdWithBloggerInfo")
+    console.log(foundBlogs, " foundBlogQuery in getBlogByIdWithBloggerInfo")
+
     return {
       id: foundBlog.id,
       name: foundBlog.name,
@@ -322,7 +333,7 @@ export class BlogsQueryRepository {
       createdAt: foundBlog.createdAt,
       blogOwnerInfo: {
         userId : foundBlog.blogOwnerId,
-        userLogin : foundBlog.login
+        //userLogin : foundBlog.login
       }
     }
   }

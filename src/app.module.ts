@@ -63,6 +63,14 @@ import { GetAllCommentForUserCommand, GetAllCommentForUserUseCase } from "./blog
 import { PostsQueryRepository } from "./posts/posts.query.repository";
 import { CommentsQueryRepository } from "./comments/comments.query.repository";
 import {TypeOrmModule} from "@nestjs/typeorm";
+import {BlogBan} from "./entities/blog-ban-entity";
+import {Blog} from "./entities/blog-entity";
+import {User} from "./entities/user-entity";
+import {APIComment} from "./entities/api-comment-entity";
+import {APILike} from "./entities/api-like-entity";
+import {APISession} from "./entities/api-session-entity";
+import {APIPost} from "./entities/api-post-entity";
+import {BloggerBansForSpecificBlog} from "./entities/blogger-bans-for-specific-blog-entity";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -83,6 +91,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 @Module({
   imports: [
     CqrsModule,
+    TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
@@ -91,12 +100,13 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: "lucky.db.elephantsql.com",  //'lucky.db.elephantsql.com', "213.200.15.144",
+      host: "lucky.db.elephantsql.com",
       port: 5432,
       username: 'tfaepjvr',
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',
-      entities: [],
+      entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog],
+      autoLoadEntities: true,
       synchronize: true,
     }),
   ],

@@ -1,27 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { APIComment, CommentsDocument } from "../mongo/mongooseSchemas";
 import { ObjectId } from "mongodb";
 import { CommentForSpecifiedPostDTO } from "../input.classes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {APIComment} from "../entities/api-comment-entity";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Blog} from "../entities/blog-entity";
 
 @Injectable()
 export class CommentsRepository{
   constructor(protected readonly dataSource: DataSource,
               protected readonly common : Common,
+              @InjectRepository(APIComment) protected commentsTypeORMRepository : Repository<APIComment>,
               protected readonly likeRepository : LikeRepository,
   ) {
   }
   async deleteAllData(){
-    await this.dataSource.query(`
-    DELETE FROM public."APICommentTable"
-    WHERE 1 = 1;
-    `)
+    await this.commentsTypeORMRepository.delete({})
   }
-  async createNewComment(newComment : APIComment){
+  async createNewComment(newComment : any){
     const comment = await this.dataSource.query(`
     INSERT INTO public."APICommentTable"("content", "commentatorId", "createdAt", "postId", "isHiden")
     VALUES ($1, $2, $3, $4, $5)

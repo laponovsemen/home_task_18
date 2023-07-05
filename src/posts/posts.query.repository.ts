@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { APIComment, APIPost, Blog, BlogDocument } from "../mongo/mongooseSchemas";
 import { Model } from "mongoose";
 import { ObjectId } from "mongodb";
 import { paginationCriteriaType } from "../appTypes";

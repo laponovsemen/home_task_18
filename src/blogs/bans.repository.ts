@@ -1,14 +1,5 @@
 import { InjectModel, Prop } from "@nestjs/mongoose";
-import {
-  APIPost, BanInfoDB,
-  Blog,
-  BlogDocument,
-  BloggerBansForSpecificBlog,
-  BloggerBansForSpecificBlogDocument,
-  BloggerBansForSpecificBlogSchema,
-  NewestLike,
-  PostDocument
-} from "../mongo/mongooseSchemas";
+
 import { FilterQuery, Model } from "mongoose";
 import { paginationCriteriaType } from "../appTypes";
 import { Common } from "../common";
@@ -16,14 +7,19 @@ import { ObjectId } from "mongodb";
 import { Injectable } from "@nestjs/common";
 import { BanBlogDTO, BanUserByBloggerDTO } from "../input.classes";
 import { UsersRepository } from "../users/users.reposiroty";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
+import {User} from "../entities/user-entity";
+import {BloggerBansForSpecificBlog} from "../entities/blogger-bans-for-specific-blog-entity";
+import {Blog} from "../entities/blog-entity";
 
 @Injectable()
 export class BansRepository {
   constructor(
       protected readonly dataSource: DataSource,
     protected readonly common: Common,
-    protected readonly usersRepository: UsersRepository
+    protected readonly usersRepository: UsersRepository,
+    @InjectRepository(BloggerBansForSpecificBlog) protected bloggerBansForSpecificBlogTypeORMRepository : Repository<BloggerBansForSpecificBlog>,
   ) {
   }
 
@@ -35,12 +31,24 @@ export class BansRepository {
       return null;
     }
 
-    const banExistsQuery =  await this.dataSource.query(`
-    SELECT * FROM public."BloggerBanForBlogInfoTable"
-    WHERE "userId" = $1 AND "blogId" = $2;
-    `, [userToBanId, blogId])
-    const [banExists] = banExistsQuery
-
+    const banExists = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .findOne({
+          where: {
+            bannedUser:{
+              id: userToBanId
+            },
+            blog: {
+              id : blogId
+            }
+          },
+          relations : {
+            blog : true
+          }
+  })
+    const blog = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .findBy({
+          id : blogId
+        })
     console.log(banExists, 'is banned');
     if (banExists && DTO.isBanned) {
       console.log('u want to ban banned user');
@@ -51,28 +59,24 @@ export class BansRepository {
       return true;
     }
     if (DTO.isBanned) {
-      const newBan = {
-        ownerId: ownerId,
-        blogId: blogId,
-        banDate: new Date().toISOString(),
-        banReason: DTO.banReason,
-        isBanned: DTO.isBanned,
-        userId: userToBanId,
-
-      };
-      const res =  await this.dataSource.query(`
-    INSERT INTO public."BloggerBanForBlogInfoTable"(
-    "banDate", "isBanned", "blogId", "userId", "ownerId", "banReason")
-    VALUES ( $1, $2, $3, $4, $5, $6);
-    `, [newBan.banDate, newBan.isBanned, newBan.blogId, newBan.userId, newBan.ownerId, newBan.banReason])
+      const newBan =  BloggerBansForSpecificBlog.create(ownerId, userToBanId, blogId, DTO)
+      const res = await this.bloggerBansForSpecificBlogTypeORMRepository
+          .save(newBan)
 
       console.log('i ban this user, ban ibfo =>', res);
       return true;
     } else {
-      await this.dataSource.query(`
-    DELETE FROM public."BloggerBanForBlogInfoTable"
-    WHERE "userId" = $1 AND "blogId" = $2;
-    `, [userToBanId, blogId])
+
+
+      await this.bloggerBansForSpecificBlogTypeORMRepository.delete({
+        bannedUser : {
+          id : userToBanId
+        }
+        ,
+        blog : {
+          id : blogId
+        }
+      })
       console.log('unban user');
       return true;
     }
@@ -84,19 +88,26 @@ export class BansRepository {
     //const filter = {ownerId: blogOwnerFromToken, blogId: new ObjectId(blogId)}
     const pageSize = paginationCriteria.pageSize;
 
-    const totalCountQuery =  await this.dataSource.query(`
-    SELECT cast(COUNT(*) AS INTEGER) FROM public."BloggerBanForBlogInfoTable"
-    WHERE "isBanned" = $1 AND "blogId" = $2;
-    `, [true, blogId])
 
-    const totalCount = totalCountQuery[0].count
+
+    const totalCount = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .countBy({
+          "isBanned" : true,
+          blog : {
+            id : blogId
+          }
+        })
+
+    console.log(totalCount , "totalCount in bloggerBansForSpecificBlogTypeORMRepository")
+
+
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
     const sortDirection: "asc" | "desc" = paginationCriteria.sortDirection;
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-    const result =  await this.dataSource.query(`
+   /* const result =  await this.dataSource.query(`
     SELECT b."banDate",
      b."isBanned",
       CAST(b."userId" AS TEXT),
@@ -111,8 +122,15 @@ export class BansRepository {
     WHERE b."isBanned" = $1 AND "blogId" = $2
     ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
     LIMIT $3 OFFSET $4;
-    `, [true, blogId, pageSize, ToSkip])
+    `, [true, blogId, pageSize, ToSkip])*/
 
+    const result = await this.dataSource
+        .getRepository(BloggerBansForSpecificBlog)
+        .createQueryBuilder("BloggerBansForSpecificBlog")
+        .leftJoinAndSelect('BloggerBansForSpecificBlog.bannedUser', 'bannedUser')
+        .getMany()
+
+    console.log(result, " result")
 
     const items = result.map((item) => {
       return this.common.mongoBanSlicing(item);
@@ -139,10 +157,7 @@ export class BansRepository {
   }
 
   async deleteAllData() {
-    await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    await this.bloggerBansForSpecificBlogTypeORMRepository.delete({})
   }
 
   async findBanStatusForSpecificUser(blogId: string, commentatorId: string) {

@@ -1,20 +1,17 @@
 import { ObjectId } from 'mongodb';
 import { Mongoose } from 'mongoose';
 import { BlogViewModelType, paginationCriteriaType, PostDBModel } from "./appTypes";
-import {
-  APIComment,
-  APILike,
-  APIPost,
-  Blog,
-  BloggerBansForSpecificBlog,
-  commentatorInfoModel, SQLComment,
-  User,
-  WithMongoId
-} from "./mongo/mongooseSchemas";
+
 import { Injectable } from "@nestjs/common";
 import { Types } from "mongoose";
 import {v4 as uuidv4} from "uuid";
 import { Prop } from "@nestjs/mongoose";
+import {APILike} from "./entities/api-like-entity";
+import {WithMongoId} from "./mongo/mongooseSchemas";
+import {APIPost} from "./entities/api-post-entity";
+import {APIComment} from "./entities/api-comment-entity";
+import {Blog} from "./entities/blog-entity";
+import {User} from "./entities/user-entity";
 
 @Injectable()
 export class Common {
@@ -86,23 +83,8 @@ export class Common {
       },
     };
   };
-  mongoCommentSlicing = (Obj2: APIComment) => {
-    return {
-      id: Obj2.id,
-      content: Obj2.content,
-      commentatorInfo: {
-        userId : Obj2.commentatorInfo.userId,
-        userLogin : Obj2.commentatorInfo.userLogin,
-      },
-      createdAt: Obj2.createdAt,
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: "None",
-      },
-    };
-  };
-  SQLCommentMapping = (Obj2: SQLComment) => {
+
+  SQLCommentMapping = (Obj2: APIComment) => {
     return {
       id: Obj2.id,
       content: Obj2.content,
@@ -118,7 +100,7 @@ export class Common {
       },
     };
   };
-  mongoBlogSlicing = (Obj2: Blog) => {
+  mongoBlogSlicing = (Obj2: any) => {
     return {
       id: Obj2.id,
       name: Obj2.name,
@@ -130,7 +112,7 @@ export class Common {
       banInfo : Obj2.banInfo
     };
   };
-  mongoBlogSlicingWithoutBlogOwnerInfo = (Obj2: Blog) => {
+  mongoBlogSlicingWithoutBlogOwnerInfo = (Obj2: any) => {
     return {
       id: Obj2.id,
       name: Obj2.name,
@@ -158,13 +140,15 @@ export class Common {
 
 
   mongoBanSlicing= (Obj2: any) => {
-    return {banInfo:
+    return {
+      banInfo:
         {banDate: Obj2.banDate,
           banReason:Obj2.banReason,
           isBanned: Obj2.isBanned
         },
-      id: Obj2.userId,
-      login: Obj2.login}
+      id: Obj2.bannedUserId,
+      bannedUser: Obj2.bannedUser.login
+    }
   }
 
   mongoPostAndCommentCommentSlicing = (item : any, listOfPostsForBlogs: APIPost[]) =>  {
@@ -217,7 +201,7 @@ export class Common {
       id: Obj.id.toString(),
       login: Obj.login,
       email: Obj.email,
-      createdAt: '2023-06-22T04:50:48.741+03:00',
+      createdAt: Obj.createdAt,
       password: Obj.password,
       banInfo: {
         banDate: Obj.banDate,

@@ -1,18 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { APIComment, APIPost, Blog, BlogDocument } from "../mongo/mongooseSchemas";
 import { Model } from "mongoose";
 import { ObjectId } from "mongodb";
 import { paginationCriteriaType } from "../appTypes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
 import {PostDTO} from "../input.classes";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Blog} from "../entities/blog-entity";
+import {APIPost} from "../entities/api-post-entity";
 
 @Injectable()
 export class PostsRepository {
   constructor(protected readonly dataSource: DataSource,
               protected readonly common: Common,
+              @InjectRepository(APIPost) protected postsTypeORMRepository : Repository<APIPost>,
               protected readonly likeRepository: LikeRepository,
   ) {
   }
@@ -192,11 +195,7 @@ export class PostsRepository {
     return true
   }
   async deleteAllData(){
-    await this.dataSource.query(`
-    DELETE FROM public."APIPostTable"
-    WHERE 1 = 1
-   ;
-    `)
+    await this.postsTypeORMRepository.delete({})
   }
 
   async getAllCommentsForSpecificPosts(paginationCriteria: paginationCriteriaType, id: string) {

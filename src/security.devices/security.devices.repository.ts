@@ -1,20 +1,17 @@
 import { Injectable, Session } from "@nestjs/common";
 import { InjectModel, Prop } from "@nestjs/mongoose";
-import {
-  APIComment,
-  APIDeviceModel,
-  APISession,
-  CommentsDocument,
-  DeviceModelSchema,
-  SessionDocument
-} from "../mongo/mongooseSchemas";
+
 import { Model } from "mongoose";
 import { ObjectId } from "mongodb";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
+import {User} from "../entities/user-entity";
+import {APISession} from "../entities/api-session-entity";
 
 @Injectable()
 export class SecurityDevicesRepository {
     constructor(protected readonly dataSource: DataSource,
+                @InjectRepository(APISession) protected sessionsTypeORMRepository : Repository<APISession>,
 
                 ) {
 
@@ -79,10 +76,7 @@ export class SecurityDevicesRepository {
   }
 
   async deleteAllData() {
-      await this.dataSource.query(`
-    DELETE FROM public."APIDeviceModelTable"
-    WHERE 1 = 1;
-    `)
+      await this.sessionsTypeORMRepository.delete({})
   }
 
   async deleteAllSessionsForSpecifiedUser(userId: string) {

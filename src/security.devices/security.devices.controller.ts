@@ -20,8 +20,9 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthGuard, RefreshTokenAuthGuard } from "../auth/auth.guard";
 import { ObjectId } from "mongodb";
 import { AuthService } from "../auth/auth.service";
-import { APISession, User } from "../mongo/mongooseSchemas";
 import { SkipThrottle } from "@nestjs/throttler";
+import {APISession} from "../entities/api-session-entity";
+import {User} from "../entities/user-entity";
 
 @Controller("security/devices")
 export class SecurityDevicesController{

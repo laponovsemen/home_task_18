@@ -8,12 +8,7 @@ import {
   Put,
   Query, Req, Res, UseGuards
 } from "@nestjs/common";
-import {
-  APIPost,
-  APIPostDTO,
-  Blog,
-  WithPagination,
-} from '../mongo/mongooseSchemas';
+
 import { Common } from '../common';
 import {
   BlogsPaginationCriteriaType,

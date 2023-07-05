@@ -119,7 +119,7 @@ export class BanUserByBloggerDTO {
   @Length(20)
   banReason: string
   @IsNotEmpty()
-  @IsNumberString()
+  @IsString()
   blogId: string
 }
 

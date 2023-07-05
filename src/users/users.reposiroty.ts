@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel, Prop } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { CommentsDocument, User, UsersDocument } from "../mongo/mongooseSchemas";
 import { Common } from "../common";
 import { paginationCriteriaType } from "../appTypes";
 import add from 'date-fns/add'
@@ -9,20 +8,23 @@ import { ObjectId } from "mongodb";
 import { addMinutes } from "date-fns";
 import { SkipThrottle } from "@nestjs/throttler";
 import { BanUserDTO } from "../input.classes";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
+import {User} from "../entities/user-entity";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Blog} from "../entities/blog-entity";
 
 @SkipThrottle()
 @Injectable()
 export class UsersRepository {
   constructor(protected readonly dataSource: DataSource,
-              protected readonly common: Common) {
+              protected readonly common: Common,
+              @InjectRepository(User) protected usersTypeORMRepository : Repository<User>,
+  ) {
 
   };
 
   async deleteAllData() {
-    await this.dataSource.query(`
-    TRUNCATE public."UserTable"
-    `)
+    await this.usersTypeORMRepository.delete({})
   }
 
   async getAllUsers(paginationCriteria: paginationCriteriaType) {
@@ -84,23 +86,16 @@ export class UsersRepository {
   }
 
   async createUser(DTO: any) {
-    const login = DTO.login
-    const password = DTO.password
-    const email = DTO.email
-    const createdAt = new Date().toISOString()
-    const result = await this.dataSource.query(`
-        INSERT INTO public."UserTable"(
-         "login", "email", "password", "createdAt", "isConfirmed", "code", "codeDateOfExpiary", "banDate", "banReason", "isBanned")
-        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING id;
-    `, [login, email, password, createdAt, true, null, null, null, null, false])
 
+    const userToCreate = User.createAsAdmin(DTO)
+
+    const result = await this.usersTypeORMRepository.save(userToCreate)
 
     return {
-      id: result[0].id.toString(),
-      login,
-      email,
-      createdAt,
+      id: result.id,
+      login : userToCreate.login,
+      email : userToCreate.email,
+      createdAt: userToCreate.createdAt,
       banInfo: {
         banDate: null,
         banReason: null,
@@ -138,13 +133,17 @@ export class UsersRepository {
   }
 
   async findUserByLoginOrEmail(loginOrEmail: string, pass : string) {
-    const filter = {$or :[{login : loginOrEmail}, {email : loginOrEmail}]}
+    //const filter = {$or :[{login : loginOrEmail}, {email : loginOrEmail}]}
     //QUERY
-    const queryResult = await this.dataSource.query(`
-    SELECT * FROM public."UserTable"
-    WHERE public."UserTable".login = $1 OR public."UserTable".email = $1;
-    ;`, [loginOrEmail])
-    const result = queryResult[0]
+    const result = await this.dataSource
+        .getRepository(User)
+        .createQueryBuilder("user")
+        .where("user.login = :loginOrEmail", { loginOrEmail: loginOrEmail })
+        .orWhere('user.email = :loginOrEmail', { loginOrEmail: loginOrEmail })
+        .getOne()
+
+
+
 
     console.log(result , " result in findUserByLoginOrEmail")
     if (!result) {
@@ -153,31 +152,17 @@ export class UsersRepository {
     return this.common.SQLUserWithPasswordMapping(result)
   }
   async createUnconfirmedUser(login: string, password: string, email: string) {
-    const dateOfCreation = new Date()
-    const codeDateOfExpiary = add(dateOfCreation, {minutes: 10})
-    const codeToSend = this.common.createEmailSendCode()
-    const newUnconfirmedUser: User = {
-      createdAt: dateOfCreation,
-      email: email,
-      login: login,
-      password: password,
-      isConfirmed: false,
-      code: codeToSend,
-      codeDateOfExpiary: codeDateOfExpiary,
-      banDate: null,
-      banReason: null,
-      isBanned: false
-    }
-    const newlyCreatedUser = await await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+
+    const code = this.common.createEmailSendCode()
+    const newUnconfirmedUser = User.createUnconfirmedUser(login, password, email, code)
+
+    const newlyCreatedUserQuery = await this.usersTypeORMRepository.save(newUnconfirmedUser)
     return {
-      id : newlyCreatedUser._id,
-      createdAt: dateOfCreation,
-      email: email,
-      login: login,
-      code: codeToSend,
+      id : newlyCreatedUserQuery.id,
+      createdAt: newlyCreatedUserQuery.createdAt,
+      email: newlyCreatedUserQuery.email,
+      login: newlyCreatedUserQuery.login,
+      code: newlyCreatedUserQuery.code,
 
     }
 
@@ -208,7 +193,7 @@ export class UsersRepository {
   }
 
   async findUserCodeFreshness(foundUser: User) {
-    return new Date() < foundUser.codeDateOfExpiary!
+    return new Date().toISOString() < foundUser.codeDateOfExpiary!
   }
 
   async makeUserConfirmed(foundUser: User) {
@@ -223,23 +208,31 @@ export class UsersRepository {
     if(!login){
       return null
     }
-    const [result] = await this.dataSource.query(`
+    /*const [result] = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
     WHERE "login" = $1
     `, [login] )
-    console.log(result, "result findUserById findUserById");
+    console.log(result, "result findUserById findUserById");*/
+
+    const result = await this.usersTypeORMRepository.findOneBy({
+      login
+    })
+
+
     return result
   }
 
   async findUserById(userId: string) {
     console.log(userId, "userId in findUserById");
-    if(!Number(userId)){
-      return null
-    }
-    const [result] = await this.dataSource.query(`
+
+    /*const [result] = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
     WHERE "id" = $1
-    `, [userId] )
+    `, [userId] )*/
+
+    const result = await this.usersTypeORMRepository.findOneBy({
+      id : userId
+    })
     console.log(result, "result findUserById findUserById");
     return result
   }

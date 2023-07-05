@@ -167,7 +167,7 @@ export class AuthController {
     console.log(result, "result");
 
     return {
-      userId : result._id,
+      userId : result.id,
       email : result.email,
       login : result.login
     }

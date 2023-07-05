@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { PostsRepository } from "./posts.repository";
 import { paginationCriteriaType } from "../appTypes";
 import { CommentForSpecifiedPostDTO } from "../input.classes";
-import { APIComment, User } from "../mongo/mongooseSchemas";
 import { JwtService } from "@nestjs/jwt";
 import { CommentsRepository } from "../comments/comments.repository";
 import { Common } from "../common";
 import { AuthService } from "../auth/auth.service";
 import { LikeRepository } from "../likes/likes.repository";
 import { ObjectId } from "mongodb";
+import {APIComment} from "../entities/api-comment-entity";
 
 
 @Injectable()
@@ -121,7 +121,7 @@ export class PostsService{
   }
 
   async createCommentForSpecificPost(DTO: CommentForSpecifiedPostDTO, postIdAsString: string, token: string) {
-    const content = DTO.content
+
     const user = await this.authService.getUserByToken(token)
     console.log(user, " in await this.authService.getUserByToken(token)")
     const foundPost = await this.postsRepository.getPostByIdWithOutLikes(postIdAsString)
@@ -131,26 +131,19 @@ export class PostsService{
 
     }
     const createdAt = new Date().toISOString()
-    const newComment: APIComment ={
-      content: content,
-      commentatorInfo: {
-        userId: user.id,
-        userLogin: user.login,
-      },
-      postId : postIdAsString,
-      createdAt: createdAt,
-      isHiden : false
-    }
+
+    const newComment = APIComment.create(DTO, user, postIdAsString)
+
     console.log(newComment);
     const createdComment = await this.commentsRepository.createNewComment({...newComment})
 
     console.log(createdComment , " createdComment to return");
     return {
       id: createdComment.id,
-      content: content,
+      content: DTO.content,
       commentatorInfo: {
-        userId: newComment.commentatorInfo.userId.toString(),
-        userLogin: newComment.commentatorInfo.userLogin,
+        userId: user.id,
+        userLogin: user.login,
       },
       createdAt: createdAt,
       likesInfo: {

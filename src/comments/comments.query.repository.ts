@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { APIComment, APIPost, CommentsDocument } from "../mongo/mongooseSchemas";
 import { ObjectId } from "mongodb";
 import { CommentForSpecifiedPostDTO } from "../input.classes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
 import {DataSource} from "typeorm";
+import {APIPost} from "../entities/api-post-entity";
 
 @Injectable()
 export class CommentsQueryRepository{
