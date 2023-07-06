@@ -89,8 +89,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       email : "igorlaponov01011972@gmail.com",
       login : "string",
       password : "stringstring",
-    }).expect(400)
-    expect(result.body).toEqual({})
+    }).expect(204)
 
 
   }, 10000)

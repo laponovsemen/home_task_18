@@ -169,19 +169,38 @@ export class UsersRepository {
   }
 
   async findUserByEmail(email: string) {
-    const filter = { email: email }
+    /*const filter = { email: email }
     return  this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+    console.log(email, "email in findUserByEmail");
+    if(!email){
+      return null
+    }
+    /*const [result] = await this.dataSource.query(`
+    SELECT *  FROM public."UserTable"
+    WHERE "login" = $1
+    `, [login] )
+    console.log(result, "result findUserById findUserById");*/
+
+    const result = await this.usersTypeORMRepository.findOneBy({
+      email
+    })
+    return  result
   }
 
-  async changeUsersConfirmationCode(_id: ObjectId, confirmationCode: string) {
+  async changeUsersConfirmationCode(id: string, confirmationCode: string) {
     const newCodeDateOfExpiary = addMinutes(new Date(), 30)
-    await await this.dataSource.query(`
+    /*await  this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+    await this.usersTypeORMRepository
+        .update({id},
+            {code : confirmationCode})
   }
 
   async findUserByRegistrationCode(code: string) {
@@ -217,8 +236,6 @@ export class UsersRepository {
     const result = await this.usersTypeORMRepository.findOneBy({
       login
     })
-
-
     return result
   }
 

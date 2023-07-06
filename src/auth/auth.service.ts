@@ -80,7 +80,7 @@ export class AuthService implements OnModuleInit{
       const UserStatus = UserExists.code
 
       await this.emailAdapter.sendEmail(email, confirmationCode)
-      await this.usersRepository.changeUsersConfirmationCode(UserExists._id, confirmationCode)
+      await this.usersRepository.changeUsersConfirmationCode(UserExists.id, confirmationCode)
       return {result : true, field : null, message : null}
     }
   }
