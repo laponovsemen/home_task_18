@@ -103,16 +103,19 @@ export class CommentsQueryRepository{
       const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
-      const result = await this.dataSource
+      const commentsForSpecificUser = await this.dataSource
           .getRepository(User)
           .createQueryBuilder('user')
           .leftJoinAndSelect('user.blogs', 'blogs')
           .leftJoinAndSelect('blogs.posts', 'posts')
           .leftJoinAndSelect('posts.comments', 'comments')
+          .leftJoinAndSelect('comments.commentator', 'commentator')
           .where({id : userId})
           .skip(ToSkip)
           .take(pageSize)
-          .getMany();
+          .getOne();
+      console.log(commentsForSpecificUser)
+      const result = commentsForSpecificUser
       console.log(result, " result in getListOfCommentsByPostIds");
       console.log(result, "blyat");
 

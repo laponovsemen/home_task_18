@@ -210,21 +210,49 @@ export class LikeRepository {
     }
 
     async findLikesCountForSpecificComment(commentId: string) {
-        const likes = await this.dataSource.query(`
+       /* const likes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
     `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Like, false])
         console.log(likes[0].count, " findLikesCountForSpecificComment")
-        return likes[0].count
+        return likes[0].count*/
+
+        const likes = await this.likesTypeORMRepository.count({
+            where: {
+                parentType: parentTypeEnum.comment,
+                comment: {
+                    id: commentId
+                },
+                status: StatusTypeEnum.Like,
+                isHiden: false
+
+            }
+        })
+        return likes
+
+
     }
 
     async findDisikesCountForSpecificComment(commentId: string) {
-        const dislikes = await this.dataSource.query(`
+        /*const dislikes = await this.dataSource.query(`
     SELECT cast(count(*) as INTEGER) FROM public."APILikeTable"
     WHERE "parentType" = $1 AND "parentId" = $2 AND "status" = $3 AND "isHiden" = $4;
     `, [parentTypeEnum.comment, commentId, StatusTypeEnum.Dislike, false])
         console.log(dislikes[0].count, " findDisikesCountForSpecificComment")
-        return dislikes[0].count
+        return dislikes[0].count*/
+
+        const likes = await this.likesTypeORMRepository.count({
+            where: {
+                parentType: parentTypeEnum.comment,
+                comment: {
+                    id: commentId
+                },
+                status: StatusTypeEnum.Dislike,
+                isHiden: false
+
+            }
+        })
+        return likes
     }
 
     async findMyStatusForSpecificComment(commentId: string, userId: string) {
@@ -236,40 +264,42 @@ export class LikeRepository {
         }
 
         console.log("before filter");
-        console.log({
-            parentId: commentId,
-            parentType: parentTypeEnum.comment,
-            userId: userId
-        }, "filter");
-        const filter = {
-            parentId: commentId,
-            parentType: parentTypeEnum.comment,
-            userId: userId
-        }
-
-        const result = await this.dataSource.query(`
-    SELECT "status" FROM public."APILikeTable"
-    WHERE "parentType" = $1 AND "parentId" = $2 AND "userId" = $3;
-    `, [parentTypeEnum.comment, commentId, userId])
-
+        const result = await  this.likesTypeORMRepository
+            .findBy({
+                comment : {
+                    id : commentId
+                },
+                user : {
+                    id : userId
+                },
+                parentType : parentTypeEnum.comment
+            })
         console.log(result, "result");
         return result[0] ? result[0].status : null
 
     }
 
     async makeLikesHiden(userId: string) {
-        await this.dataSource.query(`
+        /*await this.dataSource.query(`
     UPDATE public."APILikeTable"
     SET "isHiden" = $2
     WHERE "userId" = $1;
-    `, [userId, true])
+    `, [userId, true])*/
+
+        await this.likesTypeORMRepository
+            .update({user: {id: userId}},
+                {isHiden : true})
     }
 
     async makeLikesVisible(userId: string) {
-        await this.dataSource.query(`
+        /*await this.dataSource.query(`
     UPDATE public."APILikeTable"
     SET "isHiden" = $2
     WHERE "userId" = $1;
-    `, [userId, false])
+    `, [userId, false])*/
+
+        await this.likesTypeORMRepository
+            .update({user: {id: userId}},
+                {isHiden : false})
     }
 }

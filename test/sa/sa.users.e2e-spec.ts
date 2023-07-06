@@ -492,8 +492,6 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .expect(404)
 
   }, 10000)
-
-
   it("shoud create user , create blog and try to delete blog", async ()=> {
     await request(server).delete("/testing/all-data")
     const user = await request(server)

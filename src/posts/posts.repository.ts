@@ -78,7 +78,7 @@ export class PostsRepository {
       return null
     }
     console.log(foundPost, " foundPost")
-    if (foundPost.length === 0) {
+    if (!foundPost) {
       console.log("empty result of query ingetPostById")
       return null
     } else {
@@ -292,12 +292,17 @@ export class PostsRepository {
   }
 
   async makeAllPostsForBlogHiden(blogId: string) {
-    await this.dataSource.query(`
+    /*await this.dataSource.query(`
     UPDATE public."APIPostTable"
     SET "isHiden" = $2
     WHERE "blogId" = $1;
 
-    `, [blogId, true])
+    `, [blogId, true])*/
+
+    await this.postsTypeORMRepository
+        .update({blog :{id : blogId}},
+            {isHiden : true})
+
   }
 
   async makeAllPostsForBlogVisible(blogId: string) {

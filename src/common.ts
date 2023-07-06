@@ -146,8 +146,8 @@ export class Common {
           banReason:Obj2.banReason,
           isBanned: Obj2.isBanned
         },
-      id: Obj2.bannedUserId,
-      bannedUser: Obj2.bannedUser.login
+      id: Obj2.bannedUser.id,
+      login: Obj2.bannedUser.login
     }
   }
 

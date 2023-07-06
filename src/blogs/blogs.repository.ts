@@ -4,11 +4,12 @@ import {Common} from '../common';
 import {ObjectId} from 'mongodb';
 import {Injectable} from "@nestjs/common";
 import {BanBlogDTO, BlogDTO} from "../input.classes";
-import {DataSource, Repository} from "typeorm";
+import {DataSource, ILike, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Blog} from "../entities/blog-entity";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
+import {BlogBan} from "../entities/blog-ban-entity";
 
 @Injectable()
 export class BlogsRepository {
@@ -26,12 +27,16 @@ export class BlogsRepository {
         filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%%'
 
         const pageSize = blogsPagination.pageSize;
-        const totalCountQuery = await this.dataSource.query(`
+       /* const totalCountQuery = await this.dataSource.query(`
         SELECT CAST(COUNT(*) AS INTEGER) FROM public."BlogsTable"
         WHERE  "name" ILIKE $1 AND "blogBanId" IS NULL
     `, [filter.name])
-
-        const totalCount = parseInt(totalCountQuery[0].count, 10)
+*/
+        const totalCount = await this.blogsTypeORMRepository
+            .countBy({
+                name : ILike(filter.name),
+                blogBan : null
+            })
         const pagesCount = Math.ceil(totalCount / pageSize);
         const page = blogsPagination.pageNumber;
         const sortBy = blogsPagination.sortBy;
@@ -39,7 +44,7 @@ export class BlogsRepository {
         const ToSkip = blogsPagination.pageSize * (blogsPagination.pageNumber - 1);
 
 
-        const result = await this.dataSource.query(`
+        /*const result = await this.dataSource.query(`
     SELECT CAST("id" AS TEXT),
     "name" COLLATE "C",
     "description",
@@ -50,7 +55,21 @@ export class BlogsRepository {
      WHERE  "name" ILIKE $3 AND "blogBanId" IS NULL
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
      LIMIT $1 OFFSET $2
-    `, [pageSize, ToSkip, filter.name])
+    `, [pageSize, ToSkip, filter.name])*/
+
+        const result = await this.blogsTypeORMRepository
+            .find({
+                where : {
+                name : ILike(filter.name),
+                blogBan : null
+                },
+                order : {
+                    [sortBy] :  sortDirection.toUpperCase()
+                },
+                take : pageSize,
+                skip : ToSkip
+            })
+
 
         if (result) {
             const items = result.map((item) => {
@@ -136,20 +155,25 @@ export class BlogsRepository {
 
     async getAllPostsForSpecificBlog(paginationCriteria: paginationCriteriaType, blogId: string,) {
 
-        let countBlogsQuery
+        let totalCount
         try {
-            countBlogsQuery = await this.dataSource.query(`
+            /*countBlogsQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS INTEGER) 
     FROM public."APIPostTable"
      WHERE "blogId" = $1
-    `, [blogId])
+    `, [blogId])*/
+
+            totalCount = await this.postsTypeORMRepository
+                .countBy({
+                    blog : {id : blogId}
+                })
+
         } catch (e) {
             console.log(e)
             return null
         }
-
+        console.log(totalCount, " countBlogsQuery")
         const pageSize = paginationCriteria.pageSize;
-        const totalCount = countBlogsQuery[0].count
         const pagesCount = Math.ceil(totalCount / pageSize);
         const page = paginationCriteria.pageNumber;
         const sortBy = paginationCriteria.sortBy;
@@ -157,7 +181,7 @@ export class BlogsRepository {
         const ToSkip =
             paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-        const result = await this.dataSource.query(`
+        /*const result = await this.dataSource.query(`
     SELECT CAST("id" AS TEXT),
      "title",
       "shortDescription",
@@ -172,7 +196,23 @@ export class BlogsRepository {
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
      LIMIT $2 OFFSET $3
     `, [blogId, pageSize, ToSkip])
-
+*/
+        const result = await this.postsTypeORMRepository
+            .find({
+                relations: {
+                    blog : true
+                },
+                where : {
+                    blog : {
+                        id : blogId
+                    }
+                },
+                order : {
+                    [sortBy]: sortDirection.toUpperCase()
+                },
+                skip : ToSkip,
+                take : pageSize
+            })
 
         console.log(
             {
@@ -281,13 +321,22 @@ export class BlogsRepository {
         if (!blogId) {
             return null
         }
-        const deletedBlog = await this.dataSource.query(`
-    DELETE FROM public."BlogsTable"
-    WHERE "id" = $1
-    `, [blogId])
+
+        const foundBlog = await this.blogsTypeORMRepository
+            .findOneBy({
+                id : blogId
+            })
+
+        if(!foundBlog){
+            return null
+        }
+        const deletedBlog = await this.blogsTypeORMRepository
+            .delete({
+                id : blogId
+            })
 
 
-        return
+        return true
     }
 
     async createPostForSpecificBlog(DTO: any, id: string) {
@@ -390,10 +439,10 @@ export class BlogsRepository {
     `, [])
     }
 
-    async BanBlog(DTO: BanBlogDTO, blogId: string) {
-        const banDate = new Date().toISOString()
+    async BanBlog(DTO: BanBlogDTO, blog : Blog) {
 
-        const ban = await this.dataSource.query(`
+        const newBan = BlogBan.create(DTO, blog)
+        /*const ban = await this.dataSource.query(`
     INSERT INTO public."BlogBanTable"
     ("isBanned", "banDate")
     VALUES ($1, $2)
@@ -404,10 +453,11 @@ export class BlogsRepository {
     SET "blogBanId"= $2
         WHERE "id" = $1;
         
-    `, [blogId, ban[0].id])
-        console.log(ban, " ban")
-        console.log(updateBlog, " updateBlog")
-        console.log(ban[0].id, " ban[0].id")
+    `, [blogId, ban[0].id])*/
+
+
+        const ban = await this.blogsTypeORMRepository
+            .save(newBan)
 
         return
     }

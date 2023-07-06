@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb";
 import { addMinutes } from "date-fns";
 import { SkipThrottle } from "@nestjs/throttler";
 import { BanUserDTO } from "../input.classes";
-import {DataSource, Repository} from "typeorm";
+import {DataSource, ILike, Repository} from "typeorm";
 import {User} from "../entities/user-entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Blog} from "../entities/blog-entity";
@@ -250,22 +250,38 @@ export class UsersRepository {
 
   async banUserDB(userId: string, DTO: BanUserDTO) {
     const isBanned = DTO.isBanned
-    const banDate = new Date()
+    const banDate = new Date().toISOString()
     const banReason = DTO.banReason
-    return  this.dataSource.query(`UPDATE public."UserTable"
+   /* return this.dataSource.query(`UPDATE public."UserTable"
     SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
         WHERE id = $1;
-    `,[userId, banDate, banReason,true])
+    `, [userId, banDate, banReason, true])*/
+
+    return await this.usersTypeORMRepository
+        .update({id : userId},
+            {
+              banDate : banDate,
+              banReason : banReason,
+              isBanned : isBanned
+            })
   }
 
   async unbanUserDB(userId: string, DTO: BanUserDTO) {
   const isBanned = DTO.isBanned
   const banDate = new Date().toISOString()
   const banReason = DTO.banReason
-    return await this.dataSource.query(`UPDATE public."UserTable"
+    /*return await this.dataSource.query(`UPDATE public."UserTable"
     SET  "banDate"=$2, "banReason"=$3, "isBanned"=$4
         WHERE id = $1;
-    `,[userId, null, null,false])
+    `,[userId, null, null,false])*/
+
+    return await this.usersTypeORMRepository
+        .update({id : userId},
+            {
+              banDate : null,
+              banReason : null,
+              isBanned : false
+            })
   }
 
 
@@ -278,30 +294,38 @@ export class UsersRepository {
     console.log(searchEmailTerm, "searchEmailTerm in getAllUsersSA")
 
 
-    let banQuery = ``
+    /*let banQuery = ``
     if(searchBanTerm === 'banned'){
       banQuery = `AND "isBanned" = TRUE`
     }else if(searchBanTerm === 'notBanned'){
       banQuery = `AND "isBanned" = FALSE`
-    }
-
-    console.log(banQuery, "banQuery in getAllUsersSA")
-const query = `
+    }*/
+    /*const query = `
     SELECT CAST(COUNT(*) AS INTEGER) FROM public."UserTable"
     WHERE 
          ("login" ILIKE $1 
     OR
         "email" ILIKE $2)
-    `
-  const resultQuery = query + banQuery;
+    `*/
+  const where : any = {
+    login : ILike(searchLoginTerm),
+    email : ILike(searchEmailTerm),
 
-    console.log(resultQuery, 'resultQuery')
+  }
+    if(searchBanTerm === 'banned'){
+      where.isBanned = true
+    }else if(searchBanTerm === 'notBanned'){
+      where.isBanned = false
+    }
+
+  const resultCountQuery = await this.usersTypeORMRepository
+      .count({
+        where : where
+      })
+
+    console.log(resultCountQuery, 'resultQuery')
     const pageSize = paginationCriteria.pageSize;
-    const totalCountQuery = await this.dataSource.query(resultQuery, [searchLoginTerm, searchEmailTerm])
-    console.log(resultQuery, " resultQuery")
-
-
-    const totalCount = parseInt(totalCountQuery[0].count)
+    const totalCount = resultCountQuery
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
@@ -309,24 +333,22 @@ const query = `
 
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-    const selectQuery = `
-    SELECT * FROM public."UserTable"
-    WHERE 
-        ("login" ILIKE $1
-    OR
-        "email" ILIKE $2)
-    `
+
 
     console.log(sortBy, ' sortBy')
     console.log([sortBy, searchLoginTerm, searchEmailTerm,  pageSize, ToSkip ])
-    const result = await this.dataSource.query(selectQuery + banQuery + `
-    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
-    LIMIT $3 OFFSET $4
-    ;
-    ` , [ searchLoginTerm, searchEmailTerm,  pageSize, ToSkip ])
+    const resultFoundQuery = await this.usersTypeORMRepository
+        .find({
+          where : where,
+          skip: ToSkip,
+          take: pageSize,
+          order : {
+            [sortBy] : sortDirection.toUpperCase()
+          }
+        })
 
-       console.log(result, " SQL_RESULT")
-       const items = result.map((item) => {
+       console.log(resultFoundQuery, " SQL_RESULT")
+       const items = resultFoundQuery.map((item) => {
          return this.common.SQLUsermapping(item)
        })
 

@@ -11,6 +11,7 @@ import {Blog} from "../entities/blog-entity";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
 import {InjectRepository} from "@nestjs/typeorm";
+import {isUUID} from "class-validator";
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -215,14 +216,25 @@ export class BlogsQueryRepository {
     if (!blogId) {
       return null
     }
-    const foundBlogQuery = await this.dataSource.query(`
+    /*const foundBlog = await this.dataSource.query(`
     SELECT * FROM public."BlogsTable"
     WHERE id = $1
-    `, [blogId])
-    if(foundBlogQuery.length === 0){
+    `, [blogId])*/
+
+    const foundBlog = await this.bR
+        .findOne({
+          where : {
+            id: blogId
+          },
+          relations : {
+            blogBan : true
+          }
+        })
+
+    if(!foundBlog){
       return null
     }
-    const foundBlog = foundBlogQuery[0]
+
     return foundBlog
   }
   async updateBlogById(DTO: any, id: string) {
@@ -279,7 +291,9 @@ export class BlogsQueryRepository {
   }
 
   async getBlogByIdWithBloggerInfo(blogId) {
-
+    if (!isUUID(blogId)){
+      return null
+    }
     /*const foundBlogQuery = await this.dataSource.query(`
     SELECT b."id", b."name", b."description", b."websiteUrl", b."isMembership", b."createdAt", b."blogOwnerId", u."login"
     FROM public."BlogsTable" b
@@ -290,6 +304,8 @@ export class BlogsQueryRepository {
     `, [parseInt(blogId, 10)]);*/
 
     console.log(await this.bR.findOne({where: {id: blogId}}))
+
+
     const foundBlogs =  this.dataSource
         .getRepository(Blog)
         .createQueryBuilder("blog")

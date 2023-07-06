@@ -77,4 +77,29 @@ export class User {
 
         return newUser
     }
+
+    static getViewModelOfAllCommentsForSpecificUser(user: User) {
+
+        const blogs = user.blogs
+        /*{
+            "id": "string",
+            "content": "string",
+            "commentatorInfo": {
+            "userId": "string",
+                "userLogin": "string"
+        },
+            "createdAt": "2023-07-06T12:36:55.205Z",
+            "likesInfo": {
+            "likesCount": 0,
+                "dislikesCount": 0,
+                "myStatus": "None"
+        },
+            "postInfo": {
+            "id": "string",
+                "title": "string",
+                "blogId": "string",
+                "blogName": "string"
+        }
+        }*/
+    }
 }

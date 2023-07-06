@@ -1,7 +1,7 @@
 import { InjectModel, Prop } from "@nestjs/mongoose";
 
 import { FilterQuery, Model } from "mongoose";
-import { paginationCriteriaType } from "../appTypes";
+import {paginationCriteriaType, sortDirectionEnum} from "../appTypes";
 import { Common } from "../common";
 import { ObjectId } from "mongodb";
 import { Injectable } from "@nestjs/common";
@@ -128,6 +128,9 @@ export class BansRepository {
         .getRepository(BloggerBansForSpecificBlog)
         .createQueryBuilder("BloggerBansForSpecificBlog")
         .leftJoinAndSelect('BloggerBansForSpecificBlog.bannedUser', 'bannedUser')
+        .orderBy(`"banDate"`, sortDirection.toUpperCase() as "ASC" | "DESC")
+        .take(pageSize)
+        .skip(ToSkip)
         .getMany()
 
     console.log(result, " result")

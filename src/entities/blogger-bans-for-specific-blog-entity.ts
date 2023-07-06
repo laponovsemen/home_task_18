@@ -20,6 +20,8 @@ export class BloggerBansForSpecificBlog {
     @Column()
     banDate: string | null;
     @Column()
+    createdAt: string ;
+    @Column()
     banReason: String | null;
     @Column()
     isBanned: boolean;
@@ -34,6 +36,7 @@ export class BloggerBansForSpecificBlog {
         newBanForSpecificBlog.id = randomUUID()
         newBanForSpecificBlog.blog = blog
         newBanForSpecificBlog.banDate = new Date().toISOString()
+        newBanForSpecificBlog.createdAt = new Date().toISOString()
         newBanForSpecificBlog.owner = owner
         newBanForSpecificBlog.banReason = DTO.banReason
         newBanForSpecificBlog.isBanned = DTO.isBanned

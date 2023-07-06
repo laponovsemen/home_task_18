@@ -40,9 +40,9 @@ export class CommentsRepository{
     if (!commentId) {
       return null
     }
-    let foundCommentQuery
-    try {
-      foundCommentQuery = await this.dataSource.query(`
+
+
+    /*const  foundCommentQuery = await this.dataSource.query(`
     SELECT 
       cast(c."id" as TEXT),
       c."content",
@@ -56,16 +56,24 @@ export class CommentsRepository{
     public."UserTable" u
     ON c."commentatorId" = u."id"
     WHERE c."id" =  $1 AND u."isBanned" = $2
-    `, [commentId, false])
-    } catch (e) {
-      console.log(e)
-      return null
-    }
-    const foundComment = foundCommentQuery[0]
-    console.log(foundCommentQuery , " foundCommentQuery")
+    `, [commentId, false])*/
+
+    const foundComment = await this.commentsTypeORMRepository
+        .findOne({
+          relations:{
+            commentator : true
+          },
+          where : {
+            id : commentId,
+            commentator : {
+              isBanned : false
+            }
+          }
+        })
+    console.log(foundComment , " foundCommentQuery")
 
 
-    if (foundCommentQuery.length === 0) {
+    if (!foundComment) {
       return null
     } else {
       console.log(userId, "userId in getPostById");
@@ -130,17 +138,25 @@ export class CommentsRepository{
   }
 
   async makeCommentsHiden(userId: string) {
-    await this.dataSource.query(`
+    /*await this.dataSource.query(`
     UPDATE public."APICommentTable"
     SET "isHiden" = $2
     WHERE "commentatorId" = $1;
-    `, [userId, true])
+    `, [userId, true])*/
+
+    await this.commentsTypeORMRepository
+        .update({commentator: {id : userId}},
+            {isHiden : true})
   }
   async makeCommentsVisible(userId: string) {
-    await this.dataSource.query(`
+    /*await this.dataSource.query(`
     UPDATE public."APICommentTable"
     SET "isHiden" = $2
     WHERE "commentatorId" = $1;
-    `, [userId, false])
+    `, [userId, false])*/
+
+    await this.commentsTypeORMRepository
+        .update({commentator: {id : userId}},
+            {isHiden : false})
   }
 }

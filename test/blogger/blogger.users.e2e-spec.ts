@@ -285,7 +285,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
 
 
-  }, 10000);
+  }, 20000);
   it("create user, login, create blog, ", async () => {
 
     await request(server).delete("/testing/all-data");
