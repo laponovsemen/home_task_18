@@ -3,6 +3,7 @@ import {Blog} from "./blog-entity";
 import {PostDTO} from "../input.classes";
 import {APIComment} from "./api-comment-entity";
 import {APILike} from "./api-like-entity";
+import {randomUUID} from "crypto";
 
 
 
@@ -19,10 +20,6 @@ export class APIPost {
     @ManyToOne(() => Blog, b => b.posts, {onDelete : 'SET NULL'})
     blog : Blog
 
-    @Column()
-    blogId: string;
-    @Column()
-    blogName: string;
     @Column({type : "varchar"})
     createdAt: string;
     @Column()
@@ -41,13 +38,13 @@ export class APIPost {
 
         }
     }
-    static create(postDTO : PostDTO, blogName : string) {
+    static create(postDTO : PostDTO, blog : any) {
         const newPost = new APIPost()
+        newPost.id = randomUUID()
         newPost.title = postDTO.title
         newPost.shortDescription = postDTO.shortDescription
         newPost.content = postDTO.content
-        newPost.blogId = postDTO.blogId
-        newPost.blogName = blogName
+        newPost.blog = blog
         newPost.createdAt = new Date().toISOString()
         newPost.isHiden = false
 

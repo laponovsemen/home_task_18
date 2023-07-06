@@ -132,7 +132,7 @@ export class PostsService{
     }
     const createdAt = new Date().toISOString()
 
-    const newComment = APIComment.create(DTO, user, postIdAsString)
+    const newComment = APIComment.create(DTO, user, foundPost)
 
     console.log(newComment);
     const createdComment = await this.commentsRepository.createNewComment({...newComment})

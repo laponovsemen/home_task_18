@@ -62,23 +62,23 @@ export class PostsRepository {
   }
 
   async getPostById(postId: string, userId : string) {
-    console.log(isNaN(parseInt(postId, 10)), parseInt(postId, 10),postId, "parse")
-    if (!postId) {
-      return null
-    }
-    let foundPostQuery
+
+    let foundPost
     try {
-      foundPostQuery = await this.dataSource.query(`
-    SELECT * FROM public."APIPostTable"
-    WHERE "id" = $1 AND "isHiden" = $2;
-    `, [postId, false])
+      foundPost = await this.postsTypeORMRepository
+          .findOne({where : {
+                id: postId
+              },
+                relations: {
+                  blog : true
+                }
+              })
     } catch (error) {
       console.log(error)
       return null
     }
-
-    const foundPost = foundPostQuery[0]
-    if (foundPostQuery.length === 0) {
+    console.log(foundPost, " foundPost")
+    if (foundPost.length === 0) {
       console.log("empty result of query ingetPostById")
       return null
     } else {
@@ -256,17 +256,25 @@ export class PostsRepository {
     if(!postIdAsString){
       return null
     }
-    let foundPostQuery
+    let foundPost
     try{
-      foundPostQuery= await this.dataSource.query(`
+    /*  foundPostQuery= await this.dataSource.query(`
     SELECT *  FROM public."APIPostTable"
     WHERE "id" = $1;
-    `, [postIdAsString])
+    `, [postIdAsString])*/
+
+      foundPost = await this.postsTypeORMRepository.findOne({
+        relations : {
+          blog : true
+        },
+        where : {
+          id: postIdAsString
+        }
+      })
     } catch (e) {
       console.log(e)
       return null
     }
-    const foundPost = foundPostQuery[0]
     return foundPost
   }
 

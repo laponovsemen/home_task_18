@@ -30,22 +30,20 @@ export class Blog {
     isMembership: boolean;
     @Column()
     createdAt: string;
-    @ManyToOne(() => User, (user) => user.blogs)
+    @ManyToOne(() => User, (user) => user.blogs, )
     @JoinColumn()
     blogOwner: User
-    @Column()
-    blogOwnerId : string;
+
     @OneToOne(() => BlogBan, (blogBan) => blogBan.blog)
     @JoinColumn()
     blogBan : BlogBan
-    @Column({ nullable: true })
-    blogBanId: string
+
 
     @OneToMany(() => APIPost, p => p.blog)
     @JoinColumn()
     posts : APIPost[]
 
-    static create(DTO: BlogDTO, user: any) {
+    static create(DTO: BlogDTO, blogOwner: any) {
         const newBlog = new Blog()
         newBlog.id = randomUUID()
         newBlog.name = DTO.name
@@ -53,9 +51,22 @@ export class Blog {
         newBlog.websiteUrl = DTO.websiteUrl
         newBlog.isMembership = false
         newBlog.createdAt = new Date().toISOString()
-        newBlog.blogOwnerId = user.userId
-        newBlog.blogBanId = null
+        newBlog.blogOwner = blogOwner
+
 
         return newBlog
+    }
+
+    static createToUpdate(DTO: BlogDTO, presentBlog: Blog) {
+        const newBlogToUpdate = new Blog()
+        newBlogToUpdate.id = presentBlog.id
+        newBlogToUpdate.name = DTO.name
+        newBlogToUpdate.description = DTO.description
+        newBlogToUpdate.websiteUrl = DTO.websiteUrl
+        newBlogToUpdate.isMembership = false
+        newBlogToUpdate.createdAt = presentBlog.createdAt
+
+
+        return newBlogToUpdate
     }
 }

@@ -1,18 +1,18 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 import {APIPost} from "./api-post-entity";
 import {APILike} from "./api-like-entity";
 import {CommentForSpecifiedPostDTO} from "../input.classes";
 import {randomUUID} from "crypto";
+import {User} from "./user-entity";
 
 
 @Entity({ database: "tfaepjvr" })
 export class APIComment {
-    @PrimaryGeneratedColumn()
-    id?: string;
+    @PrimaryColumn()
+    id: string;
     @Column()
     content: string;
-    @Column()
-    commentatorId: string   ;
+
     @Column()
     login: string
     @Column()
@@ -23,20 +23,22 @@ export class APIComment {
 
     @ManyToOne(() => APIPost, p => p.comments, {onDelete : 'SET NULL'})
     post : APIPost
-    @Column()
-    postId : string;
+
+    @ManyToOne(() => User, u => u.comments, {onDelete : 'SET NULL'})
+    commentator : User
+
 
 
     @OneToMany(() => APILike, l => l.comment, {onDelete : 'SET NULL'})
     likes : APILike[]
 
-    static create(DTO: CommentForSpecifiedPostDTO, user: any, postIdAsString: string) {
+    static create(DTO: CommentForSpecifiedPostDTO, user: any, post: any) {
         const newComment = new APIComment()
         newComment.id = randomUUID()
         newComment.content = DTO.content
-        newComment.commentatorId = user.id
+        newComment.commentator = user
         newComment.login = user.login
-        newComment.postId = postIdAsString
+        newComment.post = post
         newComment.createdAt = new Date().toISOString()
         newComment.isHiden = false
 

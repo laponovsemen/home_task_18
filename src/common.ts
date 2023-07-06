@@ -35,8 +35,8 @@ export class Common {
   NewestLikesTypeSlicing = (Obj2: APILike) => {
     return {
       addedAt : Obj2.addedAt,
-      userId : Obj2.userId,
-      login : Obj2.login
+      userId : Obj2.user.id,
+      login : Obj2.user.login
     }
   }
    delay = async (milliseconds: number): Promise<void> => {
@@ -66,14 +66,14 @@ export class Common {
       banStatus
     };
   }
-  SQLPostMapping = (Obj2: WithMongoId<APIPost>) => {
+  SQLPostMapping = (Obj2: APIPost) => {
     return {
-      id: Obj2.id.toString(),
+      id: Obj2.id,
       title: Obj2.title,
       shortDescription: Obj2.shortDescription,
       content: Obj2.content,
-      blogId: Obj2.blogId.toString(),
-      blogName: Obj2.blogName,
+      blogId: Obj2.blog.id,
+      blogName: Obj2.blog.name,
       createdAt: Obj2.createdAt,
       extendedLikesInfo: {
         likesCount: 0,
@@ -89,7 +89,7 @@ export class Common {
       id: Obj2.id,
       content: Obj2.content,
       commentatorInfo: {
-        userId : Obj2.commentatorId,
+        userId : Obj2.commentator.id,
         userLogin : Obj2.login,
       },
       createdAt: Obj2.createdAt,

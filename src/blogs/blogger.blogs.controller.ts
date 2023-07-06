@@ -114,7 +114,7 @@ export class BloggerBlogsController {
       throw new NotFoundException("Blog not found")
     }
     console.log(foundBlog , " foundBlog")
-    if (foundBlog.blogOwnerId.toString() !== user.userId){
+    if (foundBlog.blogOwner.id.toString() !== user.userId){
       console.log("FORBIDDEN EXCEPTION")
       throw new ForbiddenException("Blog not found")
 
@@ -151,7 +151,7 @@ export class BloggerBlogsController {
     if(!foundBlog){
       throw new NotFoundException("Blog not found")
     }
-    if (foundBlog.blogOwnerId.toString() !== user.userId){
+    if (foundBlog.blogOwner.id.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -170,7 +170,7 @@ export class BloggerBlogsController {
     if(!foundBlog){
       throw new NotFoundException("Blog not found")
     }
-    if (foundBlog.blogOwnerId.toString() !== user.userId){
+    if (foundBlog.blogOwner.id.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -198,7 +198,7 @@ export class BloggerBlogsController {
     //console.log(foundBlog.blogOwnerInfo.userId.toString(), "foundBlog.blogOwnerInfo.userId.toString()");
     //console.log(user.userId, "user.userId");
 
-    if (foundBlog.blogOwnerId.toString() !== user.userId.toString()){
+    if (foundBlog.blogOwner.id.toString() !== user.userId.toString()){
       throw new ForbiddenException("Blog not found")
     }
 
@@ -225,7 +225,7 @@ export class BloggerBlogsController {
       throw new NotFoundException("Blog not found")
     }
 
-    if (foundBlog.blogOwnerId.toString() !== user.userId){
+    if (foundBlog.blogOwner.id.toString() !== user.userId){
       throw new ForbiddenException("Blog not found")
     }
 

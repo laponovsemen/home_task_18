@@ -164,12 +164,23 @@ export class BansRepository {
 
     //return this.banModel.findOne({ blogId: new ObjectId(blogId), userId: new ObjectId(commentatorId) });
 
-    const findBanStatusQuery =  await this.dataSource.query(`
+    /*const findBanStatusQuery =  await this.dataSource.query(`
     SELECT * FROM public."BloggerBanForBlogInfoTable"
     WHERE "blogId" = $1 AND "userId" = $2;
     `, [blogId, commentatorId])
-    const result = findBanStatusQuery[0]
-    if(findBanStatusQuery.length === 0){
+    const result = findBanStatusQuery[0]*/
+
+    const result = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .findOneBy({
+          blog : {
+            id : blogId
+          },
+          bannedUser : {
+            id : commentatorId
+          }
+        })
+    console.log(result, " result in findBanStatusForSpecificUser")
+    if(!result){
       return false
     } else {
       return result

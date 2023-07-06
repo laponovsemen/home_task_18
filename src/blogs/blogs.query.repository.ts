@@ -17,6 +17,7 @@ export class BlogsQueryRepository {
   constructor(
       protected readonly dataSource: DataSource,
       @InjectRepository(Blog) protected readonly bR: Repository<Blog>,
+      @InjectRepository(User) protected readonly userTypeORMRepository: Repository<User>,
 
     protected readonly common: Common,
   ) {}
@@ -185,41 +186,28 @@ export class BlogsQueryRepository {
     }
 
   async createNewBlog(DTO: any, user: any) {
-    const blogOwnerInfo = {
-      userId : user.userId,
-      userLogin :user.login,
-    }
-    const createdAt = new Date().toISOString()
-    const description = DTO.description
-    const isMembership = false
-    const name = DTO.name
-    const websiteUrl = DTO.websiteUrl
+    const blogOwner = await this.userTypeORMRepository.findOneBy({
+      id : user.userId
+    })
+
+
     const banInfo = {
       banDate: null,
       isBanned: false
     }
 
-    const blogToCreate  = new Blog()
+    const blogToCreate  = Blog.create(DTO,blogOwner)
 
-    blogToCreate.name = name
-    blogToCreate.description = description
-    blogToCreate.websiteUrl = websiteUrl
-    blogToCreate.isMembership = isMembership
-    blogToCreate.createdAt = createdAt
-    blogToCreate.blogOwnerId = blogOwnerInfo.userId
-    blogToCreate.blogBanId = null
 
-    const createdBlog : Blog = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+
+    const createdBlog : Blog = await this.bR.save(blogToCreate)
     return {
       id: createdBlog.id,
-      name,
-      description,
-      websiteUrl,
-      isMembership,
-      createdAt,
+      name : createdBlog.name,
+      description : createdBlog.description,
+      websiteUrl : createdBlog.websiteUrl,
+      isMembership : createdBlog.isMembership,
+      createdAt : createdBlog.createdAt,
       banInfo
     }
   }
@@ -332,8 +320,8 @@ export class BlogsQueryRepository {
       isMembership: foundBlog.isMembership,
       createdAt: foundBlog.createdAt,
       blogOwnerInfo: {
-        userId : foundBlog.blogOwnerId,
-        //userLogin : foundBlog.login
+        userId : foundBlog.blogOwner.id,
+        userLogin : foundBlog.blogOwner.login
       }
     }
   }

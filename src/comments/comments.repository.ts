@@ -21,16 +21,19 @@ export class CommentsRepository{
   async deleteAllData(){
     await this.commentsTypeORMRepository.delete({})
   }
-  async createNewComment(newComment : any){
-    const comment = await this.dataSource.query(`
+  async createNewComment(newComment : any, ){
+    console.log(newComment, " new comment to create")
+    /*const comment = await this.dataSource.query(`
     INSERT INTO public."APICommentTable"("content", "commentatorId", "createdAt", "postId", "isHiden")
     VALUES ($1, $2, $3, $4, $5)
     RETURNING CAST("id" AS TEXT);
-    `,[newComment.content, newComment.commentatorInfo.userId,newComment.createdAt, newComment.postId, newComment.isHiden])
+    `,[newComment.content, newComment.commentatorInfo.userId,newComment.createdAt, newComment.postId, newComment.isHiden])*/
 
+    const comment = await this.commentsTypeORMRepository
+        .save(newComment)
 
     console.log(comment, " commentSelectQuery")
-    return comment[0]
+    return comment
   }
 
   async getCommentById(commentId: string, userId: string) {

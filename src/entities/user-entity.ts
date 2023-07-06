@@ -4,6 +4,7 @@ import {UserDTO} from "../input.classes";
 import add from "date-fns/add";
 import {randomUUID} from "crypto";
 import {APISession} from "./api-session-entity";
+import {APIComment} from "./api-comment-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class User {
@@ -33,7 +34,11 @@ export class User {
     blogs : Blog[]
 
     @OneToMany(() => APISession, (session) => session.user)
-    session : APISession
+    session : APISession[]
+
+    @OneToMany(() => APIComment, (comment) => comment.commentator)
+    comments : APIComment[]
+
 
     static createAsAdmin(DTO: UserDTO) {
         const newUser = new User()
