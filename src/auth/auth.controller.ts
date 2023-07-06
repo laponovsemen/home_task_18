@@ -153,17 +153,19 @@ export class AuthController {
   }
 
 
-  @UseGuards(AuthGuard)
-  @Get('me')
+  @UseGuards(RefreshTokenAuthGuard)
+  @Get('/me')
   async getProfile(@Res({passthrough : true}) res: Response,
-                   @Req() req : Request) {
-    const accessToken = req.headers.authorization
-    //const refreshToken = req.cookies.refreshToken
-    const refreshTokenValidation = this.authService.verifyRefreshToken(accessToken)
+                   @Req() req : Request,
+                   @RefreshToken() refreshToken) {
+    console.log(" start getting my profile")
+    console.log(refreshToken, " refreshToken while getProfile")
+    const refreshTokenValidation = this.authService.verifyRefreshToken(refreshToken)
     if (!refreshTokenValidation) {
       throw new UnauthorizedException()
     }
-    const result = await this.authService.getUserByToken(accessToken);
+    console.log(" refreshTokenValidation passed")
+    const result = await this.authService.getUserByToken(refreshToken);
     console.log(result, "result");
 
     return {

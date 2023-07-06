@@ -53,10 +53,15 @@ export class SecurityDevicesRepository {
   }
 
   async gedDeviceByDeviceId(deviceId: string) {
-      return await this.dataSource.query(`
+      /*return await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+      return await this.sessionsTypeORMRepository
+          .findOneBy({
+              id : deviceId
+          })
 
   }
 

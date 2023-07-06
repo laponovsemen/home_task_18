@@ -103,9 +103,9 @@ export class AuthService implements OnModuleInit{
     if(!accessToken){
       return null
     }
-    const veriable = accessToken.split(" ")[1]
-    console.log(veriable, "veriable");
-    const payload = this.jwtService.decode(accessToken.split(" ")[1])
+
+    console.log(accessToken, "accessToken");
+    const payload = this.jwtService.decode(accessToken)
     console.log(payload, "payload")
     //if (typeof payload === "string") return undefined;
     if (!payload) return null;
@@ -168,6 +168,7 @@ export class AuthService implements OnModuleInit{
       return null
     }
     const deviceId : string =  refreshTokenVerification.deviceId
+    console.log(deviceId , " deviceId")
     const foundDevice = await this.securityDevicesRepository.gedDeviceByDeviceId(deviceId)
     if(!foundDevice) return null;
     if(foundDevice.refreshToken !== refreshToken){
