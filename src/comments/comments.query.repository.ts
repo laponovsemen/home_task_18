@@ -8,6 +8,7 @@ import { LikeRepository } from "../likes/likes.repository";
 import {DataSource} from "typeorm";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
+import {APIComment} from "../entities/api-comment-entity";
 
 @Injectable()
 export class CommentsQueryRepository{
@@ -104,18 +105,28 @@ export class CommentsQueryRepository{
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
       const commentsForSpecificUser = await this.dataSource
-          .getRepository(User)
-          .createQueryBuilder('user')
-          .leftJoinAndSelect('user.blogs', 'blogs')
-          .leftJoinAndSelect('blogs.posts', 'posts')
-          .leftJoinAndSelect('posts.comments', 'comments')
+          .getRepository(APIComment)
+          .createQueryBuilder('comments')
+          .leftJoinAndSelect('comments.post', 'post')
+          .leftJoinAndSelect('post.blog', 'blog')
+          .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
           .leftJoinAndSelect('comments.commentator', 'commentator')
-          .where({id : userId})
+          .where({
+            post:
+                {
+                  blog: {
+                    blogOwner: {
+                      id: userId
+                    }
+                  }
+                }
+          })
+          .orderBy()
           .skip(ToSkip)
           .take(pageSize)
-          .getOne();
+          .getMany();
       console.log(commentsForSpecificUser)
-      const result = commentsForSpecificUser
+      const result = commentsForSpecificUser.map(comment => {return APIComment.getViewModelOfComment(comment)})
       console.log(result, " result in getListOfCommentsByPostIds");
       console.log(result, "blyat");
 

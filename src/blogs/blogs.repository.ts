@@ -15,6 +15,7 @@ import {BlogBan} from "../entities/blog-ban-entity";
 export class BlogsRepository {
     constructor(
         @InjectRepository(Blog) protected blogsTypeORMRepository: Repository<Blog>,
+        @InjectRepository(BlogBan) protected blogBansTypeORMRepository: Repository<BlogBan>,
         @InjectRepository(APIPost) protected postsTypeORMRepository: Repository<APIPost>,
         @InjectRepository(User) protected usersTypeORMRepository: Repository<User>,
         protected readonly dataSource: DataSource,
@@ -456,7 +457,7 @@ export class BlogsRepository {
     `, [blogId, ban[0].id])*/
 
 
-        const ban = await this.blogsTypeORMRepository
+        const ban = await this.blogBansTypeORMRepository
             .save(newBan)
 
         return

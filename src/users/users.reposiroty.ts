@@ -307,15 +307,18 @@ export class UsersRepository {
     OR
         "email" ILIKE $2)
     `*/
-  const where : any = {
-    login : ILike(searchLoginTerm),
-    email : ILike(searchEmailTerm),
+    const where: any = [
+          {
+            login: ILike(searchLoginTerm),
+            email: ILike(searchEmailTerm)
+          }
+        ]
 
-  }
+
     if(searchBanTerm === 'banned'){
-      where.isBanned = true
+      where.append({isBanned : true})
     }else if(searchBanTerm === 'notBanned'){
-      where.isBanned = false
+      where.append({isBanned : false})
     }
 
   const resultCountQuery = await this.usersTypeORMRepository

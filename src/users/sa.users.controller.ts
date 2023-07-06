@@ -40,8 +40,8 @@ export class SAUsersController{
                      @Res({passthrough : true}) res : Response,
                      @Body() DTO : BanUserDTO
                      ){
-
-    return this.commandBus.execute( new BanProcedureCommand(userId, DTO))
+    console.log("banUnbanUser in controller")
+    return await this.commandBus.execute( new BanProcedureCommand(userId, DTO))
     //return {}
   }
 

@@ -316,8 +316,16 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       expect(allUsersBeforeBan.body.items.length).toEqual(1)
 
 
+      await request(server)
+          .put(`/sa/users/${res.body.id}/ban`)
+          .send({
+              "isBanned": true,
+              "banReason": "stringstringstringst"
+          }).expect(401)
+
       const ban = await request(server)
           .put(`/sa/users/${res.body.id}/ban`)
+          .set(authE2eSpec, basic)
           .send({
               "isBanned": true,
               "banReason": "stringstringstringst"

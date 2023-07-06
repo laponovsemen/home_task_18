@@ -44,4 +44,27 @@ export class APIComment {
 
         return newComment
     }
+
+    static getViewModelOfComment(comment: APIComment) {
+        return {
+            "id": comment.id,
+            "content": comment.content,
+            "commentatorInfo": {
+                "userId": comment.commentator.id,
+                "userLogin": comment.commentator.login
+            },
+            "createdAt": comment.createdAt,
+            "likesInfo": {
+                "likesCount": 0,
+                "dislikesCount": 0,
+                "myStatus": "None"
+            },
+            "postInfo": {
+                "id": comment.post.id,
+                "title": comment.post.title,
+                "blogId": comment.post.blog.id,
+                "blogName": comment.post.blog.name
+            }
+        }
+    }
 }
