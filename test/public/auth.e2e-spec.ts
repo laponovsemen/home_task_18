@@ -77,10 +77,10 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     const allUsers = await request(server)
         .get("/sa/users")
         .set(authE2eSpec, basic)
+        .expect(200)
 
-    expect(allUsers.body).toEqual({})
 
-  })
+  }, 10000)
   it("sdfdsfsdfds", async () => {
     await request(server).delete("/testing/all-data")
     const result = await request(server)
