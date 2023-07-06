@@ -142,55 +142,68 @@ export class PostsRepository {
     };
   }
   async deletePostById(id : string) {
-    let postId = 0
-    try{
-      postId = parseInt(id, 10)
-    } catch {
-      return null
-    }
-    if(!postId){
-      return null
-    }
-    const foundPostQuery =await this.dataSource.query(`
+
+    /*const foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1;
-    `, [postId])
-    if(foundPostQuery.length === 0){
+    `, [postId])*/
+
+    let foundPostQuery
+    try{
+      foundPostQuery = await this.postsTypeORMRepository
+          .findOneBy({
+            id : id
+          })
+    } catch (e) {
       return null
     }
 
-    const deletedPost = await this.dataSource.query(`
-    DELETE FROM public."APIPostTable"
-    WHERE "id" = $1;
-    `, [postId])
-    return  true
-  }
-  async updatePostById( DTO : PostDTO, id : string) {
-    let postId = 0
-    try{
-      postId = parseInt(id, 10)
-    } catch {
+    if(!foundPostQuery){
       return null
     }
+
+    const deletedPost = await this.postsTypeORMRepository
+        .delete({
+          id : id
+        })
+    return  true
+  }
+  async updatePostById( DTO : PostDTO, postId : string) {
+
     console.log(postId, " postId after convert");
 
     if(!postId){
       return null
     }
-    const foundPostQuery = await this.dataSource.query(`
+    /*const foundPostQuery = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1;
-    `, [postId])
-    if(foundPostQuery.length === 0){
+    `, [postId])*/
+    let foundPostQuery
+    try{
+      foundPostQuery = await this.postsTypeORMRepository
+          .findOneBy({
+            id : postId
+          })
+    } catch (e) {
       return null
     }
 
+    console.log(foundPostQuery)
+    if(!foundPostQuery){
+      return null
+    }
 
-    const updatedPost = await this.dataSource.query(`
+      const newPostToUpdate = APIPost.createToUpdate(foundPostQuery, DTO)
+
+    /*const updatedPost = await this.dataSource.query(`
     UPDATE public."APIPostTable"
     SET "title" = $2 , "shortDescription" = $3 , "content" = $4
     WHERE "id" = $1;
-    `, [postId, DTO.title, DTO.shortDescription, DTO.content])
+    `, [postId, DTO.title, DTO.shortDescription, DTO.content])*/
+
+    const updatedPost = await this.postsTypeORMRepository
+        .save(newPostToUpdate)
 
     return true
   }

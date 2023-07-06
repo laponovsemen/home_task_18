@@ -23,7 +23,7 @@ export class CommentsQueryRepository{
     `)
   }
 
-  async getListOfCommentsByPostIds(paginationCriteria : any,
+  /*async getListOfCommentsByPostIds(paginationCriteria : any,
                                    listOfPostsForBlogs: APIPost[],
                                    listOfPostsIdsForBlogs: ObjectId[]
   ){
@@ -56,7 +56,7 @@ export class CommentsQueryRepository{
       items: result.map(item => this.common.mongoPostAndCommentCommentSlicing(item, listOfPostsForBlogs)),
     };
     return array
-  }
+  }*/
 
 
     async getListOfCommentsForSpecificUser(paginationCriteria: any, userFromToken: any) {
@@ -75,16 +75,16 @@ export class CommentsQueryRepository{
     WHERE b."blogOwnerId" = $1;
     `, [userId])*/
       console.log("start making request of totalCount in getListOfCommentsForSpecificUser")
-      const totalCount =  this.dataSource
+      const totalCountQuery = await this.dataSource
           .getRepository(User)
           .createQueryBuilder('user')
             .leftJoin('user.blogs', 'blogs')
             .leftJoin('blogs.posts', 'posts')
             .leftJoin('posts.comments', 'comments')
             .loadRelationCountAndMap('user.comments', 'user.comments')
-            .where("blogs.blogOwnerId" = "user.id")
-            .getSql();
-
+            .where({id : userId})
+            .getOne();
+      const totalCount = totalCountQuery.comments
       //SELECT "user"."id" AS "user_id", "user"."login" AS "user_login", "user"."email" AS "user_email", "user"."password" AS "user_password",
       // "user"."createdAt" AS "user_createdAt", "user"."isConfirmed" AS "user_isConfirmed", "user"."code" AS "user_code",
       // "user"."codeDateOfExpiary" AS "user_codeDateOfExpiary", "user"."banDate" AS "user_banDate", "user"."banReason" AS "user_banReason",
@@ -96,60 +96,50 @@ export class CommentsQueryRepository{
       // WHERE 3a97ba3c-90cc-48e3-ad3c-45e789ffc22a  totalCount in getListOfCommentsForSpecificUser
 
       console.log(totalCount, " totalCount in getListOfCommentsForSpecificUser")
-      const pagesCount = Math.ceil(0 / pageSize);
+      // @ts-ignore
+      const pagesCount = Math.ceil(totalCount / pageSize);
       const page = paginationCriteria.pageNumber;
       const sortBy = paginationCriteria.sortBy;
       const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
-      const result = await this.dataSource.query(`
-    SELECT CAST(c."id" AS TEXT),
-        u."login",
-        "email",
-        "password",
-        c."createdAt",
-        "isConfirmed",
-        "code",
-        "codeDateOfExpiary",
-        "banDate",
-        "banReason",
-        "isBanned",
-        "name",
-        "description",
-        "websiteUrl",
-        "isMembership",
-        CAST("blogOwnerId" AS TEXT),
-        "blogBanId",
-        "title",
-        "shortDescription",
-        c."content",
-        CAST("blogId" AS TEXT),
-        "blogName",
-        c."isHiden",
-        CAST("postId" AS TEXT),
-        CAST("commentatorId" AS TEXT) 
-        FROM public."APICommentTable" c
-    RIGHT JOIN public."UserTable" u
-    ON c."commentatorId" = u."id"
-    RIGHT JOIN public."APIPostTable" p
-    ON c."postId" = p."id"
-    RIGHT JOIN public."BlogsTable" b
-    ON b."id" = p."blogId"
-    
-    WHERE b."blogOwnerId" = $1
-    ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}
-    LIMIT $2 OFFSET $3;
-    `, [userId, pageSize, ToSkip])
+      const result = await this.dataSource
+          .getRepository(User)
+          .createQueryBuilder('user')
+          .leftJoinAndSelect('user.blogs', 'blogs')
+          .leftJoinAndSelect('blogs.posts', 'posts')
+          .leftJoinAndSelect('posts.comments', 'comments')
+          .where({id : userId})
+          .skip(ToSkip)
+          .take(pageSize)
+          .getMany();
       console.log(result, " result in getListOfCommentsByPostIds");
       console.log(result, "blyat");
 
+//    SELECT "blogs"."id" AS "blogs_id", "blogs"."name" AS "blogs_name", "blogs"."description" AS "blogs_description",
+//    "blogs"."websiteUrl" AS "blogs_websiteUrl", "blogs"."isMembership" AS "blogs_isMembership", "blogs"."createdAt" AS "blogs_createdAt",
+//    "blogs"."blogOwnerId" AS "blogs_blogOwnerId", "blogs"."blogBanId" AS "blogs_blogBanId", "posts"."id" AS "posts_id",
+//    "posts"."title" AS "posts_title", "posts"."shortDescription" AS "posts_shortDescription", "posts"."content" AS "posts_content",
+//    "posts"."createdAt" AS "posts_createdAt", "posts"."isHiden" AS "posts_isHiden", "posts"."blogId" AS "posts_blogId",
+//    "comments"."id" AS "comments_id", "comments"."content" AS "comments_content", "comments"."login" AS "comments_login",
+//    "comments"."createdAt" AS "comments_createdAt", "comments"."isHiden" AS "comments_isHiden", "comments"."postId" AS "comments_postId",
+//    "comments"."commentatorId" AS "comments_commentatorId", comments
+//    FROM "user" "user"
+//    LEFT JOIN "blog" "blogs"
+//    ON "blogs"."blogOwnerId"="user"."id"
+//    LEFT JOIN "api_post" "posts"
+//    ON "posts"."blogId"="blogs"."id"
+//    LEFT JOIN "api_comment" "comments"
+//    ON "comments"."postId"="posts"."id"
+//
+//    blyat
 
       const array = {
         pageSize: pageSize,
         totalCount: totalCount,
         pagesCount: pagesCount,
         page: page,
-        items: result.map(item => this.common.mongoPostAndCommentCommentSlicing(item, result)),
+        items: result//.map(item => this.common.mongoPostAndCommentCommentSlicing(item, result)),
       };
       console.log(array, " console.log(array) to return")
       return array

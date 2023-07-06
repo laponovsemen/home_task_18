@@ -151,7 +151,7 @@ export class Common {
     }
   }
 
-  mongoPostAndCommentCommentSlicing = (item : any, listOfPostsForBlogs: APIPost[]) =>  {
+  mongoPostAndCommentCommentSlicing = (item : any, listOfPostsForBlogs: User[]) =>  {
     const post  = listOfPostsForBlogs.find(post => post.id.toString() === item.postId.toString())
     console.log(post , " post mongoPostAndCommentCommentSlicing");
     console.log(listOfPostsForBlogs, " listOfPostsForBlogs");

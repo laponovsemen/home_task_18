@@ -50,4 +50,17 @@ export class APIPost {
 
         return newPost
     }
+
+    static createToUpdate(foundPostQuery: APIPost, DTO: PostDTO) {
+        const newPostToUpdate = new APIPost()
+        newPostToUpdate.id = foundPostQuery.id
+        newPostToUpdate.title = DTO.title
+        newPostToUpdate.shortDescription = DTO.shortDescription
+        newPostToUpdate.content = DTO.content
+        newPostToUpdate.blog = foundPostQuery.blog
+        newPostToUpdate.createdAt = foundPostQuery.createdAt
+        newPostToUpdate.isHiden = foundPostQuery.isHiden
+
+        return newPostToUpdate
+    }
 }
