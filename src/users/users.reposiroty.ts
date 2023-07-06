@@ -108,26 +108,19 @@ export class UsersRepository {
 
   async deleteUserById(id: string) {
 
-    let foundUserQuery
-    try {
-      foundUserQuery = await this.dataSource.query(`
-    SELECT *  FROM public."UserTable"
-    WHERE "id" = $1;
-    `, [id])
+    const foundUserQuery = await this.usersTypeORMRepository
+        .findOneBy({
+          id
+        })
 
-    } catch (e) {
-      console.log(e)
+    if(!foundUserQuery){
       return null
     }
 
-    const foundUser = foundUserQuery[0]
-    if(!foundUser){
-      return false
-    }
-    const deletedUser = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE "id" = $1;
-    `, [id])
+    const deletedUser = await this.usersTypeORMRepository
+        .delete({
+          id
+        })
     return true
 
   }
