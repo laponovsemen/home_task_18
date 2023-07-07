@@ -99,8 +99,9 @@ export class AuthService implements OnModuleInit{
   async registrationConfirmation(code: string) {
 
     const foundUser = await this.usersRepository.findUserByRegistrationCode(code)
-    console.log("user not found")
+
     if(!foundUser){
+      console.log("user not found")
       return null
     }
     console.log(foundUser, " foundUser in registrationConfirmation")
