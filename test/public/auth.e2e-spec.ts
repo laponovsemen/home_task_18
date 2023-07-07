@@ -226,7 +226,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     await request(server).delete("/testing/all-data")
     // create new user
     const creationOfUser = await request(server)
-      .post("/users")
+      .post("/sa/users")
       .set(authE2eSpec, basic)
       .send({
         login: "login",
@@ -238,7 +238,12 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       id: expect.any(String),
       createdAt: expect.any(String),
       login: "login",
-      email: "simsbury65@gmail.com"})
+      email: "simsbury65@gmail.com",
+      "banInfo":  {
+           "banDate": null,
+               "banReason": null,
+               "isBanned": false,
+             },})
 
     // try to login
 
