@@ -91,8 +91,8 @@ export class AuthService implements OnModuleInit{
     }
   }
 
-  async registrationConfirmation(codeDTO: {code : string}) {
-    const code = codeDTO.code
+  async registrationConfirmation(code: string) {
+
     const foundUser = await this.usersRepository.findUserByRegistrationCode(code)
     if(!foundUser){
       return null

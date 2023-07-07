@@ -9,7 +9,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-  Headers, ForbiddenException
+  Headers, ForbiddenException, Query
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
@@ -61,7 +61,7 @@ export class AuthController {
     console.log(user)
     if (user?.password !== signInDto.password || user?.banInfo.isBanned) {
 
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
 
     const deviceId = randomUUID()
@@ -96,9 +96,11 @@ export class AuthController {
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(@Res() res : Response,
-                                 @Body() codeDTO: {code : string}) {
+                                 @Body() codeDTO: {code : string},
+                                 @Query() codeFromQuery
+                                 ) {
     console.log(" start registration-confirmation")
-    const result = await this.authService.registrationConfirmation(codeDTO)
+    const result = await this.authService.registrationConfirmation(codeFromQuery)
     if(!result){
       res.status(400).json({errorsMessages: [{ message: "Code already confirmed", field: "code" }]})
       return
