@@ -104,7 +104,6 @@ export class AuthController {
       return
     }
       res.status(204).json({})
-
   }
 
   @Post('registration')
