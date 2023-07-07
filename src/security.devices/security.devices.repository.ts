@@ -3,7 +3,7 @@ import { InjectModel, Prop } from "@nestjs/mongoose";
 
 import { Model } from "mongoose";
 import { ObjectId } from "mongodb";
-import {DataSource, Repository} from "typeorm";
+import {DataSource, Not, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "../entities/user-entity";
 import {APISession} from "../entities/api-session-entity";
@@ -79,19 +79,33 @@ export class SecurityDevicesRepository {
 
   }
 
-  async deleteAllDevicesExcludeCurrentDB(userIdFromRefreshToken: ObjectId, deviceIdFromRefreshToken: string) {
-      return await this.dataSource.query(`
+  async deleteAllDevicesExcludeCurrentDB(userIdFromRefreshToken: string, deviceIdFromRefreshToken: string) {
+      /*return await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+      const deletedSessions = await this.sessionsTypeORMRepository
+          .delete({
+              id : Not(deviceIdFromRefreshToken),
+              user : {
+                  id : deviceIdFromRefreshToken
+              }
+          })
+      return true
 
   }
 
   async findDeviceById(deviceId: string) {
-    return await this.dataSource.query(`
+    /*return await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+      return await this.sessionsTypeORMRepository
+          .findOneBy({
+              id : deviceId
+          })
   }
 
   async deleteAllData() {
