@@ -197,10 +197,8 @@ export class UsersRepository {
   }
 
   async findUserByRegistrationCode(code: string) {
-    const foundUser =  await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const foundUser =  await this.usersTypeORMRepository
+        .findOneBy({code})
     return foundUser
   }
 
@@ -209,10 +207,13 @@ export class UsersRepository {
   }
 
   async makeUserConfirmed(foundUser: User) {
-    await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+      await this.usersTypeORMRepository
+          .update({id: foundUser.id},
+              {
+                  code: null,
+                  codeDateOfExpiary: null,
+                  isConfirmed: true
+              })
   }
 
   async findUserByLogin(login: string) {
