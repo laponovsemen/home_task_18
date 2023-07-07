@@ -7,6 +7,7 @@ import {DataSource, Not, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "../entities/user-entity";
 import {APISession} from "../entities/api-session-entity";
+import {isUUID} from "class-validator";
 
 @Injectable()
 export class SecurityDevicesRepository {
@@ -89,7 +90,7 @@ export class SecurityDevicesRepository {
           .delete({
               id : Not(deviceIdFromRefreshToken),
               user : {
-                  id : deviceIdFromRefreshToken
+                  id : userIdFromRefreshToken
               }
           })
       return true
@@ -102,6 +103,9 @@ export class SecurityDevicesRepository {
     WHERE 1 = 1;
     `)*/
 
+      if(!isUUID(deviceId)){
+          return null
+      }
       return await this.sessionsTypeORMRepository
           .findOneBy({
               id : deviceId

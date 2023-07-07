@@ -9,6 +9,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { AppModule } from "../../src/app.module";
 import cookieParser from "cookie-parser";
 import process from "process";
+import {delay} from "rxjs";
 
 
 const mongoURI = process.env.MONGO_URL
@@ -228,6 +229,160 @@ describe("TEST OF CHECKING CONNECTED DEVICES", () => {
       .set("Cookie", [`refreshToken=${refreshToken}`])
       .expect(200)
     console.log(gettingAllDevices.body)
+
+    //console.log("refresh - " + deviceId)
+    //console.log("body - ", gettingAllDevicesForSpecificUser.body)
+
+
+    //expect(gettingAllDevicesForSpecificUser.body).toEqual({})
+
+  })
+  it("creating user and user2, check for deleting one device by id", async () => {
+    await request(server).delete("/testing/all-data")
+    const user1 = await request(server)
+        .post("/sa/users")
+        .set(auth, basic)
+        .send({
+            login : "login1",
+            password : "password1",
+            email : "simsbury65@gmail.com"
+        })
+        .expect(201)
+
+      const user2 = await request(server)
+          .post("/sa/users")
+          .set(auth, basic)
+          .send({
+              login : "login2",
+              password : "password2",
+              email : "simsbury65@gmail.com"
+          })
+          .expect(201)
+
+      //FIRST USER LOGINS
+
+      const login1 = await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'FIREFOX')
+          .send({
+              loginOrEmail : "login1",
+              password : "password1"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'CHROME')
+          .send({
+              loginOrEmail : "login1",
+              password : "password1"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'INTERNET')
+          .send({
+              loginOrEmail : "login1",
+              password : "password1"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'DF')
+          .send({
+              loginOrEmail : "login1",
+              password : "password1"
+          }).expect(200)
+
+      //SECOND USER LOGINS
+      const login2 = await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'CHROME')
+          .send({
+              loginOrEmail : "login2",
+              password : "password2"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'CHROME')
+          .send({
+              loginOrEmail : "login2",
+              password : "password2"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'INTERNET')
+          .send({
+              loginOrEmail : "login2",
+              password : "password2"
+          }).expect(200)
+
+      await request(server)
+          .post("/auth/login")
+          .set('user-agent', 'DF')
+          .send({
+              loginOrEmail : "login2",
+              password : "password2"
+          }).expect(200)
+
+
+      const accessToken1 = login1.body.accessToken
+      const refreshToken1 = login1.headers['set-cookie'][0].split(";")[0].split("=")[1]
+      console.log(refreshToken1, " refreshToken1")
+      const payload1 : any = jwt.decode(refreshToken1)
+      console.log(payload1, " payload1")
+      const deviceId1 = payload1.deviceId
+
+      const accessToken2 = login1.body.accessToken
+      const refreshToken2 = login1.headers['set-cookie'][0].split(";")[0].split("=")[1]
+      const payload2 : any = jwt.decode(refreshToken1)
+      const deviceId2 = payload2.deviceId
+
+
+      const allDevices = await request(server)
+          .get("/security/devices")
+          .set("Cookie", [`refreshToken=${refreshToken1}`])
+          .expect(200)
+
+      expect(allDevices.body).toHaveLength(4)
+      const firstDeviceOfUser1 = allDevices.body[0]
+      console.log(firstDeviceOfUser1, " firstDeviceOfUser1")
+
+
+      await request(server)
+          .delete(`/security/devices/${firstDeviceOfUser1.deviceId}`)
+          .set("Cookie", [`refreshToken=${refreshToken2}`])
+          .expect(403)
+
+      await request(server)
+          .delete(`/security/devices/76982348790-8-kjksd029032123`)
+          .set("Cookie", [`refreshToken=${refreshToken2}`])
+          .expect(404)
+
+      const deleteAllOthersDevices1 = await request(server)
+          .delete(`/security/devices`)
+          .set("Cookie", [`refreshToken=${refreshToken1}`])
+          .expect(204)
+
+
+      const allDevicesAfterdeleteAllOthersDevices1 = await request(server)
+          .get("/security/devices")
+          .set("Cookie", [`refreshToken=${refreshToken1}`])
+          .expect(200)
+
+      expect(allDevicesAfterdeleteAllOthersDevices1.body).toHaveLength(1)
+
+      //const leftDevice =
+
+
+
+
+    /*const gettingAllDevices = await request(app)
+      .get("/testing/all-data/all-security-devices")
+      .set("Cookie", [`refreshToken=${refreshToken}`])
+      .expect(200)
+    console.log(gettingAllDevices.body)*/
 
     //console.log("refresh - " + deviceId)
     //console.log("body - ", gettingAllDevicesForSpecificUser.body)

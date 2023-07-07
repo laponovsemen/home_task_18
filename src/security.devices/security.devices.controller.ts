@@ -54,8 +54,11 @@ export class SecurityDevicesController{
                           @Res({ passthrough: true }) res: Response){
 
     const refreshToken : string = req.cookies.refreshToken
+    console.log(refreshToken, " refreshToken in deleteAllOtherDevices")
     const refreshTokenPayload: any = this.jwtService.decode(refreshToken)
+    console.log(refreshTokenPayload, "  refreshTokenPayload in deleteAllOtherDevices")
     const deviceIdFromRefreshToken : string = refreshTokenPayload!.deviceId
+    console.log(deviceIdFromRefreshToken, " deviceIdFromRefreshToken in deleteAllOtherDevices")
     const userIdFromRefreshToken : string = refreshTokenPayload!.userId
     await this.securityDevicesRepository.deleteAllDevicesExcludeCurrentDB(userIdFromRefreshToken, deviceIdFromRefreshToken)
     return
