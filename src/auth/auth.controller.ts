@@ -9,7 +9,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-  Headers
+  Headers, ForbiddenException
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
@@ -61,7 +61,7 @@ export class AuthController {
     console.log(user)
     if (user?.password !== signInDto.password || user?.banInfo.isBanned) {
 
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
 
     const deviceId = randomUUID()
@@ -119,7 +119,7 @@ export class AuthController {
       return res.status(400).json({ errorsMessages: [{ message: "email already confirmed", field: result.field }] })
 
     }
-    return res.status(201).json({
+    return res.status(204).json({
       code : result.code
     })
 
