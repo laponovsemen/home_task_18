@@ -144,7 +144,7 @@ export class AuthService implements OnModuleInit{
       console.log("refreshTokenVerification is failed" );
       return null
     }
-    const lastActiveDate : Date = new Date()
+    const lastActiveDate : string = new Date().toISOString()
     const deviceId : string =  refreshTokenVerification.deviceId
     const foundDevice = await this.securityDevicesRepository.gedDeviceByDeviceId(deviceId)
     if(!foundDevice) return null;

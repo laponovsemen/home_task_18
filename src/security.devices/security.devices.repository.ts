@@ -25,13 +25,19 @@ export class SecurityDevicesRepository {
       return newSession
   }
 
-  async updateSessionByDeviceId(deviceId: string, lastActiveDate: Date, newRefreshToken: string) {
-    const updatedSession = await this.dataSource.query(`
+  async updateSessionByDeviceId(deviceId: string, lastActiveDate: string, newRefreshToken: string) {
+    /*const updatedSession = await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
 
-    return
+      const deletedSession = await this.sessionsTypeORMRepository
+          .update({id: deviceId},
+              {
+                  lastActiveDate: lastActiveDate,
+                  refreshToken: newRefreshToken
+              })
+      return true
   }
 
   async deleteDeviceById(deviceId: string) {
