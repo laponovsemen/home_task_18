@@ -304,7 +304,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     //delete all information
     await request(server).delete("/testing/all-data")
     // create new user
-    const creationOfUser = await request(server)
+    const creationOfUnconfirmedUser = await request(server)
       .post("/auth/registration")
       .send({
         login: "login",
@@ -312,11 +312,22 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         email: "simsbury65@gmail.com"
       }).expect(201)
 
-      expect(creationOfUser.body).toEqual({
+      expect(creationOfUnconfirmedUser.body).toEqual({
           code : expect.any(String)
       })
 
-      console.log(creationOfUser.body.code, " code to register")
+      console.log(creationOfUnconfirmedUser.body.code, " code to register")
+
+      const registrationConfirmation = await request(server)
+          .post(`/auth/registration-confirmation?code=${creationOfUnconfirmedUser.body.code}`)
+          .expect(204)
+
+      const login = await request(server)
+          .post("/auth/login")
+          .send({
+              loginOrEmail: "login",
+              password: "password",
+          }).expect(200)
   }, 10000)
 
 

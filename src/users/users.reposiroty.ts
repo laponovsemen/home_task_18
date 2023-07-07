@@ -128,17 +128,19 @@ export class UsersRepository {
   async findUserByLoginOrEmail(loginOrEmail: string, pass : string) {
     //const filter = {$or :[{login : loginOrEmail}, {email : loginOrEmail}]}
     //QUERY
+      console.log(loginOrEmail, " loginOrEmail")
     const result = await this.dataSource
         .getRepository(User)
         .createQueryBuilder("user")
-        .where("user.login = :loginOrEmail", { loginOrEmail: loginOrEmail })
-        .orWhere('user.email = :loginOrEmail', { loginOrEmail: loginOrEmail })
+        .where("login = :loginOrEmail", { loginOrEmail: loginOrEmail })
+        .orWhere('email = :loginOrEmail', { loginOrEmail: loginOrEmail })
         .getOne()
-
-
-
-
+    const allUser = await this.dataSource
+        .getRepository(User)
+        .createQueryBuilder("user")
+        .getMany()
     console.log(result , " result in findUserByLoginOrEmail")
+    console.log(allUser , " allUser in findUserByLoginOrEmail")
     if (!result) {
       return null
     }
@@ -150,14 +152,7 @@ export class UsersRepository {
     const newUnconfirmedUser = User.createUnconfirmedUser(login, password, email, code)
 
     const newlyCreatedUserQuery = await this.usersTypeORMRepository.save(newUnconfirmedUser)
-    return {
-      id : newlyCreatedUserQuery.id,
-      createdAt: newlyCreatedUserQuery.createdAt,
-      email: newlyCreatedUserQuery.email,
-      login: newlyCreatedUserQuery.login,
-      code: newlyCreatedUserQuery.code,
-
-    }
+    return  newlyCreatedUserQuery
 
   }
 

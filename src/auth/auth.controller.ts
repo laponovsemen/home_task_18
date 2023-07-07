@@ -97,6 +97,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(@Res() res : Response,
                                  @Body() codeDTO: {code : string}) {
+    console.log(" start registration-confirmation")
     const result = await this.authService.registrationConfirmation(codeDTO)
     if(!result){
       res.status(400).json({errorsMessages: [{ message: "Code already confirmed", field: "code" }]})
@@ -111,12 +112,16 @@ export class AuthController {
   async registration(
     @Res() res : Response,
     @Body() userDTO: UserDTO) {
+    console.log("start registrtion")
     const result = await this.authService.registration(userDTO)
+    console.log("finish registration")
     if(!result.result){
       return res.status(400).json({ errorsMessages: [{ message: "email already confirmed", field: result.field }] })
 
     }
-    return res.status(201).json(result.code)
+    return res.status(201).json({
+      code : result.code
+    })
 
   }
 

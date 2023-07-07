@@ -54,15 +54,20 @@ export class AuthService implements OnModuleInit{
     const email : string = userDTO.email
     const password : string = userDTO.password
     const foundUserByLogin = await this.usersRepository.findUserByLogin(login)
+    console.log(foundUserByLogin, " foundUserByLogin in registration")
     const foundUserByEmail = await this.usersRepository.findUserByEmail(email)
+    console.log(foundUserByEmail, " foundUserByEmail in registration")
     if (foundUserByLogin) {
       return {result : false, field : "login"}
     } else if (foundUserByEmail) {
       return {result : false, field : "email"}
     } else {
         const user = await this.usersRepository.createUnconfirmedUser(login, password, email)
+      console.log(user, " unconfirmed user in registration ")
         const info = await this.emailAdapter.sendEmail(email, user.code)
       console.log(user.code, " code to create unconfirmed user")
+
+
         return {result : true, field : null, code : user.code}
       }
     }
@@ -92,11 +97,17 @@ export class AuthService implements OnModuleInit{
     if(!foundUser){
       return null
     }
+    console.log(foundUser, " foundUser in registrationConfirmation")
     const foundUserCodeFreshness = await this.usersRepository.findUserCodeFreshness(foundUser)
     if(!foundUserCodeFreshness){
+      console.log("usercode is unfresh")
       return null
     }
+
+    console.log("usercode is fresh")
+
     await this.usersRepository.makeUserConfirmed(foundUser)
+
     return true
   }
 

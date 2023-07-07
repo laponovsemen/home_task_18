@@ -73,7 +73,7 @@ export class User {
         newUser.codeDateOfExpiary = add(dateOfCreation, {minutes: 10}).toISOString()
         newUser.banDate = null
         newUser.banReason = null
-        newUser.isBanned = true
+        newUser.isBanned = false
 
         return newUser
     }
