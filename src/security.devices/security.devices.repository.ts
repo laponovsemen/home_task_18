@@ -49,10 +49,20 @@ export class SecurityDevicesRepository {
   }
 
   async getAllDevicesForCurrentUser(userId: string) {
-      return await this.dataSource.query(`
+      /*return await this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
-    `)
+    `)*/
+
+      return await this.sessionsTypeORMRepository
+          .find({
+              where: {
+                  user : {
+                      id : userId
+                  }
+              },
+
+          })
   }
 
   async gedDeviceByDeviceId(deviceId: string) {
