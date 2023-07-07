@@ -317,7 +317,7 @@ export class UsersRepository {
     OR
         "email" ILIKE $2)
     `*/
-    const where: any = [
+    const where: any = [ //ask question about and && or
           { login: ILike(searchLoginTerm)},
           { email: ILike(searchEmailTerm)}
         ]
