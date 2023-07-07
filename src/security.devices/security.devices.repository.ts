@@ -35,11 +35,11 @@ export class SecurityDevicesRepository {
   }
 
   async deleteDeviceById(deviceId: string) {
-      const deletedSession = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
-      return deletedSession.deletedCount === 1
+      const deletedSession = await this.sessionsTypeORMRepository
+          .delete({
+              id : deviceId
+          })
+      return true
   }
 
   async getAllDevicesForCurrentUser(userId: string) {
