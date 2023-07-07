@@ -135,9 +135,9 @@ export class AuthController {
     const result = await this.authService.registrationEmailResending(emailDTO)
     if (!result.result) {
       res.status(HttpStatus.BAD_REQUEST).json({errorsMessages: [{ message: result.message, field: result.field }]})
+    } else {
+      res.status(HttpStatus.NO_CONTENT).json({code: result.code})
     }
-    res.status(HttpStatus.NO_CONTENT).json({code : result.code})
-
   }
 
   @Post('logout')
