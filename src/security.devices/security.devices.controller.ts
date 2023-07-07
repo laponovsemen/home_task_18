@@ -56,7 +56,7 @@ export class SecurityDevicesController{
     const refreshToken : string = req.cookies.refreshToken
     const refreshTokenPayload: any = this.jwtService.decode(refreshToken)
     const deviceIdFromRefreshToken : string = refreshTokenPayload!.deviceId
-    const userIdFromRefreshToken : ObjectId = new ObjectId(refreshTokenPayload!.userId)
+    const userIdFromRefreshToken : string = refreshTokenPayload!.userId
     await this.securityDevicesRepository.deleteAllDevicesExcludeCurrentDB(userIdFromRefreshToken, deviceIdFromRefreshToken)
     return
   }
