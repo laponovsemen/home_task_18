@@ -19,6 +19,6 @@ export class SecurityDevicesService{
     const userId : string = refreshTokenVerification.userId
     const result = await this.securityDevicesRepository.getAllDevicesForCurrentUser(userId)
     const listOfDevices = result.map(device => {return APISession.getViewModel(device)})
-    return result
+    return listOfDevices
   }
 }
