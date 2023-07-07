@@ -18,14 +18,11 @@ export class SecurityDevicesRepository {
     }
 
 
-  async createNewSession(userId: string, ip: string, title: string, lastActiveDate: Date, deviceId : ObjectId, refreshToken : string) {
-      const device = {
-        ip:	ip, // IP address of device during signing in
-        title:	title, // Device name: for example Chrome 105 (received by parsing http header "user-agent")
-        lastActiveDate:	lastActiveDate.toISOString(), // Date of the last generating of refresh/access tokens
-        deviceId:	deviceId, //  Id of connected device session
-      }
-    return //await this.dataSource.query()
+  async createNewSession(userId: string, ip: string, title: string,deviceId : string,  refreshToken : string) {
+
+      const newSession = APISession.create({userId, ip, title,deviceId, refreshToken})
+      await this.sessionsTypeORMRepository.save(newSession)
+      return newSession
   }
 
   async updateSessionByDeviceId(deviceId: string, lastActiveDate: Date, newRefreshToken: string) {

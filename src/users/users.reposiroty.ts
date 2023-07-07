@@ -185,7 +185,7 @@ export class UsersRepository {
   }
 
   async changeUsersConfirmationCode(id: string, confirmationCode: string) {
-    const newCodeDateOfExpiary = addMinutes(new Date(), 30)
+    const newCodeDateOfExpiary = addMinutes(new Date(), 30).getDate().toString()
     /*await  this.dataSource.query(`
     DELETE FROM public."UserTable"
     WHERE 1 = 1;
@@ -193,7 +193,9 @@ export class UsersRepository {
 
     await this.usersTypeORMRepository
         .update({id},
-            {code : confirmationCode})
+            {code : confirmationCode,
+                        codeDateOfExpiary : newCodeDateOfExpiary
+            })
   }
 
   async findUserByRegistrationCode(code: string) {

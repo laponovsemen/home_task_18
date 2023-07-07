@@ -22,6 +22,8 @@ import { Common } from "../common";
 import { ObjectId } from "mongodb";
 import { jwtConstants } from "./constants";
 import { RefreshToken } from "./decorators/public.decorator";
+import {APISession} from "../entities/api-session-entity";
+import {randomUUID} from "crypto";
 
 
 @Controller('auth')
@@ -53,8 +55,7 @@ export class AuthController {
     @Headers("user-agent") deviceName = 'unknown',
     @Ip() ip: string,
   ) {
-    const lastActiveDate = new Date()
-    const deviceId = new ObjectId(this.common.mongoObjectId())
+
     const user = await this.usersService.findUserByLoginOrEmail(signInDto.loginOrEmail, signInDto.password);
     console.log(user?.banInfo.isBanned , " is user banned");
     console.log(user)
@@ -63,14 +64,9 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-
+    const deviceId = randomUUID()
     const result = await this.authService.signIn(user, ip, deviceName, deviceId);
-    const newSession = await this.securityDevicesRepository.createNewSession(user.id.toString(),
-      ip,
-      deviceName,
-      lastActiveDate,
-      deviceId,
-      result.refresh_token)
+    const newSession = await this.securityDevicesRepository.createNewSession(user.id.toString(), ip,  deviceName, deviceId, result.refresh_token)
 
     res.cookie('refreshToken', result.refresh_token, { httpOnly: true, secure: true })
     res.status(200).send({

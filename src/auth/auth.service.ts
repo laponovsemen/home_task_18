@@ -39,7 +39,7 @@ export class AuthService implements OnModuleInit{
 
 
   }
-  async signIn(user : any, ip : string, title : string, deviceId : ObjectId) {
+  async signIn(user : any, ip : string, title : string, deviceId : string) {
 
     const payload = { userId : user.id, login : user.login,ip, title,deviceId };
     //console.log(user._id!.toHexString(), "user._id user._id");
