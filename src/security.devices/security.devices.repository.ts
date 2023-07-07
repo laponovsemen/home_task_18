@@ -18,9 +18,9 @@ export class SecurityDevicesRepository {
     }
 
 
-  async createNewSession(userId: string, ip: string, title: string,deviceId : string,  refreshToken : string) {
+  async createNewSession(user: any, ip: string, title: string,deviceId : string,  refreshToken : string) {
 
-      const newSession = APISession.create({userId, ip, title,deviceId, refreshToken})
+      const newSession = APISession.create({user, ip, title,deviceId, refreshToken})
       await this.sessionsTypeORMRepository.save(newSession)
       return newSession
   }

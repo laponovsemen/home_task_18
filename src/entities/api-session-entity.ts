@@ -11,8 +11,7 @@ export class APISession {
     id: string;
     @ManyToOne(() => User, u => u.session, {onDelete : 'SET NULL'})
     user : User
-    @Column()
-    userId: string;
+
     @Column()
     ip:	string // IP address of device during signing in
     @Column()
@@ -22,13 +21,13 @@ export class APISession {
     @Column()
     refreshToken: string;
 
-    static create(Obj: { ip: string; title: string; userId: string;deviceId : string; refreshToken: string }) {
+    static create(Obj: { ip: string; title: string; user: any;deviceId : string; refreshToken: string }) {
         const newSession = new APISession()
         newSession.id = Obj.deviceId
         newSession.lastActiveDate = new Date().toISOString()
         newSession.ip = Obj.ip
         newSession.title = Obj.title
-        newSession.userId = Obj.userId
+        newSession.user = Obj.user
         newSession.refreshToken = Obj.refreshToken
         return newSession
 

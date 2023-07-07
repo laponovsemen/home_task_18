@@ -66,7 +66,7 @@ export class AuthController {
 
     const deviceId = randomUUID()
     const result = await this.authService.signIn(user, ip, deviceName, deviceId);
-    const newSession = await this.securityDevicesRepository.createNewSession(user.id.toString(), ip,  deviceName, deviceId, result.refresh_token)
+    const newSession = await this.securityDevicesRepository.createNewSession(user, ip,  deviceName, deviceId, result.refresh_token)
 
     res.cookie('refreshToken', result.refresh_token, { httpOnly: true, secure: true })
     res.status(200).send({

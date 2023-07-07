@@ -75,7 +75,7 @@ export class SecurityDevicesController{
     const userFromToken : User  = await this.authService.getUserByRefreshToken(req.cookies.refreshToken)
     if(!userFromToken) throw new UnauthorizedException()
 
-    if(foundDevice.userId.toString() !== userFromToken!.id.toString()) throw new ForbiddenException();
+    if(foundDevice.user.id.toString() !== userFromToken!.id.toString()) throw new ForbiddenException();
 
     //const userIdFromDb =
     return await this.securityDevicesRepository.deleteDeviceById(deviceId)
