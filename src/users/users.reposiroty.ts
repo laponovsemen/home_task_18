@@ -186,6 +186,7 @@ export class UsersRepository {
   }
 
   async findUserByRegistrationCode(code: string) {
+      console.log(code, " code in findUserByRegistrationCode")
     const foundUser =  await this.usersTypeORMRepository
         .findOneBy({code})
     return foundUser

@@ -318,8 +318,17 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
       console.log(creationOfUnconfirmedUser.body.code, " code to register")
 
+      const registrationCodeResending = await request(server)
+          .post(`/auth/registration-email-resending`)
+          .send({
+              email: "simsbury65@gmail.com"
+          })
+          .expect(201)
+
+      console.log(registrationCodeResending.body, " registrationCodeResending")
+
       const registrationConfirmation = await request(server)
-          .post(`/auth/registration-confirmation?code=${creationOfUnconfirmedUser.body.code}`)
+          .post(`/auth/registration-confirmation?code=${registrationCodeResending.body.code}`)
           .expect(204)
 
       const login = await request(server)

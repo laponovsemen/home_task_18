@@ -76,24 +76,27 @@ export class AuthService implements OnModuleInit{
   async registrationEmailResending(emailFromFront: emailDTO) {
     const email = emailFromFront.email
     const UserExists = await this.usersRepository.findUserByEmail(email)
+    console.log(UserExists, " UserExists in registrationEmailResending")
 
-    const confirmationCode = this.common.createEmailSendCode()
+
+
     if (!UserExists) {
       return {result : false, field : "email", message : "user email doesnt exist"}
     } else if (UserExists.isConfirmed) {
       return {result : false, field : "email", message : "email already confirmed"}
     } else{
       const UserStatus = UserExists.code
-
+      const confirmationCode = this.common.createEmailSendCode()
       await this.emailAdapter.sendEmail(email, confirmationCode)
       await this.usersRepository.changeUsersConfirmationCode(UserExists.id, confirmationCode)
-      return {result : true, field : null, message : null}
+      return {result : true, field : null, message : null, code : confirmationCode}
     }
   }
 
   async registrationConfirmation(code: string) {
 
     const foundUser = await this.usersRepository.findUserByRegistrationCode(code)
+    console.log("user not found")
     if(!foundUser){
       return null
     }

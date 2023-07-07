@@ -97,9 +97,10 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(@Res() res : Response,
                                  @Body() codeDTO: {code : string},
-                                 @Query() codeFromQuery
+                                 @Query() codeObjetcFromQuery
                                  ) {
     console.log(" start registration-confirmation")
+    const codeFromQuery = codeObjetcFromQuery.code
     const result = await this.authService.registrationConfirmation(codeFromQuery)
     if(!result){
       res.status(400).json({errorsMessages: [{ message: "Code already confirmed", field: "code" }]})
@@ -120,7 +121,7 @@ export class AuthController {
       return res.status(400).json({ errorsMessages: [{ message: "email already confirmed", field: result.field }] })
 
     }
-    return res.status(204).json({
+    return res.status(201).json({
       code : result.code
     })
 
@@ -129,12 +130,13 @@ export class AuthController {
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(@Res() res: Response,
-                                   @Body() email: emailDTO) {
-    const result = await this.authService.registrationEmailResending(email)
+                                   @Body() emailDTO: emailDTO) {
+    console.log(emailDTO , " email in registrationEmailResending")
+    const result = await this.authService.registrationEmailResending(emailDTO)
     if (!result.result) {
       res.status(HttpStatus.BAD_REQUEST).json({errorsMessages: [{ message: result.message, field: result.field }]})
     }
-    res.status(HttpStatus.NO_CONTENT).json({})
+    res.status(HttpStatus.CREATED).json({code : result.code})
 
   }
 
