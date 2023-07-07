@@ -318,24 +318,28 @@ export class UsersRepository {
         "email" ILIKE $2)
     `*/
     const where: any = [
-          {
-            login: ILike(searchLoginTerm),
-            email: ILike(searchEmailTerm)
-          }
+          { login: ILike(searchLoginTerm)},
+          { email: ILike(searchEmailTerm)}
         ]
 
 
     if(searchBanTerm === 'banned'){
-      where.append({isBanned : true})
+      where[0].isBanned = true
+      where[1].isBanned = true
     }else if(searchBanTerm === 'notBanned'){
-      where.append({isBanned : false})
+
+      where[0].isBanned = false
+      where[1].isBanned = false
     }
 
   const resultCountQuery = await this.usersTypeORMRepository
       .count({
         where : where
       })
-
+const sqlcount = this.usersTypeORMRepository
+    .count({
+      where : where
+    })
     console.log(resultCountQuery, 'resultQuery')
     const pageSize = paginationCriteria.pageSize;
     const totalCount = resultCountQuery
