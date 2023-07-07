@@ -155,6 +155,8 @@ export class AuthService implements OnModuleInit{
 
     refreshTokenVerification.lastActiveDate = lastActiveDate
     console.log(refreshTokenVerification)
+    console.log(foundDevice, " foundDevice")
+    console.log(refreshToken, " refreshToken")
     const payload = { userId : refreshTokenVerification.userId,
       login : refreshTokenVerification.login,
       ip : refreshTokenVerification.ip,
