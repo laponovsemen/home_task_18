@@ -158,6 +158,7 @@ export class AuthController {
 
 
   @UseGuards(RefreshTokenAuthGuard)
+  @UseGuards(AuthGuard)
   @Get('/me')
   async getProfile(@Res({passthrough : true}) res: Response,
                    @Req() req : Request,
