@@ -121,7 +121,7 @@ export class AuthController {
       return res.status(400).json({ errorsMessages: [{ message: "email already confirmed", field: result.field }] })
 
     }
-    return res.status(201).json({
+    return res.status(204).json({
       code : result.code
     })
 
@@ -136,7 +136,7 @@ export class AuthController {
     if (!result.result) {
       res.status(HttpStatus.BAD_REQUEST).json({errorsMessages: [{ message: result.message, field: result.field }]})
     }
-    res.status(HttpStatus.CREATED).json({code : result.code})
+    res.status(HttpStatus.NO_CONTENT).json({code : result.code})
 
   }
 
