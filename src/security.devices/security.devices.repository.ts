@@ -122,4 +122,15 @@ export class SecurityDevicesRepository {
     WHERE 1 = 1;
     `)
   }
+
+    async findDeviceByIdWithUser(deviceId: string) {
+        if(!isUUID(deviceId)){
+            return null
+        }
+        return await this.sessionsTypeORMRepository
+            .findOne({
+                where : {id : deviceId},
+                relations : {user : true}
+            })
+    }
 }

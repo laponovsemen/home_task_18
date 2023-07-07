@@ -69,16 +69,32 @@ export class SecurityDevicesController{
   async deleteDeviceById (@Req() req: Request,
                           @Res({ passthrough: true }) res: Response,
                           @Param("deviceId") deviceId : string){
+    console.log(" start deleteDeviceById procedure")
     if (!deviceId){
+      console.log("device not found from param")
       throw new NotFoundException()
     }
-    const foundDevice : APISession = await this.securityDevicesRepository.findDeviceById(deviceId)
-    if(!foundDevice) throw new NotFoundException();
-
+    const foundDevice : APISession = await this.securityDevicesRepository.findDeviceByIdWithUser(deviceId)
+    if (!foundDevice) {
+      console.log(foundDevice, " found device not found")
+      throw new NotFoundException();
+    }
+    console.log("device found")
     const userFromToken : User  = await this.authService.getUserByRefreshToken(req.cookies.refreshToken)
-    if(!userFromToken) throw new UnauthorizedException()
+    if (!userFromToken) {
+      console.log(userFromToken, " userFromToken is not found in db")
+      throw new UnauthorizedException()
+    }
 
-    if(!foundDevice.user ||  foundDevice.user.id.toString() !== userFromToken!.id.toString()) throw new ForbiddenException();
+    if (!foundDevice.user || foundDevice.user.id.toString() !== userFromToken!.id.toString()) {
+      console.log(foundDevice, " foundDevice")
+      console.log(foundDevice.user, " foundDevice.user" )
+      console.log(foundDevice.user.id.toString(), " foundDevice.user.id.toString()" )
+      console.log(userFromToken!.id.toString(), " userFromToken!.id.toString()" )
+
+
+      throw new ForbiddenException();
+    }
 
     //const userIdFromDb =
     return await this.securityDevicesRepository.deleteDeviceById(deviceId)
