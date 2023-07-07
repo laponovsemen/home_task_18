@@ -62,7 +62,8 @@ export class AuthService implements OnModuleInit{
     } else {
         const user = await this.usersRepository.createUnconfirmedUser(login, password, email)
         const info = await this.emailAdapter.sendEmail(email, user.code)
-        return {result : true, field : null}
+      console.log(user.code, " code to create unconfirmed user")
+        return {result : true, field : null, code : user.code}
       }
     }
 

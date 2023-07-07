@@ -116,7 +116,7 @@ export class AuthController {
       return res.status(400).json({ errorsMessages: [{ message: "email already confirmed", field: result.field }] })
 
     }
-    return res.status(204).json({})
+    return res.status(201).json(result.code)
 
   }
 

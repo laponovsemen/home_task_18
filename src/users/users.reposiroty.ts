@@ -172,15 +172,7 @@ export class UsersRepository {
     if(!email){
       return null
     }
-    /*const [result] = await this.dataSource.query(`
-    SELECT *  FROM public."UserTable"
-    WHERE "login" = $1
-    `, [login] )
-    console.log(result, "result findUserById findUserById");*/
-
-    const result = await this.usersTypeORMRepository.findOneBy({
-      email
-    })
+    const result = await this.usersTypeORMRepository.findOneBy({email})
     return  result
   }
 

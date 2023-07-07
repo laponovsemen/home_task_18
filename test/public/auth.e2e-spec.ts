@@ -300,6 +300,24 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
     console.log(gettingAllDevices2.body, "2")
     expect(gettingAllDevices2.body[0].lastActiveDate).not.toEqual(gettingAllDevices.body[0].lastActiveDate)
   }, 10000)
+  it("try to create user through auth flow", async () => {
+    //delete all information
+    await request(server).delete("/testing/all-data")
+    // create new user
+    const creationOfUser = await request(server)
+      .post("/auth/registration")
+      .send({
+        login: "login",
+        password: "password",
+        email: "simsbury65@gmail.com"
+      }).expect(201)
+
+      expect(creationOfUser.body).toEqual({
+          code : expect.any(String)
+      })
+
+      console.log(creationOfUser.body.code, " code to register")
+  }, 10000)
 
 
 

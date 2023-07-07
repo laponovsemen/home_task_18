@@ -69,7 +69,7 @@ export class User {
         newUser.email = email
         newUser.createdAt = dateOfCreation.toISOString()
         newUser.isConfirmed = false
-        newUser.code = null
+        newUser.code = code
         newUser.codeDateOfExpiary = add(dateOfCreation, {minutes: 10}).toISOString()
         newUser.banDate = null
         newUser.banReason = null
