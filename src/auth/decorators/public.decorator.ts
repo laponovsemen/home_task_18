@@ -16,6 +16,15 @@ export const RefreshToken = createParamDecorator(
   },
 );
 
+export const AccessToken = createParamDecorator(
+    (data: string, ctx: ExecutionContext) => {
+        const request = ctx.switchToHttp().getRequest();
+        const accessToken = request.accessToken;
+
+        return accessToken
+    },
+);
+
 export const User = createParamDecorator(
   (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();

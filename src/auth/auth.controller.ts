@@ -21,7 +21,7 @@ import { UsersService } from "../users/users.service";
 import { Common } from "../common";
 import { ObjectId } from "mongodb";
 import { jwtConstants } from "./constants";
-import { RefreshToken } from "./decorators/public.decorator";
+import {AccessToken, RefreshToken} from "./decorators/public.decorator";
 import {APISession} from "../entities/api-session-entity";
 import {randomUUID} from "crypto";
 
@@ -157,20 +157,19 @@ export class AuthController {
   }
 
 
-  @UseGuards(RefreshTokenAuthGuard)
   @UseGuards(AuthGuard)
   @Get('/me')
   async getProfile(@Res({passthrough : true}) res: Response,
                    @Req() req : Request,
-                   @RefreshToken() refreshToken) {
+                   @AccessToken() accessToken) {
     console.log(" start getting my profile")
-    console.log(refreshToken, " refreshToken while getProfile")
-    const refreshTokenValidation = this.authService.verifyRefreshToken(refreshToken)
+    console.log(accessToken, " refreshToken while getProfile")
+    const refreshTokenValidation = this.authService.verifyRefreshToken(accessToken)
     if (!refreshTokenValidation) {
       throw new UnauthorizedException()
     }
     console.log(" refreshTokenValidation passed")
-    const result = await this.authService.getUserByToken(refreshToken);
+    const result = await this.authService.getUserByToken(accessToken);
     console.log(result, "result");
 
     return {
