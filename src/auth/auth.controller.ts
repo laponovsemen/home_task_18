@@ -133,6 +133,7 @@ export class AuthController {
                                    @Query() emailDTO) {
     console.log(emailDTO , " email in registrationEmailResending")
     const result = await this.authService.registrationEmailResending(emailDTO)
+    console.log(result, " result in registrationEmailResending")
     if (!result.result) {
       res.status(HttpStatus.BAD_REQUEST).json({errorsMessages: [{ message: result.message, field: result.field }]})
     } else {
