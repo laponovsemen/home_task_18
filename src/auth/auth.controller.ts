@@ -130,7 +130,7 @@ export class AuthController {
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(@Res() res: Response,
-                                   @Query() emailDTO) {
+                                   @Body() emailDTO) {
     console.log(emailDTO , " email in registrationEmailResending")
     const result = await this.authService.registrationEmailResending(emailDTO)
     console.log(result, " result in registrationEmailResending")
