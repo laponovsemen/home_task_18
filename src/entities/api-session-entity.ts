@@ -33,4 +33,14 @@ export class APISession {
 
 
     }
+
+    static getViewModel(device: APISession) {
+        return{
+            deviceId : device.id,
+            ip : device.ip,
+            title : device.title,
+            lastActiveDate : device.lastActiveDate
+        }
+
+    }
 }
