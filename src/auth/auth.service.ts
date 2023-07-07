@@ -30,8 +30,8 @@ export class AuthService implements OnModuleInit{
     private common: Common,
   ) {}
 
-  protected timeOfLivingAccessToken = "10s"
-  protected timeOfLivingRefreshToken = "20s"
+  protected timeOfLivingAccessToken = "10m"
+  protected timeOfLivingRefreshToken = "20m"
   async onModuleInit(){
     const token = await this.jwtService.signAsync({userId : randomUUID(), deviceId: randomUUID()},
       {secret : jwtConstants.secretForAccess})
