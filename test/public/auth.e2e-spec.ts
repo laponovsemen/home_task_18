@@ -142,9 +142,10 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
     // try to get my profile
     const myProfile = await request(server)
-      .get("/auth/me")
-      .set("Cookie", refreshToken)
-      .send({
+        .get("/auth/me")
+        .set("Cookie", refreshToken)
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
         loginOrEmail: "login",
         password: "password",
       }).expect(200)
