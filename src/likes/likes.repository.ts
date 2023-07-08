@@ -5,12 +5,15 @@ import {DataSource, Repository} from "typeorm";
 import {APILike} from "../entities/api-like-entity";
 import {parentTypeEnum, StatusTypeEnum} from "../mongo/mongooseSchemas";
 import {InjectRepository} from "@nestjs/typeorm";
+import {User} from "../entities/user-entity";
+import {APIPost} from "../entities/api-post-entity";
 
 
 @Injectable()
 export class LikeRepository {
     constructor(protected readonly dataSource: DataSource,
                 @InjectRepository(APILike) protected likesTypeORMRepository: Repository<APILike>,
+                @InjectRepository(User) protected usersTypeORMRepository: Repository<User>,
                 protected readonly common: Common) {
     }
 
@@ -18,25 +21,30 @@ export class LikeRepository {
 
     }
 
-    async likePost(DTO: LikeStatusDTO, Id: string, login: string, postId: string) {
-        const myLike = await this.findMyStatusForSpecificPost(postId, Id)
+    async likePost(DTO: LikeStatusDTO, userId: string, login: string, post : APIPost) {
+        const myLike = await this.findMyStatusForSpecificPost(post.id, userId)
         const status = DTO.likeStatus
         if (!myLike) {
+            const user = await this.usersTypeORMRepository.findOneBy({
+                id : userId
+            })
             const dateOfCreation = new Date().toISOString()
-            const parentId = postId
-            const parentType = parentTypeEnum.post
-            const addedAt = dateOfCreation
-            const userId = Id
 
-            await this.dataSource.query(`
+
+            const newLike = APILike.createPost(DTO, user, post)
+
+            await this.likesTypeORMRepository.save(newLike)
+            /*await this.dataSource.query(`
      INSERT INTO public."APILikeTable"(
     "parentId", "parentType", "addedAt", "userId", "login", "status", "isHiden")
     VALUES ($1, $2, $3, $4, $5, $6, $7);
-    `, [parentId, parentType, addedAt, userId, login, status, false])
+    `, [parentId, parentType, addedAt, userId, login, status, false])*/
+
+
             return true
         } else {
 
-            await this.changeMyLikeStatus(status, Id, postId, parentTypeEnum.post)
+            await this.changeMyLikeStatus(status, userId, post.id, parentTypeEnum.post)
 
             return true
         }

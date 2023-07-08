@@ -220,7 +220,7 @@ describe("TEST OF CHECKING CONNECTED DEVICES", () => {
     const accessToken = login.body.accessToken
     const refreshToken = login.headers['set-cookie'][0]
     const payload : any = jwt.decode(refreshToken)
-    const deviceId = payload.deviceId
+    const deviceId = payload.id
     //console.log(accessToken)
 
 

@@ -156,6 +156,15 @@ export class BlogsRepository {
 
     async getAllPostsForSpecificBlog(paginationCriteria: paginationCriteriaType, blogId: string,) {
 
+        const foundBlog = await this.blogsTypeORMRepository
+            .findOneBy({
+                id : blogId
+            })
+
+        if(!foundBlog){
+            return null
+        }
+
         let totalCount
         try {
             /*countBlogsQuery = await this.dataSource.query(`
@@ -191,7 +200,7 @@ export class BlogsRepository {
          "blogName",
           "createdAt",
            "isHiden"
-    
+
      FROM public."APIPostTable"
      WHERE "blogId" = $1
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()}

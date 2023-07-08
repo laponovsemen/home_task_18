@@ -93,6 +93,7 @@ export class PostsRepository {
       foundPostFrame.extendedLikesInfo.newestLikes = newestLikes
       foundPostFrame.extendedLikesInfo.myStatus = myLike ? myLike : "None"
       console.log(foundPostFrame, "foundPostFrame");
+      console.log(foundPostFrame.extendedLikesInfo.newestLikes , " newestLikes")
       console.log(myLike , "myLike");
       console.log(userId , "userId");
       return foundPostFrame
@@ -102,24 +103,39 @@ export class PostsRepository {
   async getAllPosts(paginationCriteria: paginationCriteriaType) {
 
     const pageSize = paginationCriteria.pageSize;
-    const totalCountQuery = await this.dataSource.query(`
+    /*const totalCountQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS INTEGER) 
     FROM public."APIPostTable"
      
-    `)
-    const totalCount = totalCountQuery[0].count
+    `)*/
+    const totalCount =  await this.postsTypeORMRepository
+        .count({
+
+        })
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = paginationCriteria.pageNumber;
     const sortBy = paginationCriteria.sortBy;
     const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-    const result = await this.dataSource.query(`
+    /*const result = await this.dataSource.query(`
     SELECT *  
     FROM public."APIPostTable"
     ORDER BY "${sortBy}" ${sortDirection}
     LIMIT ${pageSize} OFFSET ${ToSkip}
-    `)
+    `)*/
+
+    const result = await this.postsTypeORMRepository
+        .find({
+          skip : ToSkip,
+          take : pageSize,
+          order :  {
+            [sortBy] : sortDirection.toUpperCase()
+          },
+          relations : {
+            blog : true
+          }
+        })
     const items = result.map((item) => {
       return this.common.SQLPostMapping(item)
     });
