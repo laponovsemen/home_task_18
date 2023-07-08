@@ -121,11 +121,6 @@ export class LikeRepository {
                     user: true,
                     post: true
                 },
-                // select: {
-                //     id: true,
-                //     addedAt: true,
-                //     post: {id: true}
-                // },
                 where: {
                     parentType: parentTypeEnum.post,
                     post: {id: postId},
@@ -142,7 +137,14 @@ export class LikeRepository {
         )
 
         console.log(newestLikesToUpdate, " newestLikesToUpdate")
-        return newestLikesToUpdate
+        return newestLikesToUpdate.map(like => {
+            return {
+                addedAt : like.addedAt,
+                login : like.user.login,
+                userId : like.user.id,
+            }
+
+        })
     }
 
     async findMyStatusForSpecificPost(postId: string, userId: string) {

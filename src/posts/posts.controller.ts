@@ -128,24 +128,11 @@ export class PostsController {
     if(!result){
       throw new NotFoundException("Blog not found")
     }
+    console.log(result, " result in getPostByIdController")
     return result
   }
 
-  @UseGuards(BasicAuthGuard)
-  @Put(':id')
-  @HttpCode(204)
-  async updatePostById(@Res({passthrough : true}) res : Response,
-                       @Param('id') id,
-                       @Body() DTO : PostDTO){
-    if(!id){
-      throw new NotFoundException("id param is undefined or not found")
-    }
-    const result = await this.postsService.updatePostById(DTO , id);
-    if(!result){
-      throw new NotFoundException("post not found")
-    }
-    return
-  }
+
 
   @UseGuards(BasicAuthGuard)
   @Delete(':id')

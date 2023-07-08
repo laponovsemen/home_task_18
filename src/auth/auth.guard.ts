@@ -33,6 +33,7 @@ export class AuthGuard implements CanActivate {
     //console.log(token, " token");
 
     if (!token) {
+      console.log(" token not found")
       throw new UnauthorizedException();
     }
     try {
@@ -44,6 +45,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request["user"] = payload;
     } catch {
+      console.log(" token is not correct")
       throw new UnauthorizedException();
     }
     return true;

@@ -29,7 +29,9 @@ export class LikeService{
     console.log(payload, " - payload")
     const userId = payload.userId
     const login = payload.login
-    return await this.likeRepository.likePost(DTO, userId, login, foundPost)
+    const result =  await this.likeRepository.likePost(DTO, userId, login, foundPost)
+    console.log(result, " result in likePostService")
+    return result
   }
 
   async likeComment(DTO: LikeStatusDTO, token: string, commentId : string) {

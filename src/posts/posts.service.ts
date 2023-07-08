@@ -28,7 +28,7 @@ export class PostsService{
   async getPostById(id : string, token: string){
 
     let userId = null
-    const userFromDb  = await this.authService.getUserByToken(token);
+    const userFromDb  = await this.authService.getUserByToken(token.split(' ')[1]);
     console.log(userFromDb, "userFromDb");
     console.log(token, "token");
     if(userFromDb){
@@ -36,7 +36,9 @@ export class PostsService{
     }
     console.log(userId, "userId");
     console.log(userFromDb, "userFromDb");
-    return await this.postsRepository.getPostById(id, userId)
+    const result = await this.postsRepository.getPostById(id, userId)
+    console.log(result, " result in getPostByIdService")
+    return result
   }
   async getAllPosts(paginationCriteria: paginationCriteriaType, token: string) {
     const user = await this.authService.getUserByToken(token)
