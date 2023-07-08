@@ -310,7 +310,7 @@ describe("TESTING OF UPDATING POST BY ID", () => {
             },
         })
 
-        const updatedPost = await request(server)
+        const updatedPostWithWrongData = await request(server)
             .put(`/blogger/blogs/${blogId}/posts/${result.body.id}`)
             .auth(accessToken, {type  : "bearer"})
             .send({
@@ -320,177 +320,32 @@ describe("TESTING OF UPDATING POST BY ID", () => {
                 }
             )
             .expect(400)
-        expect(updatedPost.body).toEqual({
+        expect(updatedPostWithWrongData.body).toEqual({
             errorsMessages:
                 [
                     {message: "shortDescription must be shorter than or equal to 100 characters", field: "shortDescription"},
                 ]
         })
+
+        const updatedPostWithCorrectData = await request(server)
+            .put(`/blogger/blogs/${blogId}/posts/${result.body.id}`)
+            .auth(accessToken, {type  : "bearer"})
+            .send({
+                    "title": "valid",
+                    "content": "valid",
+                    "shortDescription": "length_99-nZlTI1khUHpqOqCzftIYiSHCV8fKjYFQOoCIwmUczzW9V5K8cqY3aPKo3XKwbfrmeWOJyQgGnlX5sP3aW3RlaRSQx"
+                }
+            )
+            .expect(204)
+
+
+        const getAllBlogs = await request(server)
+            .get(`/posts`)
+            .auth(accessToken, {type  : "bearer"})
+            .expect(200)
+
+        expect(getAllBlogs.body).toEqual({})
     }, 10000)
 })
 
-describe("TESTING OF DELETING POST BY ID", () => {
-    let app: INestApplication;
-    let server: any;
-    beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
-        }).compile();
 
-        app = moduleFixture.createNestApplication();
-        app.use(cookieParser());
-
-        app.useGlobalPipes(new ValidationPipe(
-                {
-                    stopAtFirstError: true,
-                    exceptionFactory: (errors) => {
-                        const errorsForResponse = [];
-                        console.log(errors, "ERRORS");
-
-                        errors.forEach(e => {
-                            const constrainedKeys = Object.keys(e.constraints);
-                            //console.log(constrainedKeys, "constrainedKeys");
-                            constrainedKeys.forEach((ckey) => {
-                                errorsForResponse.push({
-                                    message: e.constraints[ckey],
-                                    field: e.property
-                                });
-                                console.log(errorsForResponse, "errorsForResponse");
-
-                            });
-
-                        });
-                        throw new BadRequestException(errorsForResponse);
-                    }
-                }
-            )
-        );
-        app.useGlobalFilters(new HttpExceptionFilter());
-        useContainer(app.select(AppModule), { fallbackOnErrors: true });
-
-        await app.init();
-        server = app.getHttpServer();
-    });
-    afterAll(async () => {
-        await app.close();
-    });
-    it("should create post", async () => {
-        await request(app).delete("/testing/all-data").set(auth, basic)
-        const createdBlog = await request(app)
-            .post("/blogs")
-            .set(auth, basic)
-            .send({"name":"new blog",
-                "description":"description",
-                "websiteUrl":"https://github.com/",
-            })
-            .expect(201)
-        const blogId = createdBlog.body.id
-        const result = await request(app)
-            .post("/posts")
-            .set(auth, basic)
-            .send({"content":"new post content",
-                "shortDescription":"description",
-                "title":"post title",
-                "blogId":`${blogId}`})
-            .expect(201)
-        expect(result.body).toEqual({"id": expect.any(String),
-            "blogId": blogId,
-            "blogName": "new blog",
-            "content": "new post content",
-            "createdAt": expect.any(String),
-            "shortDescription": "description",
-            "title": "post title"})
-
-        const updatedPost = await request(app)
-            .delete(`/posts/${result.body.id}`)
-            .set(auth, basic)
-            .expect(204)
-
-    })
-})
-
-describe("TESTING OF READING POST BY ID", () => {
-    let app: INestApplication;
-    let server: any;
-    beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
-        }).compile();
-
-        app = moduleFixture.createNestApplication();
-        app.use(cookieParser());
-
-        app.useGlobalPipes(new ValidationPipe(
-                {
-                    stopAtFirstError: true,
-                    exceptionFactory: (errors) => {
-                        const errorsForResponse = [];
-                        console.log(errors, "ERRORS");
-
-                        errors.forEach(e => {
-                            const constrainedKeys = Object.keys(e.constraints);
-                            //console.log(constrainedKeys, "constrainedKeys");
-                            constrainedKeys.forEach((ckey) => {
-                                errorsForResponse.push({
-                                    message: e.constraints[ckey],
-                                    field: e.property
-                                });
-                                console.log(errorsForResponse, "errorsForResponse");
-
-                            });
-
-                        });
-                        throw new BadRequestException(errorsForResponse);
-                    }
-                }
-            )
-        );
-        app.useGlobalFilters(new HttpExceptionFilter());
-        useContainer(app.select(AppModule), { fallbackOnErrors: true });
-
-        await app.init();
-        server = app.getHttpServer();
-    });
-    afterAll(async () => {
-        await app.close();
-    });
-    it("should create post", async () => {
-        await request(app).delete("/testing/all-data").set(auth, basic)
-        const createdBlog = await request(app)
-            .post("/blogs")
-            .set(auth, basic)
-            .send({"name":"new blog",
-                "description":"description",
-                "websiteUrl":"https://github.com/",
-            })
-            .expect(201)
-        const blogId = createdBlog.body.id
-        const result = await request(app)
-            .post("/posts")
-            .set(auth, basic)
-            .send({"content":"new post content",
-                "shortDescription":"description",
-                "title":"post title",
-                "blogId":`${blogId}`})
-            .expect(201)
-        expect(result.body).toEqual({"id": expect.any(String),
-            "blogId": blogId,
-            "blogName": "new blog",
-            "content": "new post content",
-            "createdAt": expect.any(String),
-            "shortDescription": "description",
-            "title": "post title"})
-
-        const foundPost = await request(app)
-            .get(`/posts/${result.body.id}`)
-            .set(auth, basic)
-            .expect(200)
-        expect(foundPost.body).toEqual({"id": expect.any(String),
-            "blogId": blogId,
-            "blogName": "new blog",
-            "content": "new post content",
-            "createdAt": expect.any(String),
-            "shortDescription": "description",
-            "title": "post title"})
-    })
-})

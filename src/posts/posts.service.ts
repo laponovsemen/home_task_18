@@ -28,7 +28,7 @@ export class PostsService{
   async getPostById(id : string, token: string){
 
     let userId = null
-    const userFromDb  = await this.authService.getUserByToken(token.split(' ')[1]);
+    const userFromDb  = await this.authService.getUserByToken(token);
     console.log(userFromDb, "userFromDb");
     console.log(token, "token");
     if(userFromDb){
