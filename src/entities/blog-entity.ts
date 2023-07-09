@@ -20,7 +20,7 @@ import {randomUUID} from "crypto";
 export class Blog {
     @PrimaryColumn('uuid')
     id: string;
-    @Column({type : "varchar", collation : "C"})
+    @Column({type : "varchar", collation : "c"})
     name: string;
     @Column()
     description: string;
