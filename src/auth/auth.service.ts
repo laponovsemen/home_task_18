@@ -118,12 +118,10 @@ export class AuthService implements OnModuleInit{
     return true
   }
 
-  async getUserByToken(rawToken: any) {
-    if(!rawToken){
+  async getUserByToken(accessToken: any) {
+    if(!accessToken){
       return null
     }
-    const accessToken = rawToken.split(" ")[1]
-
 
     console.log(accessToken, "accessToken");
     const payload = this.jwtService.decode(accessToken)
