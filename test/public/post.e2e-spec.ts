@@ -339,12 +339,12 @@ describe("TESTING OF UPDATING POST BY ID", () => {
             .expect(204)
 
 
-        const getAllBlogs = await request(server)
-            .get(`/posts`)
+        const getAllPosts = await request(server)
+            .get(`/posts?sortBy=blogName`)
             .auth(accessToken, {type  : "bearer"})
             .expect(200)
 
-        expect(getAllBlogs.body).toEqual({})
+        expect(getAllPosts.body).toEqual({})
     }, 10000)
 })
 

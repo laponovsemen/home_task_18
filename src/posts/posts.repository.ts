@@ -119,27 +119,40 @@ export class PostsRepository {
     const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
     const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-    /*const result = await this.dataSource.query(`
-    SELECT *  
-    FROM public."APIPostTable"
+    const result = await this.dataSource.query(`
+    SELECT 
+    blog."name" as "blogName",
+    blog."id" as "blogId",
+    api_post.*
+    FROM public."api_post"
+    LEFT JOIN public."blog"
+    ON blog."id" = api_post."blogId"
     ORDER BY "${sortBy}" ${sortDirection}
     LIMIT ${pageSize} OFFSET ${ToSkip}
-    `)*/
+    `)
 
-    const result = await this.postsTypeORMRepository
+    console.log(result, "result")
+    /*const result = await this.postsTypeORMRepository
         .find({
           skip : ToSkip,
           take : pageSize,
-          order :  {
-            [sortBy] : sortDirection.toUpperCase()
-          },
           relations : {
             blog : true
+          },
+          order : {
+            [sortBy] : sortDirection.toUpperCase()
+          },
+          select : {
+            blog: {
+              name: true
+            }
           }
-        })
-    const items = result.map((item) => {
+
+        })*/
+
+    /*const items = result.map((item) => {
       return this.common.SQLPostMapping(item)
-    });
+    });*/
 
     /*console.log({
         pageSize: pageSize,
@@ -155,7 +168,7 @@ export class PostsRepository {
       totalCount: totalCount,
       pagesCount: pagesCount,
       page: page,
-      items: items,
+      items: result,
     };
   }
   async deletePostById(id : string) {
