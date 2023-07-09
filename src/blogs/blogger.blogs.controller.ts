@@ -116,6 +116,8 @@ export class BloggerBlogsController {
     console.log(foundBlog , " foundBlog")
     if (foundBlog.blogOwner.id !== user.userId){
       console.log("FORBIDDEN EXCEPTION")
+      console.log(foundBlog, " foundBlog")
+      console.log(user, " user")
       console.log(foundBlog.blogOwner.id, " foundBlog.blogOwner.id")
       console.log(user.userId, " user.userId")
       throw new ForbiddenException("Blog not found")
