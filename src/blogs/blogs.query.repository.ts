@@ -3,7 +3,6 @@ import { InjectModel, Prop } from "@nestjs/mongoose";
 import { Model } from 'mongoose';
 import { paginationCriteriaType } from '../appTypes';
 import { Common } from '../common';
-import { ObjectId } from 'mongodb';
 import { Injectable } from "@nestjs/common";
 import { BanBlogDTO } from "../input.classes";
 import {DataSource, Repository} from "typeorm";
