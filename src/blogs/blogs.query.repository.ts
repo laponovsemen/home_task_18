@@ -30,7 +30,7 @@ export class BlogsQueryRepository {
     const pageSize = blogsPagination.pageSize;
     const sqlCountQuery = await this.dataSource.query(`
     SELECT COUNT(*) 
-    FROM public."BlogsTable"
+    FROM public."blog"
     WHERE "blogBanId" IS NULL  AND "name" ILike $1
     `,[filter.name])
 
@@ -60,10 +60,10 @@ export class BlogsQueryRepository {
     bb."isBanned",
     bb."banDate"
     
-    FROM public."BlogsTable" b
-    LEFT JOIN public."UserTable" u
+    FROM public."blog" b
+    LEFT JOIN public."user" u
     ON b."blogOwnerId" = u."id"
-    LEFT JOIN public."BlogBanTable" bb
+    LEFT JOIN public."blog_ban" bb
     ON b."blogBanId" = bb."id"
     WHERE "name" ILike $1
     ORDER BY b."${sortBy}" ${sortDirection.toUpperCase()} 
