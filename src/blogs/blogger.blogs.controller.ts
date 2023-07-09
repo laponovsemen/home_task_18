@@ -36,6 +36,7 @@ import { BanUserByBloggerCommand } from "./use-cases/ban-user-by-blogger-use-cas
 import { GetBannedUsersForSpecificBlogCommand } from "./use-cases/get-banned-users-for-specific-blog-use-case";
 import { GetAllCommentForUserCommand } from "./use-cases/get-all-comments-for-user";
 import {Blog} from "../entities/blog-entity";
+import {UsersService} from "../users/users.service";
 
 
 
@@ -46,6 +47,7 @@ import {Blog} from "../entities/blog-entity";
 export class BloggerBlogsController {
   constructor(
     private readonly blogsService: BlogsService,
+    private readonly userService: UsersService,
     private readonly common: Common,
     private readonly commandBus: CommandBus,
     private readonly postsService: PostsService,
@@ -109,6 +111,7 @@ export class BloggerBlogsController {
     @User() user
   ): Promise<any | void> {
     const foundBlog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId)
+    const foundUserInDB = await this.userService.findUserById(user.userId) // to delete after test ht22
     if(!foundBlog){
       console.log("blog not found")
       throw new NotFoundException("Blog not found")
@@ -120,6 +123,7 @@ export class BloggerBlogsController {
       console.log(user, " user")
       console.log(foundBlog.blogOwner.id, " foundBlog.blogOwner.id")
       console.log(user.userId, " user.userId")
+      console.log(foundUserInDB)
       throw new ForbiddenException("Blog not found")
 
     }

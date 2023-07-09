@@ -23,5 +23,9 @@ export class UsersService{
   async findUserByLoginOrEmail(loginOrEmail : string, pass : string) {
     return this.usersRepository.findUserByLoginOrEmail(loginOrEmail, pass)
   }
+
+    async findUserById(userId) {
+      return this.usersRepository.findUserById(userId)
+    }
 }
 
