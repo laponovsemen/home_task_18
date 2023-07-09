@@ -474,17 +474,14 @@ export class BlogsRepository {
 
     async UnbanBlog(blogId: string, banId: string) {
 
-        const unban = await this.dataSource.query(`
-    DELETE  FROM public."BlogBanTable"
-    WHERE "id" = $1
-    `, [banId])
+        const ban = await this.blogBansTypeORMRepository
+            .delete({
+                blog : {
+                    id : blogId
+                },
+                id : banId
+            })
 
-        const updateBlog = await this.dataSource.query(`UPDATE public."BlogsTable"
-    SET "blogBanId"= $2
-        WHERE "id" = $1;
-    `, [blogId, null])
-        console.log(unban, " unban")
-        console.log(updateBlog, " updateBlog")
         return
     }
 }

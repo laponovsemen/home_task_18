@@ -67,7 +67,8 @@ export class PostsRepository {
     try {
       foundPost = await this.postsTypeORMRepository
           .findOne({where : {
-                id: postId
+                id: postId,
+                isHiden : false
               },
                 relations: {
                   blog : true
@@ -322,11 +323,8 @@ export class PostsRepository {
   }
 
   async makeAllPostsForBlogVisible(blogId: string) {
-    await this.dataSource.query(`
-    UPDATE public."APIPostTable"
-    SET "isHiden" = $2
-    WHERE "blogId" = $1;
-
-    `, [blogId, false])
+    await this.postsTypeORMRepository
+        .update({blog :{id : blogId}},
+            {isHiden : false})
   }
 }
