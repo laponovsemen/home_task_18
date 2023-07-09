@@ -473,7 +473,6 @@ export class BlogsRepository {
     }
 
     async UnbanBlog(blogId: string, banId: string) {
-
         const ban = await this.blogBansTypeORMRepository
             .delete({
                 blog : {
