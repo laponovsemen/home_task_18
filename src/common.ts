@@ -227,4 +227,22 @@ export class Common {
             isBanned: !!Obj.isBanned ,
             banDate: Obj.banDate ? Obj.banDate : null}}
         }
+
+  pureSQLPostMapping(Obj2 : any) {
+    return {
+      id: Obj2.id,
+      title: Obj2.title,
+      shortDescription: Obj2.shortDescription,
+      content: Obj2.content,
+      blogId: Obj2.blogId,
+      blogName: Obj2.blogName,
+      createdAt: Obj2.createdAt,
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: "None",
+        newestLikes: [],
+      },
+    };
+  }
 }

@@ -150,25 +150,17 @@ export class PostsRepository {
 
         })*/
 
-    /*const items = result.map((item) => {
-      return this.common.SQLPostMapping(item)
-    });*/
+    const items = result.map((item) => {
+      return this.common.pureSQLPostMapping(item)
+    });
 
-    /*console.log({
-        pageSize: pageSize,
-        totalCount: totalCount,
-        pagesCount: pagesCount,
-        page: page,
-        items: items,
-      },
-      'its fucking result',
-    );*/
+
     return {
       pageSize: pageSize,
       totalCount: totalCount,
       pagesCount: pagesCount,
       page: page,
-      items: result,
+      items: items,
     };
   }
   async deletePostById(id : string) {
