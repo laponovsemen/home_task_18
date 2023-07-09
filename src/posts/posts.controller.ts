@@ -89,6 +89,7 @@ export class PostsController {
     }
     const result = await this.postsService.createCommentForSpecificPost(DTO, postId, token);
     if(!result){
+      console.log(" createCommentForSpecificPost not found")
       throw new NotFoundException()
     }
     return result

@@ -150,6 +150,7 @@ export class BloggerBlogsController {
                        @User() user,
                        @Param('id') id): Promise<void> {
     const foundBlog = await this.blogsService.getBlogByIdWithBloggerInfo(id)
+    console.log(" Blog not found in updateBlogById")
     if(!foundBlog){
       throw new NotFoundException("Blog not found")
     }

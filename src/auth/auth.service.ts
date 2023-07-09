@@ -118,7 +118,8 @@ export class AuthService implements OnModuleInit{
     return true
   }
 
-  async getUserByToken(accessToken: any) {
+  async getUserByToken(rawToken: any) {
+    const accessToken = rawToken.split(" ")[1]
     if(!accessToken){
       return null
     }
