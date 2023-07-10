@@ -6,7 +6,7 @@ import {BanBlogDTO} from "../input.classes";
 
 @Entity({ database: "tfaepjvr" })
 export class BlogBan {
-    @PrimaryColumn()
+    @PrimaryColumn('uuid')
     id: string;
     @Column()
     isBanned : boolean

@@ -127,8 +127,10 @@ export class PostsController {
     //console.log(token, "accessTtoken")
     const result = await this.postsService.getPostById(id, token);
     if(!result){
+      console.log(" post not found")
       throw new NotFoundException("Blog not found")
     }
+    console.log(" post  found")
     console.log(result, " result in getPostByIdController")
     return result
   }

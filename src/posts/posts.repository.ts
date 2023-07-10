@@ -66,9 +66,8 @@ export class PostsRepository {
 
   async getPostById(postId: string, userId : string) {
 
-    let foundPost
-    try {
-      foundPost = await this.postsTypeORMRepository
+
+    const foundPost = await this.postsTypeORMRepository
           .findOne({where : {
                 id: postId,
                 isHiden : false
@@ -77,10 +76,7 @@ export class PostsRepository {
                   blog : true
                 }
               })
-    } catch (error) {
-      console.log(error)
-      return null
-    }
+
     console.log(foundPost, " foundPost")
     if (!foundPost) {
       console.log("empty result of query ingetPostById")

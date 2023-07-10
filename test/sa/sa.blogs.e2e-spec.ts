@@ -225,6 +225,9 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .set("Authorization", `Bearer ${accessTokenOfUser}`)
       .expect(404)
 
+
+      console.log("start unban blog")
+
     await request(server)
       .put(`/sa/blogs/${createdBlog.body.id}/ban`)
       .set("Authorization", basic)
@@ -234,7 +237,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .expect(204)
 
     await request(server)
-      .get(`/blogger/blogs/${createdBlog.body.id}/posts/${postId}`)
+        .get(`/posts/${postId}`)
       .set("Authorization", `Bearer ${accessTokenOfUser}`)
       .expect(200)
 

@@ -6,6 +6,7 @@ import {INestApplication} from "@nestjs/common";
 import {Test, TestingModule} from "@nestjs/testing";
 import {AppModule} from "../../src/app.module";
 import cookieParser from "cookie-parser";
+import {getAppAndCleanDB} from "../test-utils";
 
 const auth = "Authorization"
 const basic = 'Basic YWRtaW46cXdlcnR5'
@@ -15,11 +16,9 @@ describe("testing od deleting all data  ", () => {
     let app: INestApplication;
     let server : any
     beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
 
-        app = moduleFixture.createNestApplication();
+
+        app = await getAppAndCleanDB()
         app.use(cookieParser())
         await app.init();
         server = app.getHttpServer()
