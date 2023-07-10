@@ -10,6 +10,7 @@ import {Blog} from "../entities/blog-entity";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
 import {BlogBan} from "../entities/blog-ban-entity";
+import {TokenPayload} from "../working.classess";
 
 @Injectable()
 export class BlogsRepository {
@@ -243,21 +244,10 @@ export class BlogsRepository {
         };
     }
 
-    async createNewBlog(DTO: BlogDTO, user: any) {
-        /*const blogOwnerInfo = {
-          userId : user.userId,
-          userLogin :user.login,
-        }
-        const createdAt = new Date().toISOString()
-        const description = DTO.description
-        const isMembership = false
-        const name = DTO.name
-        const websiteUrl = DTO.websiteUrl
+    async createNewBlog(DTO: BlogDTO, user: TokenPayload) {
 
-         */
-
-        const blogOwner = await this.usersTypeORMRepository.findOneBy({id: user.userId})
-        const blogToCreate = Blog.create(DTO, blogOwner)
+        const blogOwner : User = await this.usersTypeORMRepository.findOneBy({id: user.userId})
+        const blogToCreate : Blog = Blog.create(DTO, blogOwner)
 
         const createdBlog: Blog = await this.blogsTypeORMRepository.save(blogToCreate)
         console.log(createdBlog, "createdBlog to return")

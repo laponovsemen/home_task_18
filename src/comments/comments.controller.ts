@@ -17,6 +17,7 @@ import { AuthGuard } from "../auth/auth.guard";
 import { CommentsService } from "./comments.service";
 import { AuthService } from "../auth/auth.service";
 import { LikeService } from "../likes/likes.service";
+import {AccessToken} from "../auth/decorators/public.decorator";
 
 @Controller('comments')
 export class CommentsController {
@@ -48,8 +49,10 @@ export class CommentsController {
   async updateComment(@Req() req : Request,
                       @Res({passthrough : true}) res : Response,
                       @Param('commentId') commentId,
+                      @AccessToken() accessToken,
                       @Body() DTO : CommentForSpecifiedPostDTO){
-    const token = req.headers.authorization
+    const token : string = accessToken
+    console.log(token , " token")
     const userFromToken = await this.authService.getUserByToken(token)
     const commentToUpdate = await this.commentsService.getCommentById(commentId, token)
     console.log(commentToUpdate, " found comment to update in updateComment")
@@ -58,7 +61,9 @@ export class CommentsController {
     }
     const userIdFromDB = commentToUpdate.commentatorInfo.userId
     console.log(userIdFromDB, " userIdFromDB  in updateComment")
-    if(userFromToken.id.toString() !== userIdFromDB.toString()){
+    console.log(userFromToken, " userFromToken  in updateComment")
+    if(!userFromToken || userFromToken.id !== userIdFromDB){
+      console.log("userFromToken.id !== userIdFromDB")
       throw new ForbiddenException()
     }
 
@@ -74,15 +79,19 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteComment(@Req() req : Request,
                       @Res({passthrough : true}) res : Response,
+                      @AccessToken() accessToken,
                       @Param('commentId') commentId){
-    const token = req.headers.authorization
-    const userFromToken = await this.authService.getUserByToken(token)
-    const commentToDelete = await this.commentsService.getCommentById(commentId, token)
+
+    console.log(accessToken, " accessToken")
+    const userFromToken = await this.authService.getUserByToken(accessToken)
+    const commentToDelete = await this.commentsService.getCommentById(commentId, accessToken)
     if(!commentToDelete){
       throw new NotFoundException()
     }
     const userIdFromDB = commentToDelete.commentatorInfo.userId
-    if(userFromToken.id.toString() !== userIdFromDB.toString() ){
+    console.log(userIdFromDB, " userIdFromDB")
+    console.log(userFromToken, " userFromToken")
+    if(userFromToken.id !== userIdFromDB ){
       throw new ForbiddenException()
     }
 

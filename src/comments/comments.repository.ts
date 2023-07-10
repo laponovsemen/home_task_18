@@ -94,30 +94,35 @@ export class CommentsRepository{
   }
 
   async deleteCommentById(commentId: string) {
-    const foundComment = await this.dataSource.query(`
-    SELECT *  FROM public."APICommentTable"
-    WHERE "id" = $1;
-    `, [commentId])
 
-    console.log(foundComment, " foundComment deleteCommentById")
-    if (foundComment.length === 0){
-      return null
-    }
 
-    const deletedComment = await this.dataSource.query(`
+    /*const deletedComment = await this.dataSource.query(`
     DELETE FROM public."APICommentTable"
     WHERE "id" = $1;
-    `, [commentId])
+    `, [commentId])*/
+
+    const deletedComment = await this.commentsTypeORMRepository
+        .delete({
+          id : commentId
+        })
+
     return true
   }
 
   async updateCommentById(commentId: string, DTO: CommentForSpecifiedPostDTO) {
 
-    const result = await this.dataSource.query(`
+    /*const result = await this.dataSource.query(`
     UPDATE public."APICommentTable"
     SET "content" = $2
     WHERE "id" = $1;
-    `, [commentId, DTO.content])
+    `, [commentId, DTO.content])*/
+
+    const result = await this.commentsTypeORMRepository
+        .update({
+          id : commentId
+        },{
+          content : DTO.content
+        })
 
     return true
   }
