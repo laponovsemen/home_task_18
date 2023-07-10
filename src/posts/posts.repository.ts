@@ -10,12 +10,15 @@ import {PostDTO} from "../input.classes";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Blog} from "../entities/blog-entity";
 import {APIPost} from "../entities/api-post-entity";
+import {APIComment} from "../entities/api-comment-entity";
+import postgres from "postgres";
 
 @Injectable()
 export class PostsRepository {
   constructor(protected readonly dataSource: DataSource,
               protected readonly common: Common,
               @InjectRepository(APIPost) protected postsTypeORMRepository : Repository<APIPost>,
+              @InjectRepository(APIComment) protected commentsTypeORMRepository : Repository<APIComment>,
               protected readonly likeRepository: LikeRepository,
   ) {
   }
@@ -262,7 +265,7 @@ export class PostsRepository {
       const ToSkip =
         paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-      const result = await this.dataSource.query(`
+      /*const result = await this.dataSource.query(`
             SELECT 
             CAST(c."id" AS TEXT),
             "content",
@@ -277,7 +280,23 @@ export class PostsRepository {
             WHERE "postId" = $1 AND "isHiden" = $2
             ORDER BY c."${sortBy}" ${sortDirection.toUpperCase()}
             LIMIT $3 OFFSET $4
-    `, [id, false, pageSize, ToSkip])
+    `, [id, false, pageSize, ToSkip])*/
+
+      const result = await this.commentsTypeORMRepository.find({
+        relations : {
+          post : true,
+          commentator : true
+        },
+        where : {
+          post : {
+            id : id,
+          },
+          isHiden : false
+        },
+        skip : ToSkip,
+        take : pageSize
+      })
+      console.log(result, " result")
       const items = result.map((item) => {
         return this.common.SQLCommentMapping(item)
       });
