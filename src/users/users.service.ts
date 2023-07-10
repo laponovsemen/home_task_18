@@ -27,5 +27,9 @@ export class UsersService{
     async findUserById(userId) {
       return this.usersRepository.findUserById(userId)
     }
+
+  async getAllUsersFromDBWithoutPagination() {
+    return await this.usersRepository.getAllUsersFromDBWithoutPagination()
+  }
 }
 

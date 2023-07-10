@@ -383,4 +383,8 @@ const sqlcount = this.usersTypeORMRepository
     };
 
   }
+
+    async getAllUsersFromDBWithoutPagination() {
+        return await this.usersTypeORMRepository.find()
+    }
 }

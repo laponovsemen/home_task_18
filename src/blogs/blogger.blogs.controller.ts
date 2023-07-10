@@ -112,6 +112,7 @@ export class BloggerBlogsController {
   ): Promise<any | void> {
     const foundBlog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId)
     const foundUserInDB = await this.userService.findUserById(user.userId) // to delete after test ht22
+    const allUsersFromDBWithoutPagination = await this.userService.getAllUsersFromDBWithoutPagination() // to delete after test ht22
     if(!foundBlog){
       console.log("blog not found")
       throw new NotFoundException("Blog not found")
@@ -123,7 +124,8 @@ export class BloggerBlogsController {
       console.log(user, " user")
       console.log(foundBlog.blogOwner.id, " foundBlog.blogOwner.id")
       console.log(user.userId, " user.userId")
-      console.log(foundUserInDB)
+      console.log(foundUserInDB, " foundUserInDB")
+      console.log(allUsersFromDBWithoutPagination , " ебаный тайпорм сука")
       throw new ForbiddenException("Blog not found")
 
     }
