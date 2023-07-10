@@ -75,7 +75,7 @@ export class PostsController {
                                      @User() user,
                                      @Body() DTO : CommentForSpecifiedPostDTO) {
     console.log("start createCommentForSpecificPost procedure")
-    const token = req.headers.authorization
+    const token = req.headers.authorization.split(" ")[1]
     const commentatorId = user.userId
     const postForComment = await this.postsService.getPostById(postId, token)
     console.log(postForComment, " postForComment")

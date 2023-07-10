@@ -102,7 +102,7 @@ export class BloggerBlogsController {
     return result
 
   }
-  @Post(':id/posts')
+  @Post('/:id/posts')
   @HttpCode(201)
   async createPostForSpecificBlog(
     @Body() DTO : PostForSpecificBlogDTO,

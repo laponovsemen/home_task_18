@@ -125,6 +125,7 @@ export class PostsService{
   async createCommentForSpecificPost(DTO: CommentForSpecifiedPostDTO, postIdAsString: string, token: string) {
 
     const user = await this.authService.getUserByToken(token)
+    console.log(token, " token")
     console.log(user, " in await this.authService.getUserByToken(token)")
     const foundPost = await this.postsRepository.getPostByIdWithOutLikes(postIdAsString)
     if(!user || !postIdAsString || !foundPost){

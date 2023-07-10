@@ -380,12 +380,20 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         .auth(accessToken1, {type: 'bearer'})
         .send(createPostDTO2)
 
+        await request(server)
+            .post(`/blogger/blogs/${blogId2}/posts`)
+            .auth(accessToken2, {type: 'bearer'})
+            .send(createPostDTO2)
+            .expect(403)
+
       expect(post.status).toBe(201)
 
       const comment = await request(server)
         .post(`/posts/${post.body.id}/comments`)
         .auth(accessToken1, {type: 'bearer'})
         .send(createCommentDto1)
+
+
 
       expect(comment.status).toBe(201)
     }

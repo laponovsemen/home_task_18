@@ -255,12 +255,8 @@ export class BlogsRepository {
         const websiteUrl = DTO.websiteUrl
 
          */
-        const banInfo = {
-            banDate: null,
-            isBanned: false
-        }
 
-        const blogOwner = await this.usersTypeORMRepository.findOneBy({id: user.id})
+        const blogOwner = await this.usersTypeORMRepository.findOneBy({id: user.userId})
         const blogToCreate = Blog.create(DTO, blogOwner)
 
         const createdBlog: Blog = await this.blogsTypeORMRepository.save(blogToCreate)
@@ -272,7 +268,10 @@ export class BlogsRepository {
             websiteUrl: blogToCreate.websiteUrl,
             isMembership: blogToCreate.isMembership,
             createdAt: blogToCreate.createdAt,
-            banInfo: banInfo
+            banInfo: {
+                banDate: null,
+                isBanned: false
+            }
         }
     }
 

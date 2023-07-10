@@ -32,7 +32,7 @@ export class SecurityDevicesRepository {
     WHERE 1 = 1;
     `)*/
 
-      const deletedSession = await this.sessionsTypeORMRepository
+       await this.sessionsTypeORMRepository
           .update({id: deviceId},
               {
                   lastActiveDate: lastActiveDate,
