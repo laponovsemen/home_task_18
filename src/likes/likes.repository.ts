@@ -7,6 +7,7 @@ import {parentTypeEnum, StatusTypeEnum} from "../mongo/mongooseSchemas";
 import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "../entities/user-entity";
 import {APIPost} from "../entities/api-post-entity";
+import {APIComment} from "../entities/api-comment-entity";
 
 
 @Injectable()
@@ -183,37 +184,50 @@ export class LikeRepository {
             return null
         }
 
-        const result = await this.dataSource.query(`
-    SELECT * FROM public."APILikeTable"
-    WHERE "parentId" = $1 AND "parentType" = $2 AND "userId" = $3;
-    `, [commentId, parentTypeEnum.comment, userIdAsString])
+       /* const result = await this.dataSource.query(`
+        SELECT * FROM public."APILikeTable"
+        WHERE "parentId" = $1 AND "parentType" = $2 AND "userId" = $3;
+        `, [commentId, parentTypeEnum.comment, userIdAsString])*/
+        const result = await this.likesTypeORMRepository
+            .findOneBy({
+                comment : {
+                    id : commentId
+                },
+                parentType : parentTypeEnum.comment,
+                user : {
+                    id : userIdAsString
+                }
+            })
         console.log(result, " MY STATUS IN findMyStatusForComment");
         return result
+
     }
 
     async deleteAllData() {
         await this.likesTypeORMRepository.delete({})
     }
 
-    async likeComment(DTO: LikeStatusDTO, userIdFromToken: string, login: string, commentId: string) {
-        const [myLike] = await this.findMyStatusForComment(commentId, userIdFromToken)
+    async likeComment(DTO: LikeStatusDTO, userIdFromToken: string, login: string, comment: APIComment) {
+        const user = await this.usersTypeORMRepository.findOneBy({
+            id : userIdFromToken
+        })
+        const myLike = await this.findMyStatusForComment(comment.id, user.id)
         const status = DTO.likeStatus
         if (!myLike) {
-            const dateOfCreation = new Date()
-            const parentId = commentId
-            const parentType = parentTypeEnum.comment
-            const addedAt = dateOfCreation
-            const userId = userIdFromToken
 
-            await this.dataSource.query(`
+            /*await this.dataSource.query(`
       INSERT INTO public."APILikeTable"(
      "parentId", "parentType", "addedAt", "userId", "login", "status", "isHiden")
         VALUES ($1, $2, $3, $4, $5, $6, $7);
-    `, [parentId, parentType, addedAt, userId, login, status, false])
+    `, [parentId, parentType, addedAt, userId, login, status, false])*/
+
+            const newLike = APILike.createLikeForComment(user, comment, status)
+            await this.likesTypeORMRepository.save(newLike)
+
             return true
         } else {
 
-            await this.changeMyLikeStatus(status, userIdFromToken, commentId, parentTypeEnum.comment)
+            await this.changeMyLikeStatus(status, userIdFromToken, comment.id, parentTypeEnum.comment)
 
             return true
         }

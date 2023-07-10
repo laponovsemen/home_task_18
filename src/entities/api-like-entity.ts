@@ -38,16 +38,30 @@ export class APILike{
     }
 
     static createPost(DTO: LikeStatusDTO, user : User, post : APIPost) {
-        const newUser = new APILike()
+        const newLikeForPost = new APILike()
 
-        newUser.id = randomUUID()
-        newUser.parentType = parentTypeEnum.post
-        newUser.addedAt = new Date().toISOString()
-        newUser.status = DTO.likeStatus
-        newUser.isHiden = false
-        newUser.post = post
-        newUser.user = user
+        newLikeForPost.id = randomUUID()
+        newLikeForPost.parentType = parentTypeEnum.post
+        newLikeForPost.addedAt = new Date().toISOString()
+        newLikeForPost.status = DTO.likeStatus
+        newLikeForPost.isHiden = false
+        newLikeForPost.post = post
+        newLikeForPost.user = user
 
-        return newUser
+        return newLikeForPost
+    }
+
+    static createLikeForComment(user: User, comment: APIComment, status: StatusTypeEnum) {
+        const newLikeForComment = new APILike()
+
+        newLikeForComment.id = randomUUID()
+        newLikeForComment.parentType = parentTypeEnum.comment
+        newLikeForComment.addedAt = new Date().toISOString()
+        newLikeForComment.status = status
+        newLikeForComment.isHiden = false
+        newLikeForComment.comment = comment
+        newLikeForComment.user = user
+
+        return newLikeForComment
     }
 }

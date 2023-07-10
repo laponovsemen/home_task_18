@@ -419,9 +419,4 @@ describe("CREATEING COMMENTS FOR SPECIFIED POST TESTFLOW", () => {
 
     }, 60000)
 
-    /*it("should create delete and update comments //auth is correct", async () => {
-
-
-
-    })*/
 })

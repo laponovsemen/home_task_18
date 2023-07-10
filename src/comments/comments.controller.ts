@@ -106,7 +106,7 @@ export class CommentsController {
   async getCommentById(@Req() req : Request,
                        @Res({passthrough : true}) res : Response,
                        @Param('commentId') commentId){
-    const token = req.headers.authorization
+    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null
     const result =  await this.commentsService.getCommentById(commentId, token)
     console.log(result, "result 228")
     if(!result){

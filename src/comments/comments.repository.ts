@@ -128,8 +128,7 @@ export class CommentsRepository{
   }
 
   async getCommentByIdWithOutLikes(commentId: string) {
-    let query
-    try {
+    /*try {
       query = await this.dataSource.query(`
     SELECT * FROM public."APICommentTable"
     WHERE "id" = $1
@@ -137,9 +136,15 @@ export class CommentsRepository{
     } catch (e) {
       console.log(e)
       return null
-    }
-    console.log(query, " query in getCommentByIdWithOutLikes")
-    return query[0]
+    }*/
+
+    const comment = await this.commentsTypeORMRepository
+        .findOneBy({
+          id : commentId
+        })
+
+    console.log(comment, " query in getCommentByIdWithOutLikes")
+    return comment
   }
 
   async makeCommentsHiden(userId: string) {

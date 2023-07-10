@@ -266,7 +266,7 @@ describe("CREATING COMMENTS FOR Likes procedures testing", () => {
     });
     it("should create user, blog, pot, comment , auth and get comments //auth is correct", async () => {
 
-        request(server).delete("/testing/all-data").set(auth, basic)
+        await request(server).delete("/testing/all-data").set(auth, basic)
 
         const createUserDto: UserDTO = {
             login: `login`,

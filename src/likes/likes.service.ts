@@ -49,6 +49,6 @@ export class LikeService{
     console.log(payload, " - payload")
     const userId = payload.userId
     const login = payload.login
-    return await this.likeRepository.likeComment(DTO, userId, login, commentId)
+    return await this.likeRepository.likeComment(DTO, userId, login, foundComment)
   }
 }

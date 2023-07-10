@@ -234,18 +234,24 @@ export class PostsRepository {
   }
 
   async getAllCommentsForSpecificPosts(paginationCriteria: paginationCriteriaType, id: string) {
-    const foundPost = await this.dataSource.query(`
+    /*const foundPost = await this.dataSource.query(`
     SELECT * FROM public."APIPostTable"
     WHERE "id" = $1 ;
-    `, [id])
-    if (!foundPost[0]) {
+    `, [id])*/
+
+    const foundPost = await this.postsTypeORMRepository
+        .findOneBy({
+          id : id
+        })
+
+    if (!foundPost) {
       console.log("post not found")
       return null
     } else {
       const pageSize = paginationCriteria.pageSize;
 
       const totalCountQuery = await this.dataSource.query(`
-            SELECT CAST(COUNT(*) AS INTEGER) FROM public."APICommentTable"
+            SELECT CAST(COUNT(*) AS INTEGER) FROM public."api_comment"
             WHERE "postId" = $1 AND "isHiden" = $2
     `, [id, false])
       const totalCount = totalCountQuery[0].count
@@ -264,9 +270,9 @@ export class PostsRepository {
             u."login",
             c."createdAt"
             FROM 
-            public."APICommentTable" c
+            public."api_comment" c
             LEFT JOIN 
-            public."UserTable" u
+            public."user" u
             ON c."commentatorId" = u."id"
             WHERE "postId" = $1 AND "isHiden" = $2
             ORDER BY c."${sortBy}" ${sortDirection.toUpperCase()}
