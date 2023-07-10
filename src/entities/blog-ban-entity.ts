@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 import {Blog} from "./blog-entity";
 import {randomUUID} from "crypto";
 import {BanBlogDTO} from "../input.classes";
@@ -13,6 +13,7 @@ export class BlogBan {
     @Column()
     banDate: string
     @OneToOne(() => Blog,(blog) => blog.blogBan, {onDelete : 'SET NULL'})
+    @JoinColumn()
     blog : Blog
 
     static create(DTO : BanBlogDTO, blog : Blog) {

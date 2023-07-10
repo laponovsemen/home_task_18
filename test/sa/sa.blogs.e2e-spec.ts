@@ -234,7 +234,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .expect(204)
 
     await request(server)
-      .get(`/posts/${postId}`)
+      .get(`/blogger/blogs/${createdBlog.body.id}/posts/${postId}`)
       .set("Authorization", `Bearer ${accessTokenOfUser}`)
       .expect(200)
 
