@@ -326,7 +326,7 @@ export class BlogsQueryRepository {
         .getOne()
 
 
-
+    if (!foundBlog) return null;
 
         // .getOne()
 
