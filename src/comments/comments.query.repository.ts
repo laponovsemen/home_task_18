@@ -78,13 +78,24 @@ export class CommentsQueryRepository{
       console.log("start making request of totalCount in getListOfCommentsForSpecificUser")
       const totalCountQuery = await this.dataSource
           .getRepository(User)
-          .createQueryBuilder('user')
-            .leftJoin('user.blogs', 'blogs')
-            .leftJoin('blogs.posts', 'posts')
-            .leftJoin('posts.comments', 'comments')
+          .createQueryBuilder('comments')
+          .leftJoinAndSelect('comments.post', 'post')
+          .leftJoinAndSelect('post.blog', 'blog')
+          .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
+          .leftJoinAndSelect('comments.commentator', 'commentator')
             .loadRelationCountAndMap('user.comments', 'user.comments')
-            .where({id : userId})
+            .where({
+              post:
+                  {
+                    blog: {
+                      blogOwner: {
+                        id: userId
+                      }
+                    }
+                  }
+            })
             .getOne();
+      console.log(totalCountQuery)
       const totalCount = totalCountQuery.comments
       //SELECT "user"."id" AS "user_id", "user"."login" AS "user_login", "user"."email" AS "user_email", "user"."password" AS "user_password",
       // "user"."createdAt" AS "user_createdAt", "user"."isConfirmed" AS "user_isConfirmed", "user"."code" AS "user_code",
@@ -121,7 +132,9 @@ export class CommentsQueryRepository{
                   }
                 }
           })
-          .orderBy()
+          .orderBy({
+            [sortBy] : sortDirection.toUpperCase() as "ASC" | "DESC"
+          })
           .skip(ToSkip)
           .take(pageSize)
           .getMany();
