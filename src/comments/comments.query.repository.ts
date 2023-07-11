@@ -157,7 +157,7 @@ export class CommentsQueryRepository{
                   }
                 }
           })
-          .orderBy({sortBy : sortDirection.toUpperCase() as "ASC" | "DESC"})
+          .orderBy({[`${sortBy}`] : sortDirection.toUpperCase() as "ASC" | "DESC"})
           .skip(ToSkip)
           .take(pageSize)
           .getMany();
