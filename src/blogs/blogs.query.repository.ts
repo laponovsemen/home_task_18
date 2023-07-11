@@ -315,14 +315,14 @@ export class BlogsQueryRepository {
         .getRepository(Blog)
         .createQueryBuilder("blog")
         .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
-        .where('blog.id = :blogId', { blogId })
+        .where('id = :blogId', { blogId })
         .getSql()
 
     const foundBlog = await this.dataSource
         .getRepository(Blog)
         .createQueryBuilder("blog")
         .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
-        .where('blog.id = :blogId', { blogId })
+        .where('id = :blogId', { blogId })
         .getOne()
 
 
