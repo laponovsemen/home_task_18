@@ -45,7 +45,14 @@ export class BansRepository {
             blog : true,
             bannedUser : true
           }
+
   })
+
+    console.log(banExists, "banExists ")
+    console.log(userToBanId, "userToBanId ")
+    console.log(ownerId, "ownerId ")
+    console.log(DTO, "DTO ")
+    console.log(blogId, "blogId  ")
     const blog = await this.bloggerBansForSpecificBlogTypeORMRepository
         .findBy({
           id : blogId

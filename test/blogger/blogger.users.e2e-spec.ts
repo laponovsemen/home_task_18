@@ -22,7 +22,7 @@ const authE2eSpec = "Authorization";
 const basic = "Basic YWRtaW46cXdlcnR5";
 const mongoURI = process.env.MONGO_URL;
 
-describe("TESTING OF CREATING USER AND AUTH", () => {
+describe("TESTING OF CREATING USER AND AUTH as", () => {
   let app: INestApplication;
   let server: any;
   beforeAll(async () => {
