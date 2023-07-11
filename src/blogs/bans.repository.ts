@@ -48,7 +48,7 @@ export class BansRepository {
         })*/
 
     const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
-        .findOne({})
+        .findOneBy(null)
 
     console.log(banExists, "banExists ")
     console.log(userToBanId, "userToBanId ")
