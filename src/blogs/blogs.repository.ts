@@ -37,7 +37,9 @@ export class BlogsRepository {
         const totalCount = await this.blogsTypeORMRepository
             .countBy({
                 name : ILike(filter.name),
-                blogBan : null
+                blogBan : {
+                    isBanned : false
+                }
             })
         const pagesCount = Math.ceil(totalCount / pageSize);
         const page = blogsPagination.pageNumber;
@@ -61,11 +63,13 @@ export class BlogsRepository {
 
         const result = await this.blogsTypeORMRepository
             .find({
-                where : {
-                name : ILike(filter.name),
-                blogBan : null
+                where: {
+                    name: ILike(filter.name),
+                    blogBan: {
+                        isBanned: false
+                    }
                 },
-                order : {
+                order: {
                     [sortBy] :  sortDirection.toUpperCase()
                 },
                 take : pageSize,
