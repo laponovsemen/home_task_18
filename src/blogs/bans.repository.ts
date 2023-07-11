@@ -40,9 +40,7 @@ export class BansRepository {
             bannedUser:{
               id: userToBanId
             },
-            blog: {
-              id : blogId
-            }
+
           },
           relations : {
             blog : true,
