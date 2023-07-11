@@ -184,6 +184,15 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
         .auth(accessToken, {type: 'bearer'})
         .expect(200)
 
+      const bannedUsers = allUsersBansInfo.body.items
+
+      const userIdToUnban = allUsersBansInfo.body.items[0].id
+      const bannedUser = bannedUsers.find((user) => user.id === userIdToUnban);
+      console.log(bannedUser, " bannedUser")
+      console.log(bannedUsers, " bannedUsers")
+        expect(bannedUser).toBeDefined()
+
+
       expect(allUsersBansInfo.body).toEqual({"items":  [
                 {
                  "banInfo":  {
@@ -283,9 +292,41 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
           "totalCount": 11,
            })
 
+      await request(server)
+          .put(`/blogger/users/${userIdToUnban}/ban`)
+          .auth(accessToken, {type: 'bearer'})
+          .send({
+              "isBanned": false,
+              "banReason": "stringstringstringst",
+              "blogId": createdBlogRes.body.id
+          })
+          .expect(204)
 
+      const allUsersAfterUnban = await request(server)
+          .get(`/blogger/users/blog/${createdBlogRes.body.id}`)
+          .auth(accessToken, {type: 'bearer'})
+          .expect(200)
+      console.log(allUsersAfterUnban.body, " FINAL")
+      expect(allUsersAfterUnban.body.items.find((user) => user.id === userIdToUnban)).toBeUndefined()
 
-  }, 20000);
+      await request(server)
+          .put(`/blogger/users/${allUsersAfterUnban.body.items[0].id}/ban`)
+          .auth(accessToken, {type: 'bearer'})
+          .send({
+              "isBanned": false,
+              "banReason": "stringstringstringst",
+              "blogId": createdBlogRes.body.id
+          })
+          .expect(204)
+
+      const allUsersAfterUnban2 = await request(server)
+          .get(`/blogger/users/blog/${createdBlogRes.body.id}`)
+          .auth(accessToken, {type: 'bearer'})
+          .expect(200)
+      console.log(allUsersAfterUnban2.body, " FINAL2")
+      expect(allUsersAfterUnban2.body.items.find((user) => user.id === allUsersAfterUnban.body.items[0].id)).toBeUndefined()
+
+  }, 30000);
   it("create user, login, create blog, ", async () => {
 
     await request(server).delete("/testing/all-data");

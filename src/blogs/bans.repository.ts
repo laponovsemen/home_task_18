@@ -42,7 +42,8 @@ export class BansRepository {
             }
           },
           relations : {
-            blog : true
+            blog : true,
+            bannedUser : true
           }
   })
     const blog = await this.bloggerBansForSpecificBlogTypeORMRepository
