@@ -185,7 +185,7 @@ export class BlogsQueryRepository {
       };
     }
 
-  async createNewBlog(DTO: any, user: any) {
+  /*async createNewBlog(DTO: any, user: any) {
     const blogOwner = await this.userTypeORMRepository.findOneBy({
       id : user.userId
     })
@@ -210,7 +210,7 @@ export class BlogsQueryRepository {
       createdAt : createdBlog.createdAt,
       banInfo
     }
-  }
+  }*/
   async getBlogById(blogId: string) {
     if (!blogId) {
       return null

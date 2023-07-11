@@ -8,15 +8,14 @@ import {BanBlogDTO} from "../input.classes";
 export class BlogBan {
     @PrimaryColumn('uuid')
     id: string;
-    @Column()
+    @Column({nullable : true})
     isBanned : boolean
-    @Column()
+    @Column({nullable : true})
     banDate: string
-    @OneToOne(() => Blog,(blog) => blog.blogBan, {onDelete : 'SET NULL'})
-    @JoinColumn()
-    blog : Blog
 
-    static create(DTO : BanBlogDTO, blog : Blog) {
+
+
+    /*static create(DTO : BanBlogDTO, blog : Blog) {
         const newBan = new BlogBan()
         newBan.id = randomUUID()
         newBan.isBanned = DTO.isBanned
@@ -24,5 +23,13 @@ export class BlogBan {
         newBan.blog = blog
         return newBan
 
+    }*/
+    static create() {
+        const newBan = new BlogBan()
+        newBan.id = randomUUID()
+        newBan.isBanned = false
+        newBan.banDate = new Date().toISOString()
+
+        return newBan
     }
 }

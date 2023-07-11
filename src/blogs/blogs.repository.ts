@@ -247,8 +247,9 @@ export class BlogsRepository {
     async createNewBlog(DTO: BlogDTO, user: TokenPayload) {
 
         const blogOwner : User = await this.usersTypeORMRepository.findOneBy({id: user.userId})
-        const blogToCreate : Blog = Blog.create(DTO, blogOwner)
-
+        const newBanWithEmptyFields = BlogBan.create()
+        const newBan : BlogBan = await this.blogBansTypeORMRepository.save(newBanWithEmptyFields)
+        const blogToCreate : Blog = Blog.create(DTO, blogOwner, newBan)
         const createdBlog: Blog = await this.blogsTypeORMRepository.save(blogToCreate)
         console.log(createdBlog, "createdBlog to return")
         return {
@@ -438,37 +439,30 @@ export class BlogsRepository {
     `, [])
     }
 
-    async BanBlog(DTO: BanBlogDTO, blog : Blog) {
+    async BanBlog(blog : Blog) {
 
-        const newBan = BlogBan.create(DTO, blog)
-        /*const ban = await this.dataSource.query(`
-    INSERT INTO public."BlogBanTable"
-    ("isBanned", "banDate")
-    VALUES ($1, $2)
-    RETURNING "id";
-    `, [true, banDate])
-
-        const updateBlog = await this.dataSource.query(`UPDATE public."BlogsTable"
-    SET "blogBanId"= $2
-        WHERE "id" = $1;
-        
-    `, [blogId, ban[0].id])*/
-
-
-        const ban = await this.blogBansTypeORMRepository
-            .save(newBan)
+        console.log(blog, "blog")
+        const banToUpdate = blog.blogBan
+        const updatedBan =  await this.blogBansTypeORMRepository
+            .update({
+                id : banToUpdate.id
+            }, {
+                    banDate : new Date().toISOString(),
+                    isBanned : true
+            })
 
         return
     }
 
-    async UnbanBlog(blogId: string, banId: string) {
-        const ban = await this.blogBansTypeORMRepository
-            .delete({
-
-                blog : {
-                    id : blogId
-                },
-                id : banId
+    async UnbanBlog(blog : Blog) {
+        console.log(blog, "blog")
+        const banToUpdate = blog.blogBan
+        const updatedBan =  await this.blogBansTypeORMRepository
+            .update({
+                id : banToUpdate.id
+            }, {
+                banDate : null,
+                isBanned : false
             })
 
         return

@@ -30,20 +30,20 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand>{
     const foundBlog = await this.blogsQueryRepository.getBlogById(command.blogId)
     console.log(foundBlog, " foundBlog to ban")
 
-    if (command.DTO.isBanned && foundBlog.blogBan){
+    if (command.DTO.isBanned && foundBlog.blogBan.isBanned){
       console.log(" u try to ban already banned blog")
       return
-    } else if (!command.DTO.isBanned && !foundBlog.blogBan){
+    } else if (!command.DTO.isBanned && !foundBlog.blogBan.isBanned){
       console.log(" u try to unban already unbanned blog")
       return
-    } else if (command.DTO.isBanned && !foundBlog.blogBan){
+    } else if (command.DTO.isBanned && !foundBlog.blogBan.isBanned){
       console.log("you are bunning blog")
       await this.postsRepository.makeAllPostsForBlogHiden(command.blogId)
-      await this.blogsRepository.BanBlog(command.DTO, foundBlog);
+      await this.blogsRepository.BanBlog(foundBlog);
     }else {
       console.log("you are unbunning blog")
       await this.postsRepository.makeAllPostsForBlogVisible(command.blogId)
-      await this.blogsRepository.UnbanBlog(command.blogId, foundBlog.blogBan.id);
+      await this.blogsRepository.UnbanBlog(foundBlog);
     }
     return
   }

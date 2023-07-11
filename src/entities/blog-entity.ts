@@ -34,7 +34,7 @@ export class Blog {
     @JoinColumn()
     blogOwner: User
 
-    @OneToOne(() => BlogBan, (blogBan) => blogBan.blog)
+    @OneToOne(() => BlogBan)
     @JoinColumn()
     blogBan : BlogBan
 
@@ -43,8 +43,9 @@ export class Blog {
     @JoinColumn()
     posts : APIPost[]
 
-    static create(DTO: BlogDTO, blogOwner: any) {
+    static create(DTO: BlogDTO, blogOwner: User, newBanWithEmptyFields : BlogBan) {
         const newBlog = new Blog()
+
         newBlog.id = randomUUID()
         newBlog.name = DTO.name
         newBlog.description = DTO.description
@@ -52,6 +53,7 @@ export class Blog {
         newBlog.isMembership = false
         newBlog.createdAt = new Date().toISOString()
         newBlog.blogOwner = blogOwner
+        newBlog.blogBan = newBanWithEmptyFields
 
 
         return newBlog
