@@ -138,7 +138,7 @@ export class BlogsRepository {
     "websiteUrl",
     "isMembership",
     "createdAt"
-     FROM public."BlogsTable"
+     FROM public."blog"
      WHERE "blogOwnerId" = $1  AND public."blog"."name" ILIKE $4
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
      LIMIT $2 OFFSET $3
