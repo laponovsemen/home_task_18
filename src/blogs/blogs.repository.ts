@@ -280,16 +280,18 @@ export class BlogsRepository {
         WHERE "id" = $1 AND "blogBanId" IS NULL
         `, [blogId])*/
 
-        const foundBlogQuery = await this.blogsTypeORMRepository.findBy({
-            id: blogId
+        const foundBlog = await this.blogsTypeORMRepository.findOneBy({
+            id: blogId,
+            blogBan : {
+                isBanned : false
+            }
         })
 
-        if (foundBlogQuery.length === 0) {
+        if (!foundBlog) {
             return null
         }
-        const foundBlog = foundBlogQuery[0]
         return {
-            id: foundBlog.id.toString(),
+            id: foundBlog.id,
             name: foundBlog.name,
             description: foundBlog.description,
             websiteUrl: foundBlog.websiteUrl,
