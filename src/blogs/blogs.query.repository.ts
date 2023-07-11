@@ -5,7 +5,7 @@ import { paginationCriteriaType } from '../appTypes';
 import { Common } from '../common';
 import { Injectable } from "@nestjs/common";
 import { BanBlogDTO } from "../input.classes";
-import {DataSource, Repository} from "typeorm";
+import {DataSource, ILike, Repository} from "typeorm";
 import {Blog} from "../entities/blog-entity";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
@@ -27,16 +27,22 @@ export class BlogsQueryRepository {
     filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%'
 
     const pageSize = blogsPagination.pageSize;
-    const sqlCountQuery = await this.dataSource.query(`
+   /* const sqlCountQuery = await this.dataSource.query(`
     SELECT COUNT(*) 
     FROM public."blog"
-    WHERE "blogBanId" IS NULL  AND "name" ILike $1
-    `,[filter.name])
+    WHERE "blogBanId"   AND "name" ILike $1
+    `,[filter.name])*/
 
-    const totalCount = parseInt(sqlCountQuery[0].count, 10)
+
+
+    const totalCount = await this.bR.countBy({
+      blogBan : {
+        isBanned : false
+      },
+      name : ILike(filter.name)
+    })
 
     console.log(totalCount)
-    console.log(sqlCountQuery)
     const pagesCount = Math.ceil(totalCount / pageSize);
     console.log(pagesCount, "pagesCount")
     const page = blogsPagination.pageNumber;

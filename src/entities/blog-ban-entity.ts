@@ -28,7 +28,7 @@ export class BlogBan {
         const newBan = new BlogBan()
         newBan.id = randomUUID()
         newBan.isBanned = false
-        newBan.banDate = new Date().toISOString()
+        newBan.banDate = null
 
         return newBan
     }
