@@ -34,7 +34,7 @@ export class BansRepository {
       return null;
     }
 
-    /*const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
+    const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
         .findOne({
           where: {
             bannedUser: {
@@ -45,10 +45,10 @@ export class BansRepository {
             blog: true,
             bannedUser: true
           }
-        })*/
+        })
 
-    const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
-        .findOneBy(null)
+    /*const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .findOneBy(null)*/
 
     console.log(banExists, "banExists ")
     console.log(userToBanId, "userToBanId ")
