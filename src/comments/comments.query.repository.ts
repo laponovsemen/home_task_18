@@ -5,16 +5,19 @@ import { ObjectId } from "mongodb";
 import { CommentForSpecifiedPostDTO } from "../input.classes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
-import {DataSource} from "typeorm";
+import {DataSource, Repository} from "typeorm";
 import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
 import {APIComment} from "../entities/api-comment-entity";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
 export class CommentsQueryRepository{
   constructor(protected readonly dataSource: DataSource,
               protected readonly common : Common,
               protected readonly likeRepository : LikeRepository,
+              @InjectRepository(APIComment) protected readonly commentsTypeORMRepository: Repository<APIComment>,
+
   ) {
   }
   async deleteAllData(){
@@ -76,27 +79,49 @@ export class CommentsQueryRepository{
     WHERE b."blogOwnerId" = $1;
     `, [userId])*/
       console.log("start making request of totalCount in getListOfCommentsForSpecificUser")
-      const totalCountQuery = await this.dataSource
-          .getRepository(User)
-          .createQueryBuilder('comments')
-          .leftJoinAndSelect('comments.post', 'post')
-          .leftJoinAndSelect('post.blog', 'blog')
-          .leftJoinAndSelect('blog.blogOwner', 'blogOwner')
-          .leftJoinAndSelect('comments.commentator', 'commentator')
-            .loadRelationCountAndMap('user.comments', 'user.comments')
+        /*const totalCount = await this.dataSource
+            .getRepository(APIComment)
+            .createQueryBuilder('comments')
+            .leftJoin('comments.post', 'post')
+            .leftJoin('post.blog', 'blog')
+            .leftJoin('blog.blogOwner', 'blogOwner')
+            .leftJoin('comments.commentator', 'commentator')
+            .loadRelationCountAndMap('comments.count', 'api_comment')
             .where({
-              post:
-                  {
-                    blog: {
-                      blogOwner: {
-                        id: userId
-                      }
+                post:
+                    {
+                        blog: {
+                            blogOwner: {
+                                id: userId
+                            }
+                        }
                     }
-                  }
             })
-            .getOne();
-      console.log(totalCountQuery)
-      const totalCount = totalCountQuery.comments
+            .getOne();*/
+
+        const totalCount = await this.commentsTypeORMRepository
+            .count({
+                relations: {
+                    post: {
+                        blog: {
+                            blogOwner: true
+                        }
+                    },
+                    commentator: true
+                },
+                where: {
+                    post:
+                        {
+                            blog: {
+                                blogOwner: {
+                                    id: userId
+                                }
+                            }
+                        }
+                }
+            })
+
+
       //SELECT "user"."id" AS "user_id", "user"."login" AS "user_login", "user"."email" AS "user_email", "user"."password" AS "user_password",
       // "user"."createdAt" AS "user_createdAt", "user"."isConfirmed" AS "user_isConfirmed", "user"."code" AS "user_code",
       // "user"."codeDateOfExpiary" AS "user_codeDateOfExpiary", "user"."banDate" AS "user_banDate", "user"."banReason" AS "user_banReason",
@@ -132,9 +157,7 @@ export class CommentsQueryRepository{
                   }
                 }
           })
-          .orderBy({
-            [sortBy] : sortDirection.toUpperCase() as "ASC" | "DESC"
-          })
+          .orderBy()
           .skip(ToSkip)
           .take(pageSize)
           .getMany();
