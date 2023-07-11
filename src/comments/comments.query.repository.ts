@@ -140,7 +140,7 @@ export class CommentsQueryRepository{
       const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
       const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
       //console.log(listOfPostsForBlogs, "list of posts nhui");
-      const commentsForSpecificUser = await this.dataSource
+      /*const commentsForSpecificUser = await this.dataSource
           .getRepository(APIComment)
           .createQueryBuilder('comments')
           .leftJoinAndSelect('comments.post', 'post')
@@ -157,10 +157,39 @@ export class CommentsQueryRepository{
                   }
                 }
           })
-          .orderBy({[`"${sortBy}"`] : sortDirection.toUpperCase() as "ASC" | "DESC"})
+          .orderBy({[`"${sortBy}"`] : sortDirection.toUpperCase()  })
           .skip(ToSkip)
           .take(pageSize)
-          .getMany();
+          .getMany();*/
+
+
+        const commentsForSpecificUser = await this.commentsTypeORMRepository
+            .find({
+                relations: {
+                    post: {
+                        blog: {
+                            blogOwner: true
+                        }
+                    },
+                    commentator: true
+                },
+                where: {
+                    post:
+                        {
+                            blog: {
+                                blogOwner: {
+                                    id: userId
+                                }
+                            }
+                        }
+                },
+                skip : ToSkip,
+                take : pageSize,
+                order : {
+                    [sortBy] : sortDirection.toUpperCase()
+                }
+            })
+
       console.log(commentsForSpecificUser)
       const result = commentsForSpecificUser.map(comment => {return APIComment.getViewModelOfComment(comment)})
       console.log(result, " result in getListOfCommentsByPostIds");
