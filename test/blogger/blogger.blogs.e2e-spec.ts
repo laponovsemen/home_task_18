@@ -421,7 +421,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                    },
              "postInfo":  {
                  "blogId": expect.any(String),
-                     "blogName": "string",
+                     "blogName": "another name",
                      "id": expect.any(String),
                      "title": "title",
                    },
@@ -441,7 +441,7 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
                    },
              "postInfo":  {
                  "blogId": expect.any(String),
-                     "blogName": "another name",
+                     "blogName": "string",
                      "id":expect.any(String),
                      "title": "title",
                    },

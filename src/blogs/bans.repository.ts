@@ -34,20 +34,21 @@ export class BansRepository {
       return null;
     }
 
-    const banExists : BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
+    /*const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
         .findOne({
           where: {
-            bannedUser:{
+            bannedUser: {
               id: userToBanId
             },
-
           },
-          relations : {
-            blog : true,
-            bannedUser : true
+          relations: {
+            blog: true,
+            bannedUser: true
           }
+        })*/
 
-  })
+    const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
+        .findOne({})
 
     console.log(banExists, "banExists ")
     console.log(userToBanId, "userToBanId ")
@@ -61,6 +62,8 @@ export class BansRepository {
     console.log(banExists, 'is banned');
     if (banExists && DTO.isBanned) {
       console.log('u want to ban banned user');
+      console.log(await this.bloggerBansForSpecificBlogTypeORMRepository
+          .find({}), " all bans for specific blog in Db")
       return true;
     }
     if (!banExists && !DTO.isBanned) {
