@@ -12,6 +12,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "../entities/user-entity";
 import {BloggerBansForSpecificBlog} from "../entities/blogger-bans-for-specific-blog-entity";
 import {Blog} from "../entities/blog-entity";
+import {BlogBan} from "../entities/blog-ban-entity";
 
 @Injectable()
 export class BansRepository {
@@ -20,18 +21,20 @@ export class BansRepository {
     protected readonly common: Common,
     protected readonly usersRepository: UsersRepository,
     @InjectRepository(BloggerBansForSpecificBlog) protected bloggerBansForSpecificBlogTypeORMRepository : Repository<BloggerBansForSpecificBlog>,
+    @InjectRepository(Blog) protected blogsTypeORMRepository : Repository<Blog>,
   ) {
   }
 
   async banUserForSpecificBlog(ownerId: string, userToBanId: string, DTO: BanUserByBloggerDTO) {
     const blogId = DTO.blogId;
-    const userToBan = await this.usersRepository.findUserById(userToBanId);
+    const userToBan : User = await this.usersRepository.findUserById(userToBanId);
+    const owner : User = await this.usersRepository.findUserById(ownerId)
     if (!userToBan) {
       console.log('no user');
       return null;
     }
 
-    const banExists = await this.bloggerBansForSpecificBlogTypeORMRepository
+    const banExists : BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
         .findOne({
           where: {
             bannedUser:{
@@ -53,8 +56,8 @@ export class BansRepository {
     console.log(ownerId, "ownerId ")
     console.log(DTO, "DTO ")
     console.log(blogId, "blogId  ")
-    const blog = await this.bloggerBansForSpecificBlogTypeORMRepository
-        .findBy({
+    const blog : Blog = await this.blogsTypeORMRepository
+        .findOneBy({
           id : blogId
         })
     console.log(banExists, 'is banned');
@@ -67,7 +70,7 @@ export class BansRepository {
       return true;
     }
     if (DTO.isBanned) {
-      const newBan =  BloggerBansForSpecificBlog.create(ownerId, userToBanId, blogId, DTO)
+      const newBan =  BloggerBansForSpecificBlog.create(owner, userToBan, blog, DTO)
       const res = await this.bloggerBansForSpecificBlogTypeORMRepository
           .save(newBan)
 

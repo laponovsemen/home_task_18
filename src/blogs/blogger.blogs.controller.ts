@@ -28,12 +28,9 @@ import { isNotEmpty, IsNotEmpty, IsString, IsUrl, Length } from "class-validator
 import { AllPostsForSpecificBlogGuard, AuthGuard, BasicAuthGuard } from "../auth/auth.guard";
 import { BanUserByBloggerDTO, BlogDTO, PostForSpecificBlogDTO } from "../input.classes";
 import { User } from "../auth/decorators/public.decorator";
-import { GettingAllUsersForSuperAdminCommand } from "../users/use-cases/getting-all-users-for-super-admin";
 import { CommandBus } from "@nestjs/cqrs";
 import { GettingAllBlogsForSpecifiedBloggerCommand } from "./use-cases/getting-all-blogs-for-specified-blogger";
 import { PostsService } from "../posts/posts.service";
-import { BanUserByBloggerCommand } from "./use-cases/ban-user-by-blogger-use-case";
-import { GetBannedUsersForSpecificBlogCommand } from "./use-cases/get-banned-users-for-specific-blog-use-case";
 import { GetAllCommentForUserCommand } from "./use-cases/get-all-comments-for-user";
 import {Blog} from "../entities/blog-entity";
 import {UsersService} from "../users/users.service";

@@ -30,7 +30,7 @@ export class BloggerBansForSpecificBlog {
 
 
 
-    static create(owner : any, bannedUser: any, blog: any, DTO: BanUserByBloggerDTO) {
+    static create(owner : User, bannedUser: User, blog: Blog, DTO: BanUserByBloggerDTO) {
         const newBanForSpecificBlog = new  BloggerBansForSpecificBlog()
 
         newBanForSpecificBlog.id = randomUUID()

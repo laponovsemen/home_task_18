@@ -31,6 +31,7 @@ import { BanUserByBloggerCommand } from "./use-cases/ban-user-by-blogger-use-cas
 import { GetBannedUsersForSpecificBlogCommand } from "./use-cases/get-banned-users-for-specific-blog-use-case";
 import { BlogsQueryRepository } from "./blogs.query.repository";
 import {Blog} from "../entities/blog-entity";
+import {TokenPayload} from "../working.classess";
 
 
 
@@ -51,24 +52,24 @@ export class BloggerUsersController {
   @Put("/users/:userIdToBan/ban")
   @HttpCode(204)
   async banUserByBlogger(@Query() QueryParams,
-                         @User() user,
+                         @User() user : TokenPayload,
                          @Res({passthrough : true}) res : Response,
                          @Body() DTO : BanUserByBloggerDTO,
                          @Param("userIdToBan") userIdToBan): Promise<PaginatorViewModelType<Blog>> {
 
     console.log("ban user procedure");
-    const blogOwnerFromToken = user.userId
+    const blogOwnerIdFromToken = user.userId
     const blog = await this.blogsQueryRepository.getBlogByIdWithBloggerInfo(DTO.blogId)
     if(!blog){
       throw new NotFoundException()
     }
     const blogOwnerFromDB = blog.blogOwnerInfo.userId
-    console.log(blogOwnerFromToken.toString(), "userid from token");
+    console.log(blogOwnerIdFromToken.toString(), "userid from token");
     console.log(blogOwnerFromDB.toString(), "userid from DB");
-    if(blogOwnerFromToken.toString() !== blogOwnerFromDB.toString()){
+    if(blogOwnerIdFromToken.toString() !== blogOwnerFromDB.toString()){
       throw new ForbiddenException()
     }
-    const result = await this.commandBus.execute( new BanUserByBloggerCommand(DTO, userIdToBan, blogOwnerFromToken))
+    const result = await this.commandBus.execute( new BanUserByBloggerCommand(DTO, userIdToBan, blogOwnerIdFromToken))
     if(!result){
       throw new NotFoundException()
     } else {
