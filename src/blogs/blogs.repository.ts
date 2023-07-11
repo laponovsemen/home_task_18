@@ -108,17 +108,27 @@ export class BlogsRepository {
         filter.name = blogsPagination.searchNameTerm ? `%${blogsPagination.searchNameTerm}%` : '%%'
 
         const pageSize = blogsPagination.pageSize;
-        const totalCountQuery = await this.dataSource.query(`
+
+
+        /*const totalCountQuery = await this.dataSource.query(`
     SELECT CAST(COUNT(*) AS TEXT) FROM public."BlogsTable"
         WHERE "blogOwnerId" = $1 AND public."BlogsTable"."name" ILIKE $2
-    `, [userId, filter.name])
+    `, [userId, filter.name])*/
 
-        const totalCount = parseInt(totalCountQuery[0].count, 10)
-        const pagesCount = Math.ceil(totalCount / pageSize);
-        const page = blogsPagination.pageNumber;
-        const sortBy = blogsPagination.sortBy;
+        const totalCount = await this.blogsTypeORMRepository
+            .count({
+                where: {
+                    blogOwner : {
+                        id : userId
+                    },
+                    name: ILike(filter.name)
+                }
+            })
+        const pagesCount : number = Math.ceil(totalCount / pageSize);
+        const page : number = blogsPagination.pageNumber;
+        const sortBy : string = blogsPagination.sortBy;
         const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
-        const ToSkip = blogsPagination.pageSize * (blogsPagination.pageNumber - 1);
+        const ToSkip : number = blogsPagination.pageSize * (blogsPagination.pageNumber - 1);
 
 
         const result = await this.dataSource.query(`
@@ -129,7 +139,7 @@ export class BlogsRepository {
     "isMembership",
     "createdAt"
      FROM public."BlogsTable"
-     WHERE "blogOwnerId" = $1  AND public."BlogsTable"."name" ILIKE $4
+     WHERE "blogOwnerId" = $1  AND public."blog"."name" ILIKE $4
      ORDER BY "${sortBy}" ${sortDirection.toUpperCase()} 
      LIMIT $2 OFFSET $3
     `, [userId, pageSize, ToSkip, filter.name])
