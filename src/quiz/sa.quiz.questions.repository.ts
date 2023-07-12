@@ -44,7 +44,13 @@ export class QuizQuestionsRepository {
             })
 
 
-        return result
+        return {
+            pagesCount,
+            page,
+            pageSize,
+            totalCount,
+            items : result
+        }
 
     }
 
