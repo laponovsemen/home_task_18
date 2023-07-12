@@ -36,7 +36,7 @@ export class APIQuizQuestion{
         newAPIQuizQuestion.correctAnswers = DTO.correctAnswers
         newAPIQuizQuestion.published = false
         newAPIQuizQuestion.createdAt = dateOfCreation
-        newAPIQuizQuestion.updatedAt = dateOfCreation
+        newAPIQuizQuestion.updatedAt = null
 
         return newAPIQuizQuestion
     }

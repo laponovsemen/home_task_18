@@ -58,7 +58,7 @@ describe("start creating quiz question", () => {
                "createdAt": expect.any(String),
                "id": expect.any(String),
                "published": false,
-               "updatedAt": expect.any(String),})
+               "updatedAt": null})
 
         const createdQuestion2 = await request(server)
             .post("/sa/quiz/questions")
@@ -74,7 +74,7 @@ describe("start creating quiz question", () => {
             "createdAt": expect.any(String),
             "id": expect.any(String),
             "published": false,
-            "updatedAt": expect.any(String),})
+            "updatedAt": null})
 
     })
 
