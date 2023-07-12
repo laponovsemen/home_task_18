@@ -153,7 +153,9 @@ export class BansRepository {
               take : pageSize,
               skip : ToSkip,
               order : {
-                  [sortBy]: sortDirection.toUpperCase() as "ASC" | "DESC"
+                  bannedUser: {
+                      [sortBy]: sortDirection.toUpperCase() as "ASC" | "DESC"
+                  }
               }
           })
 
