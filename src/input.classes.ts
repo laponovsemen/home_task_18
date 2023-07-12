@@ -129,6 +129,7 @@ export class PublishedDTO {
   published: boolean //maxLength: 500 minLength: 10
 }
 export class QuizDTO {
+  @Length(10, 500)
   @IsNotEmpty()
   @IsString()
   body: string //maxLength: 500 minLength: 10
