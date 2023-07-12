@@ -49,6 +49,7 @@ export class Common {
   getPaginationCriteria(QueryParams: any) : paginationCriteriaType{
     const banStatus = QueryParams.banStatus ? QueryParams.banStatus.toString() : "all";
     const searchNameTerm = QueryParams.searchNameTerm ? QueryParams.searchNameTerm.toString() : null;
+    const bodySearchTerm = QueryParams.bodySearchTerm ? QueryParams.bodySearchTerm.toString() : null;
     const searchLoginTerm = QueryParams.searchLoginTerm ? QueryParams.searchLoginTerm.toString() : null;
     const searchEmailTerm = QueryParams.searchEmailTerm ? QueryParams.searchEmailTerm.toString() : null;
     const pageNumber: number = QueryParams.pageNumber ? parseInt(QueryParams.pageNumber.toString(), 10) : 1;
@@ -58,6 +59,7 @@ export class Common {
     return {
       searchNameTerm,
       searchLoginTerm,
+      bodySearchTerm,
       searchEmailTerm,
       pageNumber,
       pageSize,

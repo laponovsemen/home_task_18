@@ -71,19 +71,46 @@ import {APILike} from "./entities/api-like-entity";
 import {APISession} from "./entities/api-session-entity";
 import {APIPost} from "./entities/api-post-entity";
 import {BloggerBansForSpecificBlog} from "./entities/blogger-bans-for-specific-blog-entity";
+import {QuizQuestionsRepository} from "./quiz/sa.quiz.questions.repository";
+import {APIQuizQuestion} from "./entities/quiz-entity";
+import {SAQuizController} from "./quiz/sa.quiz.controller";
+import {
+  CreateNewQuestionOfQuizCommand,
+  CreateNewQuestionOfQuizUseCase
+} from "./quiz/use-cases/create-new-question-of-quiz-use-case";
+import {
+  deleteQuestionOfQuizCommand,
+  deleteQuestionOfQuizUseCase
+} from "./quiz/use-cases/delete-question-of-quiz-by-id-use-case";
+import {
+  getAllQuestionsOfQuizCommand,
+  getAllQuestionsOfQuizUseCase
+} from "./quiz/use-cases/get-all-questions-of-quiz-use-case";
+import {
+  publishOrUnpublishQuestionOfQuizByIdCommand,
+  publishOrUnpublishQuestionOfQuizByIdUseCase
+} from "./quiz/use-cases/publish-or-unpublish-of-quiz-use-case";
+import {
+  updateQuestionOfQuizCommand,
+  updateQuestionOfQuizUseCase
+} from "./quiz/use-cases/update-question-of-quiz-by-id-use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
   LikeService, CommentsService, JwtService, SecurityDevicesService]
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
-  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository]
+  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,GetAllCommentForUserUseCase,
-  GettingAllBlogsForSpecifiedBloggerUseCase, BanBlogUseCase,BanUserByBloggerUseCase , GetBannedUsersForSpecificBlogUseCase]
+  GettingAllBlogsForSpecifiedBloggerUseCase, BanBlogUseCase,BanUserByBloggerUseCase , GetBannedUsersForSpecificBlogUseCase,
+  CreateNewQuestionOfQuizUseCase, deleteQuestionOfQuizUseCase, getAllQuestionsOfQuizUseCase, publishOrUnpublishQuestionOfQuizByIdUseCase,
+  updateQuestionOfQuizUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,GetAllCommentForUserCommand,
-  GettingAllBlogsForSpecifiedBloggerCommand, BanBlogCommand,BanUserByBloggerCommand, GetBannedUsersForSpecificBlogCommand]
+  GettingAllBlogsForSpecifiedBloggerCommand, BanBlogCommand,BanUserByBloggerCommand, GetBannedUsersForSpecificBlogCommand,
+  CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand, publishOrUnpublishQuestionOfQuizByIdCommand,
+  updateQuestionOfQuizCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
@@ -105,14 +132,15 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
       username: 'tfaepjvr',
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',
-      entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog],
+      entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog, APIQuizQuestion],
       autoLoadEntities: true,
       synchronize: true,
     }),
   ],
 
   controllers: [AppController, BloggerBlogsController, TestingController,BlogsController,SABlogsController,SAUsersController,
-    PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController],
+    PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController,
+    SAQuizController],
 
   providers: [...modules,
     ...services,

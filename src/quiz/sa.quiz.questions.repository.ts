@@ -1,16 +1,9 @@
-import {InjectModel, Prop} from "@nestjs/mongoose";
 import {paginationCriteriaType} from '../appTypes';
 import {Common} from '../common';
-import {ObjectId} from 'mongodb';
 import {Injectable} from "@nestjs/common";
 import {BanBlogDTO, BlogDTO, QuizDTO} from "../input.classes";
 import {DataSource, ILike, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Blog} from "../entities/blog-entity";
-import {APIPost} from "../entities/api-post-entity";
-import {User} from "../entities/user-entity";
-import {BlogBan} from "../entities/blog-ban-entity";
-import {TokenPayload} from "../working.classess";
 import {APIQuizQuestion} from "../entities/quiz-entity";
 
 @Injectable()

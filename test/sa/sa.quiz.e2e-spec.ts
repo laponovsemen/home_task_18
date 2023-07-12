@@ -7,12 +7,13 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {AppModule} from "../../src/app.module";
 import cookieParser from "cookie-parser";
 import {getAppAndCleanDB} from "../test-utils";
+import {QuizDTO} from "../../src/input.classes";
 
 const auth = "Authorization"
 const basic = 'Basic YWRtaW46cXdlcnR5'
 
 //TESTING ROUTE
-describe("testing od deleting all data  ", () => {
+describe("start creating quiz question", () => {
     let app: INestApplication;
     let server : any
     beforeAll(async () => {
@@ -26,11 +27,26 @@ describe("testing od deleting all data  ", () => {
     afterAll(async () => {
         app.close()
     });
-    it("testing od deleting all data // correct authorization ",async () => {
-        request(server)
+    it("delete All Data, create question and get them all",async () => {
+        await request(server)
             .delete("/testing/all-data")
             .set(auth, basic)
             .expect(204)
+
+
+        const createQuestionDTO : QuizDTO = {
+            body : "question body01",
+            correctAnswers : ["correct1"]
+        }
+
+        const createdQuestion = await request(server)
+            .post("/sa/quiz/questions")
+            .set(auth, basic)
+            .send(createQuestionDTO)
+            .expect(201)
+
+        expect(createdQuestion.body).toEqual({})
+
     })
 
     it("testing od deleting all data // incorrect authorization // wrong Authorization field value", () => {
