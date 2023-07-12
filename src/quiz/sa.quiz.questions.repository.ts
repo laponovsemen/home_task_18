@@ -5,6 +5,7 @@ import {BanBlogDTO, BlogDTO, QuizDTO} from "../input.classes";
 import {DataSource, ILike, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 import {APIQuizQuestion} from "../entities/quiz-entity";
+import {isUUID} from "class-validator";
 
 @Injectable()
 export class QuizQuestionsRepository {
@@ -61,9 +62,9 @@ export class QuizQuestionsRepository {
 
     async findQuizQuestionById(quizQuestionId: string) : Promise<APIQuizQuestion>  {
 
-        if (!quizQuestionId)  return null;
+        if (!quizQuestionId || !isUUID(quizQuestionId))  return null;
 
-        const foundQuizQuestion : APIQuizQuestion = await this.quizQuestionsTypeORMRepository.findOneBy({ id: quizQuestionId })
+        const foundQuizQuestion : APIQuizQuestion = await this.quizQuestionsTypeORMRepository.findOneByOrFail({ id: quizQuestionId })
 
         if (!foundQuizQuestion) {
             return null

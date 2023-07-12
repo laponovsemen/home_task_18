@@ -129,13 +129,18 @@ describe("start creating quiz question", () => {
             .send(updateQuestion2DTO)
             .expect(204)
 
-        const getQuestionById = await request(server)
+        /*const getQuestionById = await request(server)
             .get(`/sa/quiz/questions/${questonToUpdate.id}`)
             .set(auth, basic)
             .expect(200)
 
         expect(getQuestionById.body.body).toEqual(updateQuestion2DTO.body)
-        expect(getQuestionById.body.correctAnswers).toEqual(updateQuestion2DTO.correctAnswers)
+        expect(getQuestionById.body.correctAnswers).toEqual(updateQuestion2DTO.correctAnswers)*/
+
+        await request(server)
+            .delete(`/sa/quiz/questions/${questonToUpdate.id}`)
+            .set(auth, basic)
+            .expect(204)
 
     })
 

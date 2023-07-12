@@ -45,6 +45,7 @@ export class APIQuizQuestion{
         const newAPIQuizQuestionToUpdate = new APIQuizQuestion()
 
 
+        newAPIQuizQuestionToUpdate.id = presentQuizQuestion.id
         newAPIQuizQuestionToUpdate.body = DTO.body
         newAPIQuizQuestionToUpdate.correctAnswers = DTO.correctAnswers
         newAPIQuizQuestionToUpdate.published = presentQuizQuestion.published
@@ -56,7 +57,7 @@ export class APIQuizQuestion{
 
     static createToPublish(publishedDTO: PublishedDTO, foundQuestion: APIQuizQuestion) {
         const newAPIQuizQuestionToPublish = new APIQuizQuestion()
-
+        newAPIQuizQuestionToPublish.id = foundQuestion.id
         newAPIQuizQuestionToPublish.body = foundQuestion.body
         newAPIQuizQuestionToPublish.correctAnswers = foundQuestion.correctAnswers
         newAPIQuizQuestionToPublish.published = publishedDTO.published
