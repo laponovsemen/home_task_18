@@ -64,7 +64,7 @@ export class QuizQuestionsRepository {
 
         if (!quizQuestionId || !isUUID(quizQuestionId))  return null;
 
-        const foundQuizQuestion : APIQuizQuestion = await this.quizQuestionsTypeORMRepository.findOneByOrFail({ id: quizQuestionId })
+        const foundQuizQuestion : APIQuizQuestion = await this.quizQuestionsTypeORMRepository.findOneBy({ id: quizQuestionId })
 
         if (!foundQuizQuestion) {
             return null
