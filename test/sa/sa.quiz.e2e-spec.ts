@@ -76,6 +76,13 @@ describe("start creating quiz question", () => {
             "published": false,
             "updatedAt": null})
 
+        const getAllQuestions = await request(server)
+            .get("/sa/quiz/questions")
+            .set(auth, basic)
+            .expect(200)
+
+        expect(getAllQuestions.body).toEqual({})
+
     })
 
     it("testing od deleting all data // incorrect authorization // wrong Authorization field value", () => {

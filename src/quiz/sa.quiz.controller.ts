@@ -47,8 +47,8 @@ export class SAQuizController {
                                 ): Promise<PaginatorViewModelType<any>> {
         const paginationCriteria: paginationCriteriaType =
             this.common.getPaginationCriteria(QueryParams);
-        await this.commandBus.execute(new getAllQuestionsOfQuizCommand(paginationCriteria))
-        return
+        return await this.commandBus.execute(new getAllQuestionsOfQuizCommand(paginationCriteria))
+
     }
 
 

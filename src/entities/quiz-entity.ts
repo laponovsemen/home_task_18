@@ -23,7 +23,7 @@ export class APIQuizQuestion{
 
     @Column({ type : 'varchar'})
     createdAt	 : string
-    @Column({ type : 'varchar'})
+    @Column({ type : 'varchar', nullable : true})
     updatedAt	: string
 
 
