@@ -31,6 +31,7 @@ export class APIQuizQuestion{
         const newAPIQuizQuestion = new APIQuizQuestion()
         const dateOfCreation = new Date().toISOString()
 
+        newAPIQuizQuestion.id = randomUUID()
         newAPIQuizQuestion.body = DTO.body
         newAPIQuizQuestion.correctAnswers = DTO.correctAnswers
         newAPIQuizQuestion.published = false

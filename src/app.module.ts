@@ -118,7 +118,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 @Module({
   imports: [
     CqrsModule,
-    TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog]),
+    TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog, APIQuizQuestion]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
