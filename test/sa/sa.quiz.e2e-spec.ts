@@ -39,13 +39,42 @@ describe("start creating quiz question", () => {
             correctAnswers : ["correct1"]
         }
 
+        const createQuestion2DTO: QuizDTO = {
+            "body": "question body 104061",
+            "correctAnswers": ["correct answer 1, correct answer 2"]
+        }
+
         const createdQuestion = await request(server)
             .post("/sa/quiz/questions")
             .set(auth, basic)
             .send(createQuestionDTO)
             .expect(201)
 
-        expect(createdQuestion.body).toEqual({})
+        expect(createdQuestion.body).toEqual({
+            "body": "question body01",
+               "correctAnswers":  [
+                 "correct1",
+                  ],
+               "createdAt": expect.any(String),
+               "id": expect.any(String),
+               "published": false,
+               "updatedAt": expect.any(String),})
+
+        const createdQuestion2 = await request(server)
+            .post("/sa/quiz/questions")
+            .set(auth, basic)
+            .send(createQuestion2DTO)
+            .expect(201)
+
+        expect(createdQuestion2.body).toEqual({
+            "body": "question body 104061",
+            "correctAnswers":  [
+                "correct answer 1, correct answer 2"
+            ],
+            "createdAt": expect.any(String),
+            "id": expect.any(String),
+            "published": false,
+            "updatedAt": expect.any(String),})
 
     })
 

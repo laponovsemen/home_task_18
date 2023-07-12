@@ -133,7 +133,6 @@ export class QuizDTO {
   @IsString()
   body: string //maxLength: 500 minLength: 10
   @IsArray()
-  @Length(20)
   correctAnswers: string[] //All variants of possible correct answers for current questions Examples: [6, 'six', 'шесть', 'дофига']
   // In Postgres save this data in JSON column string
 
