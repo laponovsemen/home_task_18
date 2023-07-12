@@ -3,6 +3,7 @@ import { StatusTypeEnum, WithMongoId } from "./mongo/mongooseSchemas";
 
 export type paginationCriteriaType = {
   searchLoginTerm : string | null;
+  bodySearchTerm : string | null;
   searchEmailTerm : string | null;
   searchNameTerm: string | null;
   pageNumber: number;

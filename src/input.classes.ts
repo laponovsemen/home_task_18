@@ -1,6 +1,6 @@
 import {
   IS_NUMBER_STRING,
-  IS_UUID,
+  IS_UUID, IsArray,
   IsBoolean, IsDefined,
   IsEnum,
   IsNotEmpty,
@@ -121,6 +121,22 @@ export class BanUserByBloggerDTO {
   @IsNotEmpty()
   @IsString()
   blogId: string
+}
+
+
+export class PublishedDTO {
+  @IsBoolean()
+  published: boolean //maxLength: 500 minLength: 10
+}
+export class QuizDTO {
+  @IsNotEmpty()
+  @IsString()
+  body: string //maxLength: 500 minLength: 10
+  @IsArray()
+  @Length(20)
+  correctAnswers: string[] //All variants of possible correct answers for current questions Examples: [6, 'six', 'шесть', 'дофига']
+  // In Postgres save this data in JSON column string
+
 }
 
 

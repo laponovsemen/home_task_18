@@ -1,0 +1,110 @@
+import {InjectModel, Prop} from "@nestjs/mongoose";
+import {paginationCriteriaType} from '../appTypes';
+import {Common} from '../common';
+import {ObjectId} from 'mongodb';
+import {Injectable} from "@nestjs/common";
+import {BanBlogDTO, BlogDTO, QuizDTO} from "../input.classes";
+import {DataSource, ILike, Repository} from "typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Blog} from "../entities/blog-entity";
+import {APIPost} from "../entities/api-post-entity";
+import {User} from "../entities/user-entity";
+import {BlogBan} from "../entities/blog-ban-entity";
+import {TokenPayload} from "../working.classess";
+import {APIQuizQuestion} from "../entities/quiz-entity";
+
+@Injectable()
+export class QuizQuestionsRepository {
+    constructor(
+        @InjectRepository(APIQuizQuestion) protected quizQuestionsTypeORMRepository: Repository<APIQuizQuestion>,
+        protected readonly dataSource: DataSource,
+        protected readonly common: Common,
+    ) {
+    }
+
+    async getAllQuizQuestionsWithPagination(blogsPagination: paginationCriteriaType) {
+        let filter: { body?: any } = {}
+        filter.body = blogsPagination.bodySearchTerm ? `%${blogsPagination.bodySearchTerm}%` : '%%'
+
+        const pageSize = blogsPagination.pageSize;
+
+        const totalCount : number = await this.quizQuestionsTypeORMRepository
+            .countBy({
+                body : ILike(filter.body),
+            })
+        const pagesCount = Math.ceil(totalCount / pageSize);
+        const page = blogsPagination.pageNumber;
+        const sortBy = blogsPagination.sortBy;
+        const sortDirection: 'asc' | 'desc' = blogsPagination.sortDirection;
+        const ToSkip = blogsPagination.pageSize * (blogsPagination.pageNumber - 1);
+
+        const result = await this.quizQuestionsTypeORMRepository
+            .find({
+                where: {
+                    body: ILike(filter.body),
+                },
+                order: {
+                    [sortBy] :  sortDirection.toUpperCase()
+                },
+                take : pageSize,
+                skip : ToSkip
+            })
+
+
+        return result
+
+    }
+
+
+    async createNewQuizQuestion(quizQuestion : APIQuizQuestion) {
+        return await this.quizQuestionsTypeORMRepository.save(quizQuestion)
+    }
+
+    async findQuizQuestionById(quizQuestionId: string) : Promise<APIQuizQuestion>  {
+
+        if (!quizQuestionId)  return null;
+
+        const foundQuizQuestion : APIQuizQuestion = await this.quizQuestionsTypeORMRepository.findOneBy({ id: quizQuestionId })
+
+        if (!foundQuizQuestion) {
+            return null
+        } else {
+            return foundQuizQuestion
+        }
+    }
+
+    async updateQuestionOfQuizById(DTO: QuizDTO, presentQuizQuestion: APIQuizQuestion) {
+
+
+        if (!presentQuizQuestion || !DTO) {
+            return null
+        }
+        const quizQuestionToUpdate = APIQuizQuestion.createToUpdate(DTO, presentQuizQuestion)
+
+        const updateQuizQuestoinResult: APIQuizQuestion = await this.quizQuestionsTypeORMRepository.save(quizQuestionToUpdate)
+        console.log(quizQuestionToUpdate, "quizQuestionToUpdate to return")
+        console.log(updateQuizQuestoinResult, " updateQuizQuestoinResult")
+        return true
+    }
+
+    async deleteQuizQuestionById(quizQuestionId: string) {
+        if (!quizQuestionId) {
+            return null
+        }
+
+        await this.quizQuestionsTypeORMRepository
+            .delete({
+                id : quizQuestionId
+            })
+
+        return true
+    }
+
+
+
+    async deleteAllData() {
+        await this.quizQuestionsTypeORMRepository.delete({})
+    }
+
+
+}
