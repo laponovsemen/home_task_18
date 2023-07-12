@@ -65,7 +65,7 @@ export class SAQuizController {
 
     @Delete("/questions/:quizQuestionId")
     @HttpCode(204)
-    async deleteQuestionOfQuizById(@Body() DTO : BanBlogDTO,
+    async deleteQuestionOfQuizById(
                                    @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
     ) {
