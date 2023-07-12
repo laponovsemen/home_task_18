@@ -330,8 +330,7 @@ export class BlogsQueryRepository {
 
         // .getOne()
 
-    console.log(foundBlog, " foundBlogQuery in getBlogByIdWithBloggerInfo")
-    console.log(foundBlogs, " foundBlogQuery in getBlogByIdWithBloggerInfo")
+
 
     return {
       id: foundBlog.id,

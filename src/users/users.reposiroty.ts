@@ -227,7 +227,6 @@ export class UsersRepository {
   }
 
   async findUserById(userId: string) {
-    console.log(userId, "userId in findUserById");
 
     /*const [result] = await this.dataSource.query(`
     SELECT *  FROM public."UserTable"
@@ -237,7 +236,7 @@ export class UsersRepository {
     const result = await this.usersTypeORMRepository.findOneBy({
       id : userId
     })
-    console.log(result, "result findUserById findUserById");
+
     return result
   }
 

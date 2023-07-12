@@ -50,11 +50,7 @@ export class BansRepository {
     /*const banExists: BloggerBansForSpecificBlog = await this.bloggerBansForSpecificBlogTypeORMRepository
         .findOneBy(null)*/
 
-    console.log(banExists, "banExists ")
-    console.log(userToBanId, "userToBanId ")
-    console.log(ownerId, "ownerId ")
-    console.log(DTO, "DTO ")
-    console.log(blogId, "blogId  ")
+
     const blog : Blog = await this.blogsTypeORMRepository
         .findOneBy({
           id : blogId
@@ -62,15 +58,11 @@ export class BansRepository {
     console.log(banExists, 'is banned');
     if (banExists && DTO.isBanned) {
       console.log('u want to ban banned user');
-      console.log(await this.bloggerBansForSpecificBlogTypeORMRepository
-          .find({}), " all bans for specific blog in Db")
       return true;
-    }
-    if (!banExists && !DTO.isBanned) {
+    } else if (!banExists && !DTO.isBanned) {
       console.log('u want to unban not banned user');
       return true;
-    }
-    if (DTO.isBanned) {
+    } else if (DTO.isBanned) {
       const newBan =  BloggerBansForSpecificBlog.create(owner, userToBan, blog, DTO)
       const res = await this.bloggerBansForSpecificBlogTypeORMRepository
           .save(newBan)

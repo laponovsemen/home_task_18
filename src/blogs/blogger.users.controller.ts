@@ -57,15 +57,14 @@ export class BloggerUsersController {
                          @Body() DTO : BanUserByBloggerDTO,
                          @Param("userIdToBan") userIdToBan): Promise<PaginatorViewModelType<Blog>> {
 
-    console.log("ban user procedure");
+
     const blogOwnerIdFromToken = user.userId
     const blog = await this.blogsQueryRepository.getBlogByIdWithBloggerInfo(DTO.blogId)
     if(!blog){
       throw new NotFoundException()
     }
     const blogOwnerFromDB = blog.blogOwnerInfo.userId
-    console.log(blogOwnerIdFromToken.toString(), "userid from token");
-    console.log(blogOwnerFromDB.toString(), "userid from DB");
+
     if(blogOwnerIdFromToken.toString() !== blogOwnerFromDB.toString()){
       throw new ForbiddenException()
     }
