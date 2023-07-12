@@ -75,8 +75,7 @@ export class BansRepository {
       await this.bloggerBansForSpecificBlogTypeORMRepository.delete({
         bannedUser : {
           id : userToBanId
-        }
-        ,
+        },
         blog : {
           id : blogId
         }

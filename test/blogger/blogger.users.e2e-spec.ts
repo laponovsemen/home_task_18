@@ -326,6 +326,34 @@ describe("TESTING OF CREATING USER AND AUTH as", () => {
       console.log(allUsersAfterUnban2.body, " FINAL2")
       expect(allUsersAfterUnban2.body.items.find((user) => user.id === allUsersAfterUnban.body.items[0].id)).toBeUndefined()
 
+      await request(server)
+          .put(`/blogger/users/${allUsersAfterUnban.body.items[allUsersAfterUnban.body.items.length - 1].id}/ban`)
+          .auth(accessToken, {type: 'bearer'})
+          .send({
+              "isBanned": false,
+              "banReason": "stringstringstringst",
+              "blogId": createdBlogRes.body.id
+          })
+          .expect(204)
+
+
+      const allUsersAfterUnban3 = await request(server)
+          .get(`/blogger/users/blog/${createdBlogRes.body.id}`)
+          .auth(accessToken, {type: 'bearer'})
+          .expect(200)
+      console.log(allUsersAfterUnban2.body, " FINAL2")
+
+      expect(allUsersAfterUnban2.body.items.find((user) =>
+          user.id === allUsersAfterUnban.body.items[allUsersAfterUnban.body.items.length - 1].id)).toBeDefined()
+
+      console.log(allUsersAfterUnban2.body.items, " allUsersAfterUnban2.body.items")
+
+      expect(allUsersAfterUnban3.body.items.find((user) =>
+          user.id === allUsersAfterUnban.body.items[allUsersAfterUnban.body.items.length - 1].id)).toBeUndefined()
+
+      console.log(allUsersAfterUnban3.body.items, " allUsersAfterUnban3.body.items")
+
+
   }, 30000);
   it("create user, login, create blog, ", async () => {
 

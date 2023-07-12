@@ -55,7 +55,6 @@ export class Blog {
         newBlog.blogOwner = blogOwner
         newBlog.blogBan = newBanWithEmptyFields
 
-
         return newBlog
     }
 
