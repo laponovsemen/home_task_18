@@ -40,6 +40,9 @@ export class BansRepository {
             bannedUser: {
               id: userToBanId
             },
+            blog : {
+              id : blogId
+            }
           },
           relations: {
             blog: true,
@@ -70,15 +73,8 @@ export class BansRepository {
       console.log('i ban this user, ban ibfo =>', res);
       return true;
     } else {
-
-
       await this.bloggerBansForSpecificBlogTypeORMRepository.delete({
-        bannedUser : {
-          id : userToBanId
-        },
-        blog : {
-          id : blogId
-        }
+        id : banExists.id
       })
       console.log('unban user');
       return true;
@@ -128,18 +124,38 @@ export class BansRepository {
     `, [true, blogId, pageSize, ToSkip])*/
 
 
-    const request = this.dataSource
+    /*const request = this.dataSource
         .getRepository(BloggerBansForSpecificBlog)
         .createQueryBuilder("BloggerBansForSpecificBlog")
         .leftJoinAndSelect('BloggerBansForSpecificBlog.bannedUser', 'bannedUser')
+        .leftJoinAndSelect('BloggerBansForSpecificBlog.blog', 'blog')
+        .where()
         .orderBy(`bannedUser.${sortBy}`, sortDirection.toUpperCase() as "ASC" | "DESC")
         .take(pageSize)
         .skip(ToSkip)
-    const sql =  request
-        .getSql()
+
 
     const result =  await request
-        .getMany()
+        .getMany()*/
+
+      const result = await this.bloggerBansForSpecificBlogTypeORMRepository
+          .find({
+              relations : {
+                  bannedUser : true,
+                  blog : true,
+                  owner : true
+              },
+              where : {
+                  blog : {
+                      id : blogId
+                  },
+              },
+              take : pageSize,
+              skip : ToSkip,
+              order : {
+                  [sortBy]: sortDirection.toUpperCase() as "ASC" | "DESC"
+              }
+          })
 
     //    SELECT "BloggerBansForSpecificBlog"."id" AS "BloggerBansForSpecificBlog_id",
     //    "BloggerBansForSpecificBlog"."banDate" AS "BloggerBansForSpecificBlog_banDate",
@@ -159,7 +175,6 @@ export class BansRepository {
     //    LEFT JOIN "user" "bannedUser"
     //    ON "bannedUser"."id"="BloggerBansForSpecificBlog"."bannedUserId"
     //    ORDER BY bannedUser.createdAt" DESC  result
-    console.log(sql, " result")
 
     const items = result.map((item) => {
       return this.common.mongoBanSlicing(item);
