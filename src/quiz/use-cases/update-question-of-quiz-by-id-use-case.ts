@@ -19,12 +19,14 @@ export class updateQuestionOfQuizUseCase implements ICommandHandler<updateQuesti
 
   async execute(command: updateQuestionOfQuizCommand) {
 
-
+    console.log("start update question")
     const foundQuestion = await this.quizQuestionsRepository.findQuizQuestionById(command.quizQuestionId)
     if (!foundQuestion){
+      console.log("foundQuestion not found")
       return null
     }
     await this.quizQuestionsRepository.updateQuestionOfQuizById(command.updateQuizDTO, foundQuestion)
+    console.log("foundQuestion is updated")
     return true
 
   }

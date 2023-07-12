@@ -44,6 +44,11 @@ describe("start creating quiz question", () => {
             "correctAnswers": ["correct answer 1, correct answer 2"]
         }
 
+        const updateQuestion2DTO: QuizDTO = {
+            "body": "question body2281337",
+            "correctAnswers": ["correct answer 13332, correct answer 2"]
+        }
+
         const createdQuestion = await request(server)
             .post("/sa/quiz/questions")
             .set(auth, basic)
@@ -81,7 +86,56 @@ describe("start creating quiz question", () => {
             .set(auth, basic)
             .expect(200)
 
-        expect(getAllQuestions.body).toEqual({})
+        expect(getAllQuestions.body).toEqual({
+            "items": [
+                {
+                    "body": "question body 104061",
+                    "correctAnswers": [
+                        "correct answer 1, correct answer 2",
+                    ],
+                    "createdAt": expect.any(String),
+                    "id": expect.any(String),
+                    "published": false,
+                    "updatedAt": null,
+                },
+                {
+                    "body": "question body01",
+                    "correctAnswers": [
+                        "correct1",
+                    ],
+                    "createdAt": expect.any(String),
+                    "id": expect.any(String),
+                    "published": false,
+                    "updatedAt": null,
+                },
+            ],
+            "page": 1,
+            "pageSize": 10,
+            "pagesCount": 1,
+            "totalCount": 2,
+        })
+
+
+        const questonToUpdate = getAllQuestions.body.items[0]
+
+        await request(server)
+            .put(`/sa/quiz/questions/io234634212hiadoipqhwe`)
+            .set(auth, basic)
+            .expect(404)
+
+        const updateQuestion = await request(server)
+            .put(`/sa/quiz/questions/${questonToUpdate.id}`)
+            .set(auth, basic)
+            .send(updateQuestion2DTO)
+            .expect(204)
+
+        const getQuestionById = await request(server)
+            .get(`/sa/quiz/questions/${questonToUpdate.id}`)
+            .set(auth, basic)
+            .expect(200)
+
+        expect(getQuestionById.body.body).toEqual(updateQuestion2DTO.body)
+        expect(getQuestionById.body.correctAnswers).toEqual(updateQuestion2DTO.correctAnswers)
 
     })
 

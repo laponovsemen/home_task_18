@@ -43,6 +43,7 @@ export class SAQuizController {
     @Get("/questions")
     @HttpCode(200)
     async getAllQuestionsOfQuiz(@Query() QueryParams,
+                                @Res({passthrough : true}) res: Response
 
                                 ): Promise<PaginatorViewModelType<any>> {
         const paginationCriteria: paginationCriteriaType =
@@ -56,15 +57,16 @@ export class SAQuizController {
     @Post("/questions")
     @HttpCode(201)
     async createQuestionOfQuiz(@Body() quizDTO : QuizDTO,
-                  @Param("blogId") blogId
+                               @Res({passthrough : true}) res: Response,
     ) {
         const resultOfCreation = await this.commandBus.execute(new CreateNewQuestionOfQuizCommand(quizDTO))
         return resultOfCreation
     }
 
-    @Post("/questions/:quizQuestionId")
+    @Delete("/questions/:quizQuestionId")
     @HttpCode(204)
     async deleteQuestionOfQuizById(@Body() DTO : BanBlogDTO,
+                                   @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
     ) {
 
@@ -78,9 +80,10 @@ export class SAQuizController {
 
     }
 
-    @Post("/questions/:quizQuestionId")
+    @Put("/questions/:quizQuestionId")
     @HttpCode(204)
     async updateQuestionOfQuizById(@Body() quizDTO : QuizDTO,
+                                   @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
     ) {
         const resultOfUpdating = await this.commandBus.execute(new updateQuestionOfQuizCommand(quizQuestionId, quizDTO))
@@ -91,10 +94,11 @@ export class SAQuizController {
         }
     }
 
-    @Post("/questions/:id/publish")
+    @Put("/questions/:id/publish")
     @HttpCode(204)
     async publishOrUnpublishQuestionOfQuizById(@Body() publishedDTO : PublishedDTO,
-                               @Param("id") quizQuestionId
+                               @Param("id") quizQuestionId,
+                                               @Res({passthrough : true}) res: Response
     ) {
 
 
