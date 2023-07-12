@@ -20,6 +20,7 @@ export class publishOrUnpublishQuestionOfQuizByIdUseCase implements ICommandHand
   async execute(command: publishOrUnpublishQuestionOfQuizByIdCommand) {
 
     const foundQuestion = await this.quizQuestionsRepository.findQuizQuestionById(command.quizQuestionId)
+    if(!foundQuestion) return null;
 
     const quizQuestion = APIQuizQuestion.createToPublish(command.publishedDTO, foundQuestion)
 
