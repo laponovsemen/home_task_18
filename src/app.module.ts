@@ -94,6 +94,7 @@ import {
   updateQuestionOfQuizCommand,
   updateQuestionOfQuizUseCase
 } from "./quiz/use-cases/update-question-of-quiz-by-id-use-case";
+import {PairQuizGameController} from "./pair.quiz.game/pair.quiz.game.controller";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -140,7 +141,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
   controllers: [AppController, BloggerBlogsController, TestingController,BlogsController,SABlogsController,SAUsersController,
     PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController,
-    SAQuizController],
+    SAQuizController, PairQuizGameController],
 
   providers: [...modules,
     ...services,
