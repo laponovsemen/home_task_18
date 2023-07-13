@@ -67,7 +67,7 @@ export class PairQuizGameController {
     async connectOrCreatePair( @Res({passthrough : true}) res: Response,
 
     ) {
-        return
+        return {asc : true}
     }
 
     @Post("/my-current/answers")
