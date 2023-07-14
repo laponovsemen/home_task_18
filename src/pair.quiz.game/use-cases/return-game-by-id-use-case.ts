@@ -5,7 +5,9 @@ import {PairGameQuizRepository} from "../pair.game.quiz.repository";
 import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
 
 export class returnGameByIdCommand{
-  constructor(public tokenPayload : TokenPayload) {}
+  constructor(public tokenPayload : TokenPayload,
+              public gameId : string
+  ) {}
 }
 @CommandHandler(returnGameByIdCommand)
 export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdCommand> {

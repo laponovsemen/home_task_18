@@ -46,20 +46,19 @@ export class PairQuizGameController {
     async returnCurrentUnfinishedUserGame(@Query() QueryParams,
                                 @Res({passthrough : true}) res: Response
 
-                                ): Promise<PaginatorViewModelType<any>> {
-        const paginationCriteria: paginationCriteriaType =
-            this.common.getPaginationCriteria(QueryParams);
-        return await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(paginationCriteria))
+                                ) {
+
     }
 
 
 
     @Get(`/:gameId`)
     @HttpCode(201)
-    async returnGameById(
-                               @Res({passthrough : true}) res: Response,
+    async returnGameById(@Res({passthrough : true}) res: Response,
+                         @User() tokenPayload : TokenPayload,
+                         @Param("gameId") gameId : string
     ) {
-        const resultOfCreation = await this.commandBus.execute(new returnGameByIdCommand())
+        const resultOfCreation = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
         return resultOfCreation
     }
 
@@ -79,12 +78,7 @@ export class PairQuizGameController {
                                    @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
     ) {
-        const resultOfUpdating = await this.commandBus.execute(new sendAnswerForNextQuestionCommand(quizQuestionId, quizDTO))
-        if(!resultOfUpdating){
-            throw new NotFoundException()
-        } else {
-            return true
-        }
+
     }
 
 }
