@@ -49,9 +49,7 @@ export class User {
     @JoinColumn()
     gameAsSecondPlayer : PairGameQuiz
 
-    @OneToMany(() => APIQuizQuestionAnswer, g => g.answerer)
-    @JoinColumn()
-    answers : APIQuizQuestionAnswer[]
+
 
 
 
