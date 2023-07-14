@@ -53,7 +53,7 @@ export class PairQuizGameController {
 
 
     @Get(`/:gameId`)
-    @HttpCode(201)
+    @HttpCode(200)
     async returnGameById(@Res({passthrough : true}) res: Response,
                          @User() tokenPayload : TokenPayload,
                          @Param("gameId") gameId : string
