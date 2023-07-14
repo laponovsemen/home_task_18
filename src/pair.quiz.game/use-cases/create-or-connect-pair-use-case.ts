@@ -56,6 +56,7 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
     } finally {
       console.log(" finally")
       //await this.transactionService.release()
+      // ask why it works if i dont use release transaction
     }
 
 
