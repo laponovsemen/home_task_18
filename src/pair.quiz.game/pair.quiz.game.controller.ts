@@ -1,7 +1,7 @@
 import {
     Body,
     Controller,
-    Delete,
+    Delete, ForbiddenException,
     Get, HttpCode, HttpStatus, NotFoundException,
     Param,
     Post,
@@ -69,7 +69,11 @@ export class PairQuizGameController {
     ) {
 
         const pairConnection = await this.commandBus.execute(new CreateOrConnectPairCommand(tokenPayload))
-        return pairConnection
+        if (!pairConnection){
+            throw new ForbiddenException()
+        } else {
+            return pairConnection
+        }
     }
 
     @Post("/my-current/answers")
