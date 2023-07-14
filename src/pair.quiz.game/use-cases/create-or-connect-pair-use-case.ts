@@ -6,6 +6,8 @@ import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
 import {UsersRepository} from "../../users/users.reposiroty";
 import {Inject} from "@nestjs/common";
 import {TypeORMTransactionService} from "../../transaction.service";
+import {User} from "../../entities/user-entity";
+import {PairGameQuiz} from "../../entities/api-pair-game-quiz-entity";
 
 export class CreateOrConnectPairCommand{
   constructor(public tokenPayload : TokenPayload) {}
@@ -18,28 +20,34 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
     protected pairGameQuizRepository: PairGameQuizRepository,
     protected usersRepository : UsersRepository,
 
-    @Inject('TransactionService') private transactionService: TypeORMTransactionService
+   private transactionService: TypeORMTransactionService
   ) {
 
   }
 
   async execute(command: CreateOrConnectPairCommand) {
-    const user = await this.usersRepository.findUserById(command.tokenPayload.userId)
-
+    const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
+    await this.transactionService.connect()
     await this.transactionService.startTransaction()
     try {
 
-      const checkOfParticipatingInAnotherGame = true
+      const checkOfParticipatingInAnotherGame : boolean
+          = await this.pairGameQuizRepository.checkOfParticipatingUserInAnotherGame(user)
       //check if user is participating in another game
       if (!checkOfParticipatingInAnotherGame) return null;
 
-      const gameWithPengingSecondUser = await this.pairGameQuizRepository.findGameWithPengingSecondUser()
+      const gameWithPengingSecondUser : PairGameQuiz = await this.pairGameQuizRepository.findGameWithPengingSecondUser()
 
       if (gameWithPengingSecondUser) {
-        return await this.pairGameQuizRepository.addSecondUserToPendingGame(gameWithPengingSecondUser, user)
+        const result = await this.pairGameQuizRepository.addSecondUserToPendingGame(gameWithPengingSecondUser, user)
+        await this.transactionService.commitTransaction()
+        return result
       } else {
-        return await this.pairGameQuizRepository.createNewGame(user)
+        const result = await this.pairGameQuizRepository.createNewGame(user)
+        await this.transactionService.commitTransaction()
+        return result
       }
+
     } catch (e) {
       console.log(" catch error")
       console.log(e)

@@ -60,4 +60,21 @@ export class PairGameQuizRepository {
 
         return game
     }
+
+    async checkOfParticipatingUserInAnotherGame(user: User) : Promise<boolean> {
+        const game = await this.pairGameQuizTypeORMRepository
+            .createQueryBuilder("game")
+            .where( new Brackets(qb => {
+                    qb.where('game.status = :status', { status: GameStatuses.PendingSecondPlayer})
+                        .orWhere('game.secondPlayer = :user', { user: user});
+                })
+            )
+            .andWhere(new Brackets(qb => {
+                qb.where('game.firstPlayer = :user', { user: user})
+                    .orWhere('game.secondPlayer = :user', { user: user});
+            }))
+
+
+        return !!game
+    }
 }

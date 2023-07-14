@@ -1,26 +1,30 @@
 import {DataSource, QueryRunner} from "typeorm";
-import {OnModuleInit} from "@nestjs/common";
+import {Injectable, OnModuleInit} from "@nestjs/common";
+import {InjectDataSource} from "@nestjs/typeorm";
 
-export class  TypeORMTransactionService implements OnModuleInit {
+@Injectable()
+export class  TypeORMTransactionService {
     private queryRunner : QueryRunner
     constructor(
-        protected dataSource : DataSource
+        @InjectDataSource() protected dataSource : DataSource
     ) {
-    }
-    onModuleInit() {
         this.queryRunner = this.dataSource.createQueryRunner()
     }
 
+    async connect(){
+        return this.queryRunner.connect()
+    }
+
     async startTransaction(){
-        await this.queryRunner.connect()
+        return  this.queryRunner.startTransaction()
     }
 
     async commitTransaction(){
-        await this.queryRunner.connect()
+        return  this.queryRunner.commitTransaction()
     }
 
     async rollbackTransaction(){
-        await this.queryRunner.rollbackTransaction()
+        return  this.queryRunner.rollbackTransaction()
     }
 
     async release(){
