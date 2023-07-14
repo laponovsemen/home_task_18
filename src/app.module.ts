@@ -110,10 +110,11 @@ import {
   sendAnswerForNextQuestionUseCase
 } from "./pair.quiz.game/use-cases/send-answer-for-next-question-use-case";
 import {PairGameQuizRepository} from "./pair.quiz.game/pair.game.quiz.repository";
+import {TypeORMTransactionService} from "./transaction.service";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
-  LikeService, CommentsService, JwtService, SecurityDevicesService]
+  LikeService, CommentsService, JwtService, SecurityDevicesService, TypeORMTransactionService]
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
   BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository]
