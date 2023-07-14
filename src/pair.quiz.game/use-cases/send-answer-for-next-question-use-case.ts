@@ -8,7 +8,7 @@ export class sendAnswerForNextQuestionCommand{
   constructor(public tokenPayload : TokenPayload) {}
 }
 @CommandHandler(sendAnswerForNextQuestionCommand)
-export class sendAnswerForNextQuestionCommandUseCase implements ICommandHandler<sendAnswerForNextQuestionCommand> {
+export class sendAnswerForNextQuestionUseCase implements ICommandHandler<sendAnswerForNextQuestionCommand> {
   constructor(
     protected common: Common,
     protected quizQuestionsRepository: QuizQuestionsRepository,

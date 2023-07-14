@@ -95,23 +95,38 @@ import {
   updateQuestionOfQuizUseCase
 } from "./quiz/use-cases/update-question-of-quiz-by-id-use-case";
 import {PairQuizGameController} from "./pair.quiz.game/pair.quiz.game.controller";
+import {APIQuizQuestionAnswer} from "./entities/api-quiz-question-answer-entity";
+import {PairGameQuiz} from "./entities/api-pair-game-quiz-entity";
+import {
+  CreateOrConnectPairCommand,
+  CreateOrConnectPairUseCase
+} from "./pair.quiz.game/use-cases/create-or-connect-pair-use-case";
+import {
+  returnCurrentUnfinishedUserGameCommand, returnCurrentUnfinishedUserGameUseCase
+} from "./pair.quiz.game/use-cases/return-current-unfinished-user-game-use-case";
+import {returnGameByIdCommand, returnGameByIdUseCase} from "./pair.quiz.game/use-cases/return-game-by-id-use-case";
+import {
+  sendAnswerForNextQuestionCommand,
+  sendAnswerForNextQuestionUseCase
+} from "./pair.quiz.game/use-cases/send-answer-for-next-question-use-case";
+import {PairGameQuizRepository} from "./pair.quiz.game/pair.game.quiz.repository";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
   LikeService, CommentsService, JwtService, SecurityDevicesService]
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
-  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository]
+  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,GetAllCommentForUserUseCase,
   GettingAllBlogsForSpecifiedBloggerUseCase, BanBlogUseCase,BanUserByBloggerUseCase , GetBannedUsersForSpecificBlogUseCase,
   CreateNewQuestionOfQuizUseCase, deleteQuestionOfQuizUseCase, getAllQuestionsOfQuizUseCase, publishOrUnpublishQuestionOfQuizByIdUseCase,
-  updateQuestionOfQuizUseCase]
+  updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase, returnGameByIdUseCase, sendAnswerForNextQuestionUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,GetAllCommentForUserCommand,
   GettingAllBlogsForSpecifiedBloggerCommand, BanBlogCommand,BanUserByBloggerCommand, GetBannedUsersForSpecificBlogCommand,
   CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand, publishOrUnpublishQuestionOfQuizByIdCommand,
-  updateQuestionOfQuizCommand]
+  updateQuestionOfQuizCommand, CreateOrConnectPairCommand, returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
@@ -119,7 +134,8 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 @Module({
   imports: [
     CqrsModule,
-    TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog, APIQuizQuestion]),
+    TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
+      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
@@ -133,7 +149,8 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
       username: 'tfaepjvr',
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',
-      entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog, APIQuizQuestion],
+      entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz],
       autoLoadEntities: true,
       synchronize: true,
     }),
