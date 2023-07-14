@@ -21,11 +21,12 @@ import { isNotEmpty, IsNotEmpty, IsString, IsUrl, Length } from "class-validator
 import { AllPostsForSpecificBlogGuard, AuthGuard, BasicAuthGuard } from "../auth/auth.guard";
 import {BanBlogDTO, BlogDTO, PostForSpecificBlogDTO, PublishedDTO, QuizDTO} from "../input.classes";
 import { CommandBus } from "@nestjs/cqrs";
-import {CreateNewQuestionOfQuizCommand} from "./use-cases/create-new-question-of-quiz-use-case";
-import {deleteQuestionOfQuizCommand} from "./use-cases/delete-question-of-quiz-by-id-use-case";
-import {publishOrUnpublishQuestionOfQuizByIdCommand} from "./use-cases/publish-or-unpublish-of-quiz-use-case";
-import {updateQuestionOfQuizCommand} from "./use-cases/update-question-of-quiz-by-id-use-case";
-import {getAllQuestionsOfQuizCommand} from "./use-cases/get-all-questions-of-quiz-use-case";
+
+import {TokenPayload} from "../working.classess";
+import {User} from "../auth/decorators/public.decorator";
+import {CreateOrConnectPairCommand} from "./use-cases/create-or-connect-pair-use-case";
+import {returnCurrentUnfinishedUserGameCommand} from "./use-cases/return-current-unfinished-user-game-use-case";
+import {returnGameByIdCommand} from "./use-cases/return-game-by-id-use-case";
 
 
 
@@ -48,7 +49,7 @@ export class PairQuizGameController {
                                 ): Promise<PaginatorViewModelType<any>> {
         const paginationCriteria: paginationCriteriaType =
             this.common.getPaginationCriteria(QueryParams);
-        return await this.commandBus.execute(new getAllQuestionsOfQuizCommand(paginationCriteria))
+        return await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(paginationCriteria))
     }
 
 
@@ -58,16 +59,18 @@ export class PairQuizGameController {
     async returnGameById(
                                @Res({passthrough : true}) res: Response,
     ) {
-        const resultOfCreation = await this.commandBus
+        const resultOfCreation = await this.commandBus.execute(new returnGameByIdCommand())
         return resultOfCreation
     }
 
     @Post("/connection")
     @HttpCode(201)
-    async connectOrCreatePair( @Res({passthrough : true}) res: Response,
-
+    async createOrConnectPair(@Res({passthrough: true}) res: Response,
+                              @User() tokenPayload : TokenPayload
     ) {
-        return {asc : true}
+
+        const pairConnection = await this.commandBus.execute(new CreateOrConnectPairCommand(tokenPayload))
+        return pairConnection
     }
 
     @Post("/my-current/answers")
@@ -76,7 +79,7 @@ export class PairQuizGameController {
                                    @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
     ) {
-        const resultOfUpdating = await this.commandBus.execute(new updateQuestionOfQuizCommand(quizQuestionId, quizDTO))
+        const resultOfUpdating = await this.commandBus.execute(new sendAnswerForNextQuestionCommand(quizQuestionId, quizDTO))
         if(!resultOfUpdating){
             throw new NotFoundException()
         } else {

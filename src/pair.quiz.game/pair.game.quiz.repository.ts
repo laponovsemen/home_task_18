@@ -8,9 +8,9 @@ import {APIQuizQuestion} from "../entities/quiz-entity";
 import {isUUID} from "class-validator";
 
 @Injectable()
-export class QuizQuestionsRepository {
+export class PairGameQuizRepository {
     constructor(
-        @InjectRepository(APIQuizQuestion) protected quizQuestionsTypeORMRepository: Repository<APIQuizQuestion>,
+        @InjectRepository(PairGameQuiz) protected pairGameQuizTypeORMRepository: Repository<PairGameQuiz>,
         protected readonly dataSource: DataSource,
         protected readonly common: Common,
     ) {
@@ -103,7 +103,7 @@ export class QuizQuestionsRepository {
 
 
     async deleteAllData() {
-        await this.quizQuestionsTypeORMRepository.delete({})
+        await this.pairGameQuizTypeORMRepository.delete({})
     }
 
 

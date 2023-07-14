@@ -1,10 +1,12 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
 import {parentTypeEnum, StatusTypeEnum} from "../mongo/mongooseSchemas";
 import {APIPost} from "./api-post-entity";
 import {APIComment} from "./api-comment-entity";
 import {User} from "./user-entity";
 import {LikeStatusDTO, PublishedDTO, QuizDTO} from "../input.classes";
 import {randomUUID} from "crypto";
+import {PairGameQuiz} from "./api-pair-game-quiz-entity";
+import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class APIQuizQuestion{
@@ -20,6 +22,13 @@ export class APIQuizQuestion{
     @Column({ type : 'boolean', default : false})
     published : boolean // If question is completed and can be used in the Quiz game
 
+    @ManyToMany(() => PairGameQuiz, g => g.questions)
+    @JoinColumn()
+    games : PairGameQuiz[]
+
+    @OneToMany(() => APIQuizQuestionAnswer, g => g.question)
+    @JoinColumn()
+    answers : APIQuizQuestionAnswer[]
 
     @Column({ type : 'varchar'})
     createdAt	 : string

@@ -1,10 +1,12 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
 import {Blog} from "./blog-entity";
 import {UserDTO} from "../input.classes";
 import add from "date-fns/add";
 import {randomUUID} from "crypto";
 import {APISession} from "./api-session-entity";
 import {APIComment} from "./api-comment-entity";
+import {PairGameQuiz} from "./api-pair-game-quiz-entity";
+import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class User {
@@ -38,6 +40,19 @@ export class User {
 
     @OneToMany(() => APIComment, (comment) => comment.commentator)
     comments : APIComment[]
+
+    @OneToMany(() => PairGameQuiz, g => g.firstPlayer)
+    @JoinColumn()
+    gameAsFirstPlayer : PairGameQuiz
+
+    @OneToMany(() => PairGameQuiz, g => g.secondPlayer)
+    @JoinColumn()
+    gameAsSecondPlayer : PairGameQuiz
+
+    @OneToMany(() => APIQuizQuestionAnswer, g => g.answerer)
+    @JoinColumn()
+    answers : APIQuizQuestionAnswer[]
+
 
 
     static createAsAdmin(DTO: UserDTO) {
