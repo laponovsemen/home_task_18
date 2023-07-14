@@ -5,11 +5,14 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {PairGameQuiz} from "../entities/api-pair-game-quiz-entity";
 import {GameStatuses} from "./view.model.classess/game.statuses.enum";
 import {User} from "../entities/user-entity";
+import {APIQuizQuestion} from "../entities/quiz-entity";
+import {QuizQuestionsRepository} from "../quiz/sa.quiz.questions.repository";
 
 @Injectable()
 export class PairGameQuizRepository {
     constructor(
         @InjectRepository(PairGameQuiz) protected pairGameQuizTypeORMRepository: Repository<PairGameQuiz>,
+        protected quizQuestionsRepository: QuizQuestionsRepository,
         protected readonly dataSource: DataSource,
         protected readonly common: Common,
     ) {
@@ -32,7 +35,9 @@ export class PairGameQuizRepository {
     }
 
     async createNewGame(user: User) {
-        return Promise.resolve(undefined);
+        const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
+        const newGame = PairGameQuiz.create(user, fiveQuestions)
+        return newGame
     }
 
     async addSecondUserToPendingGame(gameWithPengingSecondUser: PairGameQuiz, user: User) {

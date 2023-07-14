@@ -34,7 +34,7 @@ export class PairGameQuiz {
     @JoinColumn()
     firstPlayer : User
 
-    @ManyToMany(() => APIQuizQuestionAnswer, q => q.games)
+    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfFirstUser)
     @JoinColumn()
     answersOfFirstUser : APIQuizQuestionAnswer[]
 
@@ -45,7 +45,7 @@ export class PairGameQuiz {
     @JoinColumn()
     secondPlayer : User
 
-    @ManyToMany(() => APIQuizQuestionAnswer, q => q.games)
+    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfSecondUser)
     @JoinColumn()
     answersOfSecondUser : APIQuizQuestionAnswer[]
 
@@ -75,9 +75,24 @@ export class PairGameQuiz {
 
 
 
-    static create(DTO: CommentForSpecifiedPostDTO, user: any, post: any) {
+    static create( user: User, randomlyGeneratedFiveQuestions : APIQuizQuestion[]) {
         const newPairGameQuiz = new PairGameQuiz()
+
         newPairGameQuiz.id = randomUUID()
+        newPairGameQuiz.firstPlayer = user
+        newPairGameQuiz.answersOfFirstUser  = []
+        newPairGameQuiz.firstPlayerScore = 0
+
+        newPairGameQuiz.secondPlayer = null
+        newPairGameQuiz.answersOfSecondUser = []
+        newPairGameQuiz.secondPlayerScore = 0
+
+        newPairGameQuiz.questions = randomlyGeneratedFiveQuestions
+        newPairGameQuiz.status =  GameStatuses.PendingSecondPlayer;
+
+        newPairGameQuiz.pairCreatedDate	= new Date().toISOString();  //Date when first player initialized the pair
+        newPairGameQuiz.startGameDate = null; //Game starts immediately after second player connection to this pair
+        newPairGameQuiz.finishGameDate = null; //Game finishes immediately after both players have answered all the questions
 
         return newPairGameQuiz
     }

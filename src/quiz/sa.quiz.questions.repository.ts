@@ -107,4 +107,13 @@ export class QuizQuestionsRepository {
     }
 
 
+    async generateFiveRandomQuestions() {
+        return this.dataSource
+            .getRepository(APIQuizQuestion)
+            .createQueryBuilder("question")
+            .select()
+            .orderBy('RANDOM()')
+            .take(5)
+            .getMany();
+    }
 }
