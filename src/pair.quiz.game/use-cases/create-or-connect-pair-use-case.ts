@@ -27,6 +27,7 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
 
   async execute(command: CreateOrConnectPairCommand) {
     const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
+
     await this.transactionService.connect()
     await this.transactionService.startTransaction()
     try {
@@ -54,7 +55,7 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
       await this.transactionService.rollbackTransaction()
     } finally {
       console.log(" finally")
-      await this.transactionService.release()
+      //await this.transactionService.release()
     }
 
 

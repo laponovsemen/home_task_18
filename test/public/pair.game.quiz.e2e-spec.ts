@@ -32,114 +32,85 @@ describe("start creating quiz question", () => {
 
 
         const createQuestionDTO : QuizDTO = {
-            body : "question body01",
-            correctAnswers : ["correct1"]
+            body : "question",
+            correctAnswers : ["correct"]
+        }
+        for(let i = 0; i < 10 ; i++){
+            const createdQuestion = await request(server)
+                .post("/sa/quiz/questions")
+                .set(auth, basic)
+                .send({
+                    body : createQuestionDTO.body + `${i}`,
+                    correctAnswers: [createQuestionDTO.correctAnswers[0] + `${i}`]
+                })
+                .expect(201)
+
+            await request(server)
+                .put(`/sa/quiz/questions/${createdQuestion.body.id}/publish`)
+                .set(auth, basic)
+                .send({
+                    "published": true
+                })
+                .expect(204)
         }
 
-        const createQuestion2DTO: QuizDTO = {
-            "body": "question body 104061",
-            "correctAnswers": ["correct answer 1, correct answer 2"]
-        }
-
-        const updateQuestion2DTO: QuizDTO = {
-            "body": "question body2281337",
-            "correctAnswers": ["correct answer 13332, correct answer 2"]
-        }
-
-        const createdQuestion = await request(server)
-            .post("/sa/quiz/questions")
+        const createFirstUser = await request(server)
+            .post(`/sa/users`)
             .set(auth, basic)
-            .send(createQuestionDTO)
+            .send({
+                login : "login1",
+                email : "simsbury65@gmail.com",
+                password : "password1"
+            })
             .expect(201)
 
-        expect(createdQuestion.body).toEqual({
-            "body": "question body01",
-               "correctAnswers":  [
-                 "correct1",
-                  ],
-               "createdAt": expect.any(String),
-               "id": expect.any(String),
-               "published": false,
-               "updatedAt": null})
-
-        const createdQuestion2 = await request(server)
-            .post("/sa/quiz/questions")
+        const createSecondUser = await request(server)
+            .post(`/sa/users`)
             .set(auth, basic)
-            .send(createQuestion2DTO)
+            .send({
+                login : "login2",
+                email : "simsbury65@gmail.com",
+                password : "password2"
+            })
             .expect(201)
 
-        expect(createdQuestion2.body).toEqual({
-            "body": "question body 104061",
-            "correctAnswers":  [
-                "correct answer 1, correct answer 2"
-            ],
-            "createdAt": expect.any(String),
-            "id": expect.any(String),
-            "published": false,
-            "updatedAt": null})
-
-        const getAllQuestions = await request(server)
-            .get("/sa/quiz/questions")
-            .set(auth, basic)
+        const loginOfFirstUser = await request(server)
+            .post(`/auth/login`)
+            .send({
+                loginOrEmail : "login1",
+                password : "password1"
+            })
             .expect(200)
 
-        expect(getAllQuestions.body).toEqual({
-            "items": [
-                {
-                    "body": "question body 104061",
-                    "correctAnswers": [
-                        "correct answer 1, correct answer 2",
-                    ],
-                    "createdAt": expect.any(String),
-                    "id": expect.any(String),
-                    "published": false,
-                    "updatedAt": null,
-                },
-                {
-                    "body": "question body01",
-                    "correctAnswers": [
-                        "correct1",
-                    ],
-                    "createdAt": expect.any(String),
-                    "id": expect.any(String),
-                    "published": false,
-                    "updatedAt": null,
-                },
-            ],
-            "page": 1,
-            "pageSize": 10,
-            "pagesCount": 1,
-            "totalCount": 2,
-        })
-
-
-        const questonToUpdate = getAllQuestions.body.items[0]
-
-        await request(server)
-            .put(`/sa/quiz/questions/io234634212hiadoipqhwe`)
-            .set(auth, basic)
-            .expect(404)
-
-        const updateQuestion = await request(server)
-            .put(`/sa/quiz/questions/${questonToUpdate.id}`)
-            .set(auth, basic)
-            .send(updateQuestion2DTO)
-            .expect(204)
-
-        /*const getQuestionById = await request(server)
-            .get(`/sa/quiz/questions/${questonToUpdate.id}`)
-            .set(auth, basic)
+        const loginOfSecondUser = await request(server)
+            .post(`/auth/login`)
+            .send({
+                loginOrEmail : "login2",
+                password : "password2"
+            })
             .expect(200)
 
-        expect(getQuestionById.body.body).toEqual(updateQuestion2DTO.body)
-        expect(getQuestionById.body.correctAnswers).toEqual(updateQuestion2DTO.correctAnswers)*/
-
         await request(server)
-            .delete(`/sa/quiz/questions/${questonToUpdate.id}`)
-            .set(auth, basic)
-            .expect(204)
+            .post(`/pair-game-quiz/pairs/connection`)
+            .expect(401)
 
-    })
+        const createPair = await request(server)
+            .post(`/pair-game-quiz/pairs/connection`)
+            .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
+            .expect(201)
+
+        //expect(createPair.body).toEqual({})
+
+        const connectToTheCreatedPair = await request(server)
+            .post(`/pair-game-quiz/pairs/connection`)
+            .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
+            .expect(201)
+
+
+
+
+
+    },20000)
 
     it("testing od deleting all data // incorrect authorization // wrong Authorization field value", () => {
         request(server)

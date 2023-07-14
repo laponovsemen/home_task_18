@@ -16,7 +16,7 @@ export class  TypeORMTransactionService {
     }
 
     async startTransaction(){
-        return  this.queryRunner.startTransaction()
+        return this.queryRunner.startTransaction()
     }
 
     async commitTransaction(){
@@ -24,7 +24,7 @@ export class  TypeORMTransactionService {
     }
 
     async rollbackTransaction(){
-        return  this.queryRunner.rollbackTransaction()
+        return this.queryRunner.rollbackTransaction()
     }
 
     async release(){
