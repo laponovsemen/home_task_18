@@ -1,6 +1,6 @@
 import {Common} from '../common';
 import {Injectable} from "@nestjs/common";
-import {DataSource, Repository} from "typeorm";
+import {Brackets, DataSource, Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
 import {PairGameQuiz} from "../entities/api-pair-game-quiz-entity";
 import {GameStatuses} from "./view.model.classess/game.statuses.enum";
@@ -26,6 +26,8 @@ export class PairGameQuizRepository {
 
 
     async findGameWithPengingSecondUser() {
+
+
         return await this.pairGameQuizTypeORMRepository
             .findOne({
                 where: {
@@ -42,5 +44,20 @@ export class PairGameQuizRepository {
 
     async addSecondUserToPendingGame(gameWithPengingSecondUser: PairGameQuiz, user: User) {
         return Promise.resolve(undefined);
+    }
+
+    async findGameByIdWhereUserIsParticipate(user: User, gameId: string) {
+        const game = await this.pairGameQuizTypeORMRepository
+            .createQueryBuilder("game")
+            .where('game.id = :id', {
+                id : gameId
+            })
+            .andWhere(new Brackets(qb => {
+                qb.where('game.firstPlayer = :user', { user: user})
+                    .orWhere('game.secondPlayer = :user', { user: user});
+            }))
+
+
+        return game
     }
 }

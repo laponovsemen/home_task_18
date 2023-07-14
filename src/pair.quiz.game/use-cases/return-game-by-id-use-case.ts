@@ -3,6 +3,7 @@ import { Common } from "../../common";
 import {TokenPayload} from "../../working.classess";
 import {PairGameQuizRepository} from "../pair.game.quiz.repository";
 import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
+import {UsersRepository} from "../../users/users.reposiroty";
 
 export class returnGameByIdCommand{
   constructor(public tokenPayload : TokenPayload,
@@ -15,14 +16,16 @@ export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdComm
     protected common: Common,
     protected quizQuestionsRepository: QuizQuestionsRepository,
     protected pairGameQuizRepository: PairGameQuizRepository,
+    protected usersRepositiry: UsersRepository,
   ) {
 
   }
 
   async execute(command: returnGameByIdCommand) {
-    /*const quizQuestion = APIQuizQuestion.create(command.DTO)
+    const user = await this.usersRepositiry.findUserById(command.tokenPayload.userId)
 
-    return await this.quizQuestionsRepository.createNewQuizQuestion(quizQuestion)*/
+    const foundGameByIdWhereUserIsParticipate = await this.pairGameQuizRepository
+        .findGameByIdWhereUserIsParticipate(user, command.gameId)
 
   }
 }
