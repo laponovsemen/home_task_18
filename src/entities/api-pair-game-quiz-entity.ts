@@ -50,8 +50,9 @@ export class PairGameQuiz {
     @Column()
     secondPlayerScore : number
 
-    @Column({
-        array : true
+    @Column('json', {
+        array : true,
+        nullable : true
     })
     questions : APIQuizQuestion[]
 
