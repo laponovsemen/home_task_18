@@ -113,10 +113,7 @@ describe("start creating quiz question", () => {
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(403)
 
-      await request(server)
-        .delete("/testing/all-data")
-        .set(auth, basic)
-        .expect(204)
+
 
 
     },30000)

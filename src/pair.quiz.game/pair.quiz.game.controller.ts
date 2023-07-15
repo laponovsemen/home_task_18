@@ -63,7 +63,7 @@ export class PairQuizGameController {
     }
 
     @Post("/connection")
-    @HttpCode(201)
+    @HttpCode(200)
     async createOrConnectPair(@Res({passthrough: true}) res: Response,
                               @User() tokenPayload : TokenPayload
     ) {
@@ -78,7 +78,7 @@ export class PairQuizGameController {
     }
 
     @Post("/my-current/answers")
-    @HttpCode(204)
+    @HttpCode(200)
     async sendAnswerForNextQuestion(@Body() quizDTO : QuizDTO,
                                    @Res({passthrough : true}) res: Response,
                                @Param("quizQuestionId") quizQuestionId
