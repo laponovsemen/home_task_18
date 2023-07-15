@@ -44,7 +44,7 @@ export class TypeORMTransactionService {
 
   async release(qRId: string) {
       const data = this.arrayOfQr.find(el => el.qRId === qRId)
-      await data.queryRunner.rollbackTransaction()
+      await data.queryRunner.release()
       this.arrayOfQr.filter(el => el.qRId !== qRId)
       return true
 

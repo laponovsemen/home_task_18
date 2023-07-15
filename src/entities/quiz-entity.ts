@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 import {parentTypeEnum, StatusTypeEnum} from "../mongo/mongooseSchemas";
 import {APIPost} from "./api-post-entity";
 import {APIComment} from "./api-comment-entity";
@@ -23,6 +23,7 @@ export class APIQuizQuestion{
     published : boolean // If question is completed and can be used in the Quiz game
 
     @ManyToMany(() => PairGameQuiz, g => g.questions)
+    @JoinTable()
     games : PairGameQuiz[]
 
     @OneToMany(() => APIQuizQuestionAnswer, g => g.question)

@@ -1,7 +1,7 @@
 import {
     Column,
     Entity,
-    JoinColumn,
+    JoinColumn, JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -34,7 +34,7 @@ export class PairGameQuiz {
     @JoinColumn()
     firstPlayer : User
 
-    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfFirstUser)
+    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfFirstUser)
     answersOfFirstUser : APIQuizQuestionAnswer[]
 
     @Column()
@@ -44,13 +44,14 @@ export class PairGameQuiz {
     @JoinColumn()
     secondPlayer : User
 
-    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfSecondUser, )
+    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfSecondUser, )
     answersOfSecondUser : APIQuizQuestionAnswer[]
 
     @Column()
     secondPlayerScore : number
 
     @ManyToMany(() => APIQuizQuestion, q => q.games)
+    @JoinTable()
     questions : APIQuizQuestion[]
 
     @Column({
@@ -95,9 +96,28 @@ export class PairGameQuiz {
     }
 
 
-    // static addSecondUser(gameWithPengingSecondUser: PairGameQuiz, user: User) {
-    //
-    // }
+
+    static addSecondUser(gameWithPengingSecondUser: PairGameQuiz, user: User) {
+        const newPairGameQuizWithAddedSecondUser = new PairGameQuiz()
+
+        newPairGameQuizWithAddedSecondUser.id = gameWithPengingSecondUser.id
+        newPairGameQuizWithAddedSecondUser.firstPlayer = gameWithPengingSecondUser.firstPlayer
+        newPairGameQuizWithAddedSecondUser.answersOfFirstUser  = gameWithPengingSecondUser.answersOfFirstUser
+        newPairGameQuizWithAddedSecondUser.firstPlayerScore = gameWithPengingSecondUser.firstPlayerScore
+
+        newPairGameQuizWithAddedSecondUser.secondPlayer = user
+        newPairGameQuizWithAddedSecondUser.answersOfSecondUser = gameWithPengingSecondUser.answersOfSecondUser
+        newPairGameQuizWithAddedSecondUser.secondPlayerScore = gameWithPengingSecondUser.secondPlayerScore
+
+        newPairGameQuizWithAddedSecondUser.questions = gameWithPengingSecondUser.questions
+        newPairGameQuizWithAddedSecondUser.status =  GameStatuses.Active;
+
+        newPairGameQuizWithAddedSecondUser.pairCreatedDate	= gameWithPengingSecondUser.pairCreatedDate;  //Date when first player initialized the pair
+        newPairGameQuizWithAddedSecondUser.startGameDate = new Date().toISOString(); //Game starts immediately after second player connection to this pair
+        newPairGameQuizWithAddedSecondUser.finishGameDate = null; //Game finishes immediately after both players have answered all the questions
+
+        return newPairGameQuizWithAddedSecondUser
+    }
 }
 
 

@@ -24,12 +24,12 @@ export class APIQuizQuestionAnswer {
     @PrimaryColumn({type : 'uuid'})
     id: string;
     @ManyToOne(() => PairGameQuiz, u => u.answersOfFirstUser)
-    @JoinColumn()
-    gamesOfFirstUser : PairGameQuiz
+
+    gameOfFirstUser : PairGameQuiz
 
     @ManyToOne(() => PairGameQuiz, u => u.answersOfSecondUser)
-    @JoinColumn()
-    gamesOfSecondUser : PairGameQuiz
+
+    gameOfSecondUser : PairGameQuiz
 
 
     @Column({
