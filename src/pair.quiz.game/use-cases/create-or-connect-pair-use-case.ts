@@ -19,8 +19,7 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
     protected quizQuestionsRepository: QuizQuestionsRepository,
     protected pairGameQuizRepository: PairGameQuizRepository,
     protected usersRepository : UsersRepository,
-
-   private transactionService: TypeORMTransactionService
+    private transactionService: TypeORMTransactionService
   ) {
 
   }
@@ -28,35 +27,35 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
   async execute(command: CreateOrConnectPairCommand) {
     const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
 
-    await this.transactionService.connect()
-    await this.transactionService.startTransaction()
+    const qRId = await this.transactionService.createRunner()
+    await this.transactionService.connect(qRId)
+    await this.transactionService.startTransaction(qRId)
     try {
 
       const checkOfParticipatingInAnotherGame : boolean
           = await this.pairGameQuizRepository.checkOfParticipatingUserInAnotherGame(user)
+      console.log(checkOfParticipatingInAnotherGame, " checkOfParticipatingInAnotherGame")
       //check if user is participating in another game
-      if (!checkOfParticipatingInAnotherGame) return null;
+      if (checkOfParticipatingInAnotherGame) return null;
 
       const gameWithPengingSecondUser : PairGameQuiz = await this.pairGameQuizRepository.findGameWithPengingSecondUser()
 
+      let result
       if (gameWithPengingSecondUser) {
-        const result = await this.pairGameQuizRepository.addSecondUserToPendingGame(gameWithPengingSecondUser, user)
-        await this.transactionService.commitTransaction()
-        return result
+        result = await this.pairGameQuizRepository.addSecondUserToPendingGame(gameWithPengingSecondUser, user)
       } else {
-        const result = await this.pairGameQuizRepository.createNewGame(user)
-        await this.transactionService.commitTransaction()
-        return result
+        result = await this.pairGameQuizRepository.createNewGame(user)
       }
-
+      // await this.transactionService.commitTransaction()
+      return result
     } catch (e) {
       console.log(" catch error")
       console.log(e)
-      await this.transactionService.rollbackTransaction()
+      await this.transactionService.rollbackTransaction(qRId)
     } finally {
       console.log(" finally")
-      //await this.transactionService.release()
-      // ask why it works if i dont use release transaction
+      await this.transactionService.release(qRId)
+      // ask why it works if I don't use release transaction
     }
 
 

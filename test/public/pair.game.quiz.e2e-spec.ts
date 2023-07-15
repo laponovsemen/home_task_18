@@ -107,10 +107,13 @@ describe("start creating quiz question", () => {
             .expect(201)
 
 
+        await request(server)
+            .post(`/pair-game-quiz/pairs/connection`)
+            .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
+            .expect(403)
 
 
-
-    },20000)
+    },30000)
 
     it("testing od deleting all data // incorrect authorization // wrong Authorization field value", () => {
         request(server)

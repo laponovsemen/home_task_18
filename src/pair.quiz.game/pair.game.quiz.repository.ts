@@ -39,11 +39,15 @@ export class PairGameQuizRepository {
     async createNewGame(user: User) {
         const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
         const newGame = PairGameQuiz.create(user, fiveQuestions)
-        return newGame
+        console.log(newGame, " new game")
+        const newGameInDB = await this.pairGameQuizTypeORMRepository.create(newGame)
+        return newGameInDB
     }
 
     async addSecondUserToPendingGame(gameWithPengingSecondUser: PairGameQuiz, user: User) {
-        return Promise.resolve(undefined);
+        /*const gameWithAddedSecondUser  = PairGameQuiz.addSecondUser(gameWithPengingSecondUser, user)
+        return await this.pairGameQuizTypeORMRepository
+          .save()*/
     }
 
     async findGameByIdWhereUserIsParticipate(user: User, gameId: string) {
@@ -57,7 +61,6 @@ export class PairGameQuizRepository {
                     .orWhere('game.secondPlayer = :user', { user: user});
             }))
 
-
         return game
     }
 
@@ -66,15 +69,16 @@ export class PairGameQuizRepository {
             .createQueryBuilder("game")
             .where( new Brackets(qb => {
                     qb.where('game.status = :status', { status: GameStatuses.PendingSecondPlayer})
-                        .orWhere('game.secondPlayer = :user', { user: user});
+                        .orWhere('game.status = :status', { status: GameStatuses.Active});
                 })
             )
             .andWhere(new Brackets(qb => {
-                qb.where('game.firstPlayer = :user', { user: user})
-                    .orWhere('game.secondPlayer = :user', { user: user});
+                qb.where('game.firstPlayerId = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayerId = :userId', { userId: user.id});
             }))
+            .getOne()
 
-
+        console.log(game, " game in checkOfParticipatingUserInAnotherGame")
         return !!game
     }
 }

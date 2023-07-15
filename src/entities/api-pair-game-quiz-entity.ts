@@ -35,25 +35,22 @@ export class PairGameQuiz {
     firstPlayer : User
 
     @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfFirstUser)
-    @JoinColumn()
     answersOfFirstUser : APIQuizQuestionAnswer[]
 
     @Column()
     firstPlayerScore : number
 
-    @ManyToOne(() => User, u => u.gameAsSecondPlayer)
+    @ManyToOne(() => User, u => u.gameAsSecondPlayer, {nullable: true})
     @JoinColumn()
     secondPlayer : User
 
-    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfSecondUser)
-    @JoinColumn()
+    @ManyToMany(() => APIQuizQuestionAnswer, q => q.gamesOfSecondUser, )
     answersOfSecondUser : APIQuizQuestionAnswer[]
 
     @Column()
     secondPlayerScore : number
 
     @ManyToMany(() => APIQuizQuestion, q => q.games)
-    @JoinColumn()
     questions : APIQuizQuestion[]
 
     @Column({
@@ -98,6 +95,9 @@ export class PairGameQuiz {
     }
 
 
+    // static addSecondUser(gameWithPengingSecondUser: PairGameQuiz, user: User) {
+    //
+    // }
 }
 
 

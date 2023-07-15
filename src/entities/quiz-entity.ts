@@ -23,11 +23,9 @@ export class APIQuizQuestion{
     published : boolean // If question is completed and can be used in the Quiz game
 
     @ManyToMany(() => PairGameQuiz, g => g.questions)
-    @JoinColumn()
     games : PairGameQuiz[]
 
     @OneToMany(() => APIQuizQuestionAnswer, g => g.question)
-    @JoinColumn()
     answers : APIQuizQuestionAnswer[]
 
     @Column({ type : 'varchar'})

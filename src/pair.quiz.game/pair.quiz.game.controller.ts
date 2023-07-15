@@ -69,6 +69,7 @@ export class PairQuizGameController {
     ) {
 
         const pairConnection = await this.commandBus.execute(new CreateOrConnectPairCommand(tokenPayload))
+        console.log(pairConnection, " pairConnection")
         if (!pairConnection){
             throw new ForbiddenException()
         } else {
