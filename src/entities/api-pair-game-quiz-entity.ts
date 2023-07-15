@@ -51,7 +51,7 @@ export class PairGameQuiz {
     secondPlayerScore : number
 
     @Column({
-        type: 'json'
+        array : true
     })
     questions : APIQuizQuestion[]
 
