@@ -58,8 +58,13 @@ export class PairQuizGameController {
                          @User() tokenPayload : TokenPayload,
                          @Param("gameId") gameId : string
     ) {
-        const resultOfCreation = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
-        return resultOfCreation
+        const resultOfGetting = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
+        if(!resultOfGetting){
+            throw new ForbiddenException()
+        } else {
+            return resultOfGetting
+        }
+
     }
 
     @Post("/connection")

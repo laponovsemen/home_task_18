@@ -27,5 +27,6 @@ export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdComm
     const foundGameByIdWhereUserIsParticipate = await this.pairGameQuizRepository
         .findGameByIdWhereUserIsParticipate(user, command.gameId)
 
+    return foundGameByIdWhereUserIsParticipate
   }
 }
