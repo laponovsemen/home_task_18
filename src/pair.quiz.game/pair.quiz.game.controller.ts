@@ -3,7 +3,7 @@ import {
     Controller,
     Delete, ForbiddenException,
     Get, HttpCode, HttpStatus, NotFoundException,
-    Param,
+    Param, ParseUUIDPipe,
     Post,
     Put,
     Query, Req, Res, UseGuards
@@ -61,12 +61,15 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(@Res({passthrough : true}) res: Response,
                          @User() tokenPayload : TokenPayload,
-                         @Param("gameId") gameId : string
+                         @Param("gameId", new ParseUUIDPipe()) gameId : string
     ) {
+        console.log(" returnGameById Procedure Controller");
         const resultOfGetting = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
         if(!resultOfGetting){
+            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error");
             throw new ForbiddenException()
         } else {
+            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller");
             return resultOfGetting
         }
 

@@ -75,6 +75,16 @@ describe("start creating quiz question", () => {
             })
             .expect(201)
 
+      const createThirdUser = await request(server)
+        .post(`/sa/users`)
+        .set(auth, basic)
+        .send({
+          login : "login3",
+          email : "simsbury65@gmail.com",
+          password : "password3"
+        })
+        .expect(201)
+
         const loginOfFirstUser = await request(server)
             .post(`/auth/login`)
             .send({
@@ -90,6 +100,14 @@ describe("start creating quiz question", () => {
                 password : "password2"
             })
             .expect(200)
+
+      const loginOfThirdUser = await request(server)
+        .post(`/auth/login`)
+        .send({
+          loginOrEmail : "login3",
+          password : "password3"
+        })
+        .expect(200)
 
         await request(server)
             .post(`/pair-game-quiz/pairs/connection`)
@@ -108,12 +126,41 @@ describe("start creating quiz question", () => {
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(200)
 
-        console.log("must return 403 because of action in another game");
+        console.log("must return 403 because of action of user 2 in another game");
         await request(server)
             .post(`/pair-game-quiz/pairs/connection`)
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(403)
 
+      console.log("must return 403 because of action of user 1 in another game");
+      await request(server)
+        .post(`/pair-game-quiz/pairs/connection`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(403);
+
+      const foundGameByIdByUserOne =
+        await request(server)
+          .get(`/pair-game-quiz/pairs/${connectToTheCreatedPair.body.id}`)
+          .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+          .expect(200);
+
+      const foundGameByIdByUserTwo =
+        await request(server)
+          .get(`/pair-game-quiz/pairs/${connectToTheCreatedPair.body.id}`)
+          .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })
+          .expect(200);
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/2281337`)
+        .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })
+        .expect(400);
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/${connectToTheCreatedPair.body.id}`)
+        .auth(loginOfThirdUser.body.accessToken, { type: "bearer" })
+        .expect(403);
+
+      expect(foundGameByIdByUserOne.body).toEqual(foundGameByIdByUserTwo.body)
 
 
 

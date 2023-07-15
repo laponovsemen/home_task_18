@@ -60,7 +60,7 @@ export class PairGameQuizRepository {
                 qb.where('game.firstPlayerId = :userId', { userId: user.id})
                     .orWhere('game.secondPlayerId = :userId', { userId: user.id});
             }))
-
+          .getOne()
         return game
     }
 

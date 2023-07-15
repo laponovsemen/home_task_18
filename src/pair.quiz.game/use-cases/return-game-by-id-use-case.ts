@@ -22,8 +22,9 @@ export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdComm
   }
 
   async execute(command: returnGameByIdCommand) {
+    console.log("start returnGameByIdCommand");
     const user = await this.usersRepositiry.findUserById(command.tokenPayload.userId)
-
+    console.log(user , " user in returnGameByIdCommand");
     const foundGameByIdWhereUserIsParticipate = await this.pairGameQuizRepository
         .findGameByIdWhereUserIsParticipate(user, command.gameId)
 
