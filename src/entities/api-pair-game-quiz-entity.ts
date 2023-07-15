@@ -30,7 +30,7 @@ import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
 export class PairGameQuiz {
     @PrimaryColumn({type : 'uuid'})
     id: string;
-    @ManyToOne(() => User, u => u.gameAsFirstPlayer)
+    @ManyToOne(() => User, u => u.gameAsFirstPlayer, {nullable : true, onDelete : 'SET NULL'})
     @JoinColumn()
     firstPlayer : User
 
@@ -40,7 +40,7 @@ export class PairGameQuiz {
     @Column()
     firstPlayerScore : number
 
-    @ManyToOne(() => User, u => u.gameAsSecondPlayer, {nullable: true})
+    @ManyToOne(() => User, u => u.gameAsSecondPlayer, {nullable : true, onDelete : 'SET NULL'})
     @JoinColumn()
     secondPlayer : User
 
@@ -50,7 +50,7 @@ export class PairGameQuiz {
     @Column()
     secondPlayerScore : number
 
-    @ManyToMany(() => APIQuizQuestion, q => q.games)
+    @ManyToMany(() => APIQuizQuestion, {nullable : true, onDelete : 'SET NULL'})
     @JoinTable()
     questions : APIQuizQuestion[]
 

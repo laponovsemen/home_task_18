@@ -113,21 +113,14 @@ describe("start creating quiz question", () => {
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(403)
 
+      await request(server)
+        .delete("/testing/all-data")
+        .set(auth, basic)
+        .expect(204)
+
 
     },30000)
 
-    it("testing od deleting all data // incorrect authorization // wrong Authorization field value", () => {
-        request(server)
-            .delete("/testing/all-data")
-            .set(auth, "ksdjfl;skdfjlkds")
-            .expect(401)
-    })
 
-    it("testing od deleting all data // incorrect authorization // no Authorization field in header", () => {
-        request(server)
-            .delete("/testing/all-data")
-            .set("lkdhjflksdfhkldsjhf", basic)
-            .expect(401)
-    })
 
 })

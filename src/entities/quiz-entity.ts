@@ -22,9 +22,7 @@ export class APIQuizQuestion{
     @Column({ type : 'boolean', default : false})
     published : boolean // If question is completed and can be used in the Quiz game
 
-    @ManyToMany(() => PairGameQuiz, g => g.questions)
-    @JoinTable()
-    games : PairGameQuiz[]
+
 
     @OneToMany(() => APIQuizQuestionAnswer, g => g.question)
     answers : APIQuizQuestionAnswer[]

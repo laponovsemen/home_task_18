@@ -41,11 +41,11 @@ export class User {
     @OneToMany(() => APIComment, (comment) => comment.commentator)
     comments : APIComment[]
 
-    @OneToMany(() => PairGameQuiz, g => g.firstPlayer)
+    @OneToMany(() => PairGameQuiz, g => g.firstPlayer, {onDelete : 'SET NULL'})
     @JoinColumn()
     gameAsFirstPlayer : PairGameQuiz
 
-    @OneToMany(() => PairGameQuiz, g => g.secondPlayer)
+    @OneToMany(() => PairGameQuiz, g => g.secondPlayer, {onDelete : 'SET NULL'})
     @JoinColumn()
     gameAsSecondPlayer : PairGameQuiz
 
