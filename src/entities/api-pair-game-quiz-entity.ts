@@ -50,8 +50,9 @@ export class PairGameQuiz {
     @Column()
     secondPlayerScore : number
 
-    @ManyToMany(() => APIQuizQuestion, {nullable : true, onDelete : 'SET NULL'})
-    @JoinTable()
+    @Column({
+        type: 'array'
+    })
     questions : APIQuizQuestion[]
 
     @Column({

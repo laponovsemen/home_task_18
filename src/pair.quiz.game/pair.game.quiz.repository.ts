@@ -151,8 +151,8 @@ export class PairGameQuizRepository {
             status : GameStatuses.Active
         })
         .andWhere(new Brackets(qb => {
-            qb.where('game.firstPlayer = :user', { user: user})
-              .orWhere('game.secondPlayer = :user', { user: user});
+            qb.where('game.firstPlayerId = :userId', { userId: user.id})
+              .orWhere('game.secondPlayerId = :userId', { userId: user.id});
         }))
 
       return game
