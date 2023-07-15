@@ -7,6 +7,7 @@ import { GameStatuses } from "./view.model.classess/game.statuses.enum";
 import { User } from "../entities/user-entity";
 import { QuizQuestionsRepository } from "../quiz/sa.quiz.questions.repository";
 import { isLogLevelEnabled } from "@nestjs/common/services/utils";
+import { AnswersInputModel } from "./view.model.classess/answers.input.model";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -56,8 +57,8 @@ export class PairGameQuizRepository {
                 id : gameId
             })
             .andWhere(new Brackets(qb => {
-                qb.where('game.firstPlayer = :user', { user: user})
-                    .orWhere('game.secondPlayer = :user', { user: user});
+                qb.where('game.firstPlayerId = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayerId = :userId', { userId: user.id});
             }))
 
         return game
@@ -156,4 +157,65 @@ export class PairGameQuizRepository {
 
       return game
   }
+
+    async answerNextQuestion(user: User, answer: AnswersInputModel) {
+        const queryRunner : QueryRunner =  this.dataSource.createQueryRunner()
+        let result
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+        const pairGameQuizRepoFromQueryRunner = queryRunner.manager.getRepository(PairGameQuiz)
+        try {
+
+            const checkOfParticipatingInAnotherGame : PairGameQuiz
+              = await pairGameQuizRepoFromQueryRunner
+              .createQueryBuilder("game")
+              .where( new Brackets(qb => {
+                    qb.where('game.status = :status', { status: GameStatuses.PendingSecondPlayer})
+                      .orWhere('game.status = :status', { status: GameStatuses.Active});
+                })
+              )
+              .andWhere(new Brackets(qb => {
+                  qb.where('game.firstPlayerId = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayerId = :userId', { userId: user.id});
+              }))
+              .getOne()
+
+            console.log(await pairGameQuizRepoFromQueryRunner.find({}), " all games in db");
+            console.log(checkOfParticipatingInAnotherGame, " checkOfParticipatingInAnotherGame")
+            //check if user is participating in another game
+            if (checkOfParticipatingInAnotherGame) return null;
+
+            const gameWithPendingSecondUser : PairGameQuiz = await pairGameQuizRepoFromQueryRunner.findOne({
+                where: {
+                    status: GameStatuses.PendingSecondPlayer
+                }
+            })
+
+
+            if (gameWithPendingSecondUser) {
+                const gameWithAddedSecondUser = PairGameQuiz.addSecondUser(gameWithPendingSecondUser, user)
+                result = await pairGameQuizRepoFromQueryRunner.save(gameWithAddedSecondUser)
+            } else {
+                const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
+                const newGame = PairGameQuiz.create(user, fiveQuestions)
+                console.log(newGame, " new game")
+                result = await pairGameQuizRepoFromQueryRunner.save(newGame);
+                //console.log(p);
+
+            }
+            await queryRunner.commitTransaction()
+            console.log(result, " result ");
+
+        } catch (e) {
+            console.log(" catch error")
+            console.log(e)
+            await queryRunner.rollbackTransaction()
+        } finally {
+            console.log(" finally")
+            await queryRunner.release()
+            // ask why it works if I don't use release transaction
+        }
+
+        return result
+    }
 }

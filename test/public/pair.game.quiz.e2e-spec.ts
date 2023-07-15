@@ -98,14 +98,14 @@ describe("start creating quiz question", () => {
         const createPair = await request(server)
             .post(`/pair-game-quiz/pairs/connection`)
             .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
-            .expect(201)
+            .expect(200)
 
         //expect(createPair.body).toEqual({})
         console.log("add second user to pair");
         const connectToTheCreatedPair = await request(server)
             .post(`/pair-game-quiz/pairs/connection`)
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
-            .expect(201)
+            .expect(200)
 
         console.log("must return 403 because of action in another game");
         await request(server)

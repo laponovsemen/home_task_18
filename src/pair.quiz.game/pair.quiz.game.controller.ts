@@ -27,6 +27,8 @@ import {User} from "../auth/decorators/public.decorator";
 import {CreateOrConnectPairCommand} from "./use-cases/create-or-connect-pair-use-case";
 import {returnCurrentUnfinishedUserGameCommand} from "./use-cases/return-current-unfinished-user-game-use-case";
 import {returnGameByIdCommand} from "./use-cases/return-game-by-id-use-case";
+import { AnswersInputModel } from "./view.model.classess/answers.input.model";
+import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-next-question-use-case";
 
 
 
@@ -87,11 +89,12 @@ export class PairQuizGameController {
 
     @Post("/my-current/answers")
     @HttpCode(200)
-    async sendAnswerForNextQuestion(@Body() quizDTO : QuizDTO,
-                                   @Res({passthrough : true}) res: Response,
+    async sendAnswerForNextQuestion(@Res({passthrough : true}) res: Response,
+                               @Body() answer : AnswersInputModel,
+                               @User() tokenPayload : TokenPayload,
                                @Param("quizQuestionId") quizQuestionId
     ) {
-
+        const answerProcedure = await  this.commandBus.execute(new sendAnswerForNextQuestionCommand(tokenPayload, answer))
     }
 
 }
