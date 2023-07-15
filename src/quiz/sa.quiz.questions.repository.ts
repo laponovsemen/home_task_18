@@ -107,13 +107,20 @@ export class QuizQuestionsRepository {
     }
 
 
-    async generateFiveRandomQuestions() {
-        return this.dataSource
+    async generateFiveRandomQuestions() : Promise<string[]> {
+        let array : string[] = []
+
+        const queryResult : APIQuizQuestion[] = await this.dataSource
             .getRepository(APIQuizQuestion)
             .createQueryBuilder("question")
             .select("id")
             .orderBy('RANDOM()')
             .take(5)
             .getMany();
+
+        console.log(queryResult, " queryResult");
+        queryResult.forEach(item => {array.push(item.id)})
+        console.log(array, " resultant array");
+        return array
     }
 }

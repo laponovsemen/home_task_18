@@ -38,7 +38,7 @@ export class PairGameQuizRepository {
     }
 
     async createNewGame(user: User) {
-        const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
+        const fiveQuestions : string[] = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
         const newGame = PairGameQuiz.create(user, fiveQuestions)
         console.log(newGame, " new game")
         return this.pairGameQuizTypeORMRepository.create(newGame);

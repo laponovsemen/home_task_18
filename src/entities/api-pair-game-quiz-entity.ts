@@ -54,7 +54,7 @@ export class PairGameQuiz {
         array : true,
         nullable : true
     })
-    questions : APIQuizQuestion[]
+    questions : string[]
 
     @Column({
         type : 'enum',
@@ -75,7 +75,7 @@ export class PairGameQuiz {
 
 
 
-    static create( user: User, randomlyGeneratedFiveQuestions : APIQuizQuestion[]) {
+    static create( user: User, randomlyGeneratedFiveQuestionsIds : string[]) {
         const newPairGameQuiz = new PairGameQuiz()
 
         newPairGameQuiz.id = randomUUID()
@@ -87,7 +87,7 @@ export class PairGameQuiz {
         newPairGameQuiz.answersOfSecondUser = []
         newPairGameQuiz.secondPlayerScore = 0
 
-        newPairGameQuiz.questions = randomlyGeneratedFiveQuestions
+        newPairGameQuiz.questions = randomlyGeneratedFiveQuestionsIds
         newPairGameQuiz.status =  GameStatuses.PendingSecondPlayer;
 
         newPairGameQuiz.pairCreatedDate	= new Date().toISOString();  //Date when first player initialized the pair
