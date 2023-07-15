@@ -142,4 +142,18 @@ export class PairGameQuizRepository {
 
         return result
     }
+
+  async findUnfinishedGameWhereUserParticipate(user: User) {
+      const game = await this.pairGameQuizTypeORMRepository
+        .createQueryBuilder("game")
+        .where('game.status = :status', {
+            status : GameStatuses.Active
+        })
+        .andWhere(new Brackets(qb => {
+            qb.where('game.firstPlayer = :user', { user: user})
+              .orWhere('game.secondPlayer = :user', { user: user});
+        }))
+
+      return game
+  }
 }

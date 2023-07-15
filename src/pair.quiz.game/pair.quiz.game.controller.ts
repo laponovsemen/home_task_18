@@ -44,13 +44,16 @@ export class PairQuizGameController {
     @Get("/my-current")
     @HttpCode(200)
     async returnCurrentUnfinishedUserGame(@Query() QueryParams,
-                                @Res({passthrough : true}) res: Response
-
+                                          @Res({ passthrough: true }) res: Response,
+                                          @User() tokenPayload: TokenPayload
                                 ) {
-
+        const resultOfGetting = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
+        if(!resultOfGetting){
+            throw new NotFoundException()
+        } else {
+            return resultOfGetting
+        }
     }
-
-
 
     @Get(`/:gameId`)
     @HttpCode(200)
