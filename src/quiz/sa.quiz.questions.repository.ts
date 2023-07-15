@@ -111,7 +111,7 @@ export class QuizQuestionsRepository {
         return this.dataSource
             .getRepository(APIQuizQuestion)
             .createQueryBuilder("question")
-            .select()
+            .select("id")
             .orderBy('RANDOM()')
             .take(5)
             .getMany();

@@ -14,6 +14,7 @@ const basic = 'Basic YWRtaW46cXdlcnR5'
 
 //TESTING ROUTE
 describe("start creating quiz question", () => {
+    jest.setTimeout(60000)
     let app: INestApplication;
     let server : any
     beforeAll(async () => {

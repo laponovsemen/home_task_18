@@ -50,7 +50,7 @@ export class PairGameQuiz {
     @Column()
     secondPlayerScore : number
 
-    @Column('json', {
+    @Column('varchar', {
         array : true,
         nullable : true
     })
