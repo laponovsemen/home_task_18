@@ -12,7 +12,7 @@ import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
 export class User {
     @PrimaryColumn('uuid')
     id: string;
-    @Column({type: 'varchar', collation: 'C', unique: true, nullable: false})
+    @Column({type: 'varchar', unique: true, nullable: false})
     login: string;
     @Column()
     email: string;

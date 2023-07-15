@@ -145,11 +145,13 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: "lucky.db.elephantsql.com",
+      /*host: "lucky.db.elephantsql.com",
       port: 5432,
       username: 'tfaepjvr',
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
-      database: 'tfaepjvr',
+      database: 'tfaepjvr',*/
+      url : "postgres://laponovsemen:29DiRadTZCrs@ep-weathered-wildflower-358276-pooler.us-east-2.aws.neon.tech/neondb",
+      ssl : true,
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
         APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz],
       autoLoadEntities: true,
