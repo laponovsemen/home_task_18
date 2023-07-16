@@ -37,15 +37,17 @@ export class TestingService {
     //   console.log(e)
     //   return null
     // }
-    await this.blogsRepository.deleteAllData()
-    await this.postsRepository.deleteAllData()
-    await this.usersRepository.deleteAllData()
-    await this.commentsRepository.deleteAllData()
-    await this.likeRepository.deleteAllData()
-    await this.securityDevicesRepository.deleteAllData()
-    await this.bansRepository.deleteAllData()
-    await this.quizQuestionsRepository.deleteAllData()
-    await this.pairGameQuizRepository.deleteAllData()
-    await this.answerRepository.delete({})
+    await Promise.all([
+     this.blogsRepository.deleteAllData(),
+     this.postsRepository.deleteAllData(),
+     this.usersRepository.deleteAllData(),
+     this.commentsRepository.deleteAllData(),
+     this.likeRepository.deleteAllData(),
+     this.securityDevicesRepository.deleteAllData(),
+     this.bansRepository.deleteAllData(),
+     this.quizQuestionsRepository.deleteAllData(),
+     this.pairGameQuizRepository.deleteAllData(),
+     this.answerRepository.delete({})
+      ])
   }
 }
