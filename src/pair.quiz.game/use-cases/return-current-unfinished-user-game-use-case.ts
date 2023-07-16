@@ -22,7 +22,9 @@ export class returnCurrentUnfinishedUserGameUseCase implements ICommandHandler<r
   async execute(command: returnCurrentUnfinishedUserGameCommand) {
 
     const user = await this.usersRepository.findUserById(command.tokenPayload.userId)
+    console.log(user, " user in returnCurrentUnfinishedUserGameCommand");
     const foundGame = await this.pairGameQuizRepository.findUnfinishedGameWhereUserParticipate(user)
+    console.log(foundGame, " found game");
     return foundGame
   }
 }

@@ -55,6 +55,7 @@ describe("start creating quiz question", () => {
                 .expect(204)
         }
 
+
         const createFirstUser = await request(server)
             .post(`/sa/users`)
             .set(auth, basic)
@@ -110,8 +111,13 @@ describe("start creating quiz question", () => {
         .expect(200)
 
         await request(server)
-            .post(`/pair-game-quiz/pairs/connection`)
-            .expect(401)
+          .post(`/pair-game-quiz/pairs/connection`)
+          .expect(401);
+
+        await request(server)
+          .get("/pair-game-quiz/pairs/my-current")
+          .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
+          .expect(404);
 
         console.log("create pair");
         const createPair = await request(server)

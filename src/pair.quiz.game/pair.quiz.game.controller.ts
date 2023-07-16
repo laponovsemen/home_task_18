@@ -49,10 +49,13 @@ export class PairQuizGameController {
                                           @Res({ passthrough: true }) res: Response,
                                           @User() tokenPayload: TokenPayload
                                 ) {
+        console.log("start returnCurrentUnfinishedUserGame procedure");
         const resultOfGetting = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
         if(!resultOfGetting){
+            console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame must throw 403");
             throw new NotFoundException()
         } else {
+            console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame");
             return resultOfGetting
         }
     }
