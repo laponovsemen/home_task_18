@@ -258,6 +258,11 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
         .expect(404);
 
+      await request(server)
+        .get(`/pair-game-quiz/pairs/2281337`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(400);
+
     },60000)
 
 
