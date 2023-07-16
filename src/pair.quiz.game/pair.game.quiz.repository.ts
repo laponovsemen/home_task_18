@@ -63,10 +63,6 @@ export class PairGameQuizRepository {
             .where('game.id = :id', {
                 id : gameId
             })
-            .andWhere(new Brackets(qb => {
-                qb.where('game.firstPlayer.id = :userId', { userId: user.id})
-                    .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
-            }))
           .getOne()
 
 

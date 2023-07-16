@@ -200,6 +200,17 @@ describe("start creating quiz question", () => {
         .auth(loginOfThirdUser.body.accessToken, { type: "bearer" })
         .expect(403);
 
+      await request(server)
+        .get(`/pair-game-quiz/pairs/602afe92-7d97-4395-b1b9-6cf98b351bbe`)
+        .auth(loginOfThirdUser.body.accessToken, { type: "bearer" })
+        .expect(404);
+
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/18009213`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(400);
+
       expect(foundGameByIdByUserOne.body).toEqual(foundGameByIdByUserTwo.body)
 
       await request(server)

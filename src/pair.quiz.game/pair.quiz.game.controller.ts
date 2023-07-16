@@ -29,6 +29,7 @@ import {returnCurrentUnfinishedUserGameCommand} from "./use-cases/return-current
 import {returnGameByIdCommand} from "./use-cases/return-game-by-id-use-case";
 import { AnswersInputModel } from "./view.model.classess/answers.input.model";
 import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-next-question-use-case";
+import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 
 
 
@@ -67,9 +68,14 @@ export class PairQuizGameController {
                          @Param("gameId", new ParseUUIDPipe()) gameId : string
     ) {
         console.log(" returnGameById Procedure Controller");
-        const resultOfGetting = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
+        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
         if(!resultOfGetting){
-            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error");
+            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
+            throw new NotFoundException()
+        } else if (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
+          && resultOfGetting.secondPlayerProgress.player.id !== tokenPayload.userId) {
+
+            console.log(resultOfGetting, " resultOfGetting in returnGameById 403");
             throw new ForbiddenException()
         } else {
             console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller");
