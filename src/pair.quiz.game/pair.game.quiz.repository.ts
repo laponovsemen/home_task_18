@@ -105,15 +105,20 @@ export class PairGameQuizRepository {
         await queryRunner.startTransaction()
         const pairGameQuizRepoFromQueryRunner = queryRunner.manager.getRepository(PairGameQuiz)
         try {
-
+        //TODO FD
             const checkOfParticipatingInAnotherGame : PairGameQuiz
               = await pairGameQuizRepoFromQueryRunner
               .createQueryBuilder("game")
               .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
               .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
-              .where( new Brackets(qb => {
+              /*.where( new Brackets(qb => {
                     qb.where("game.status = 'PendingSecondPlayer'")
                       .orWhere("game.status = 'Active'");
+                })
+              )*/
+              .where( new Brackets(qb => {
+                    qb.where("game.status = :status", {status : GameStatuses.PendingSecondPlayer})
+                      .orWhere("game.status = :status", {status : GameStatuses.Active})
                 })
               )
               .andWhere(new Brackets(qb => {
@@ -130,9 +135,14 @@ export class PairGameQuizRepository {
               .createQueryBuilder("game")
               .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
               .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
-              .where( new Brackets(qb => {
+              /*.where( new Brackets(qb => {
                     qb.where("game.status = 'PendingSecondPlayer'")
                       .orWhere("game.status = 'Active'");
+                })
+              )*/
+              .where( new Brackets(qb => {
+                    qb.where("game.status = ':status'", {status : GameStatuses.PendingSecondPlayer})
+                      .orWhere("game.status = ':status'", {status : GameStatuses.Active})
                 })
               )
               .andWhere(new Brackets(qb => {
@@ -207,6 +217,8 @@ export class PairGameQuizRepository {
               .createQueryBuilder("game")
               .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
               .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+              .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
+              .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
               .where('game.status = :status', { status: GameStatuses.Active}) // check for enum injection
               .andWhere(new Brackets(qb => {
                   qb.where('game.firstPlayerId = :userId', { userId: user.id})
@@ -216,12 +228,13 @@ export class PairGameQuizRepository {
 
             console.log(gameWhichUserParticipateIn, " checkOfParticipatingInAnotherGame")
 
-            if (gameWhichUserParticipateIn) return null; //check if user is participating in this game, if no -> 403
+            if (!gameWhichUserParticipateIn) return null; //check if user is participating in this game, if no -> 403
 
             const numberOfUserInGame : userNumberInGame = PairGameQuiz.findoutNumberOfUser(user, gameWhichUserParticipateIn)
             if(numberOfUserInGame === userNumberInGame.none) return null; // user don't participate in game
 
             const answersOfUser : APIQuizQuestionAnswer[] = PairGameQuiz.getAnswersOfUserByQueue(numberOfUserInGame, gameWhichUserParticipateIn)
+            console.log(answersOfUser, " answersOfUser");
             if(answersOfUser.length > 4) return null; // too many answers for questions
 
             const questionToAnwser : APIQuizQuestion = await apiQuizQuestionRepoFromQueryRunner

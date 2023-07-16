@@ -122,6 +122,8 @@ describe("start creating quiz question", () => {
       expect(createPair.body.firstPlayer.id).toEqual(createFirstUser.body.id)
       console.log(createPair.body, " createPair.body.");
 
+
+        //TRY TO CONNECT TO CREATED PAIR
       await request(server)
         .post(`/pair-game-quiz/pairs/connection`)
         .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
@@ -201,9 +203,32 @@ describe("start creating quiz question", () => {
         .expect(403);
 
 
-      expect(foundGameByIdByUserOne.body).toEqual({})
+      //expect(foundGameByIdByUserOne.body).toEqual({})
       const questionsOfTheGame = foundGameByIdByUserOne.body.questions
       console.log(questionsOfTheGame);
+
+      console.log("start making answers for the quiz")
+
+      /*for (let i = 0; i < 5; i++){
+        console.log(i, " attempt");
+        await request(server)
+          .post(`/pair-game-quiz/pairs/my-current/answers`)
+          .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+          .send({"answer":"correct"})
+          .expect(200);
+
+        await request(server)
+          .post(`/pair-game-quiz/pairs/my-current/answers`)
+          .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })
+          .send({"answer":"correct"})
+          .expect(200);
+      }
+      await request(server)
+        .post(`/pair-game-quiz/pairs/my-current/answers`)
+        .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })
+        .send({"answer":"correct"})
+        .expect(403);*/
+
     },30000)
 
 

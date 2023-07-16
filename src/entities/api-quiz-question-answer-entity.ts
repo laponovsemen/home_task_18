@@ -40,11 +40,11 @@ export class APIQuizQuestionAnswer {
     })
     answerStatus : AnswerStatuses
 
-    @ManyToOne(() => APIQuizQuestion, q => q.answers)
+    @ManyToOne(() => APIQuizQuestion, q => q.answers, {onDelete : 'SET NULL'})
     @JoinColumn()
     question : APIQuizQuestion
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {onDelete : 'SET NULL'})
     @JoinColumn()
     answerer : User
 
@@ -69,9 +69,9 @@ export class APIQuizQuestionAnswer {
                        game : PairGameQuiz) {
 
         const newAnswerToSaveInDb = new APIQuizQuestionAnswer()
-        const answerStatus  = AnswerStatuses.Correct as AnswerStatuses ?
-          questionToAnwser.correctAnswers.find(element => element === answer.answer) :
-          AnswerStatuses.Incorrect as AnswerStatuses
+        const answerStatus : AnswerStatuses =  questionToAnwser.correctAnswers.find(element => element === answer.answer) ?
+          AnswerStatuses.Correct :
+          AnswerStatuses.Incorrect
 
         newAnswerToSaveInDb.id = randomUUID()
         if (numberOfUserInGame === userNumberInGame.first ){
@@ -79,7 +79,7 @@ export class APIQuizQuestionAnswer {
         } else {
             newAnswerToSaveInDb.gameOfSecondUser = game
         }
-        newAnswerToSaveInDb.answerStatus = answerStatus as AnswerStatuses
+        newAnswerToSaveInDb.answerStatus = answerStatus
         newAnswerToSaveInDb.question = questionToAnwser
         newAnswerToSaveInDb.answerer = user
         newAnswerToSaveInDb.addedAt = new Date().toISOString()

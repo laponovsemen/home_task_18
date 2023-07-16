@@ -24,7 +24,7 @@ export class APIQuizQuestion{
 
 
 
-    @OneToMany(() => APIQuizQuestionAnswer, g => g.question)
+    @OneToMany(() => APIQuizQuestionAnswer, g => g.question, {onDelete : 'SET NULL'})
     answers : APIQuizQuestionAnswer[]
 
     @Column({ type : 'varchar'})
