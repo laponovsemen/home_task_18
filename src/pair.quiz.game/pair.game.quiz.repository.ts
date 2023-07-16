@@ -193,9 +193,7 @@ export class PairGameQuizRepository {
   async findUnfinishedGameWhereUserParticipate(user: User) {
       const game = await this.pairGameQuizTypeORMRepository
         .createQueryBuilder("game")
-        .where('game.status = :status', {
-            status : GameStatuses.Active
-        })
+        .where(`game.status = '${GameStatuses.Active}'`)
         .andWhere(new Brackets(qb => {
             qb.where('game.firstPlayerId = :userId', { userId: user.id})
               .orWhere('game.secondPlayerId = :userId', { userId: user.id});
