@@ -26,6 +26,7 @@ describe("start creating quiz question", () => {
         app.close()
     });
     it("delete All Data, create question and get them all",async () => {
+        console.log("start test");
         await request(server)
             .delete("/testing/all-data")
             .set(auth, basic)
