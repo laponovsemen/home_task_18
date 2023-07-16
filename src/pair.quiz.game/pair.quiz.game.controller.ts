@@ -72,8 +72,13 @@ export class PairQuizGameController {
         if(!resultOfGetting){
             console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
             throw new NotFoundException()
-        } else if (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
-          && resultOfGetting.secondPlayerProgress.player.id !== tokenPayload.userId) {
+        } else if (
+          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
+          && resultOfGetting.secondPlayerProgress === null)
+          ||
+          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
+          && resultOfGetting.secondPlayerProgress.player.id !== tokenPayload.userId)
+        ) {
 
             console.log(resultOfGetting, " resultOfGetting in returnGameById 403");
             throw new ForbiddenException()
