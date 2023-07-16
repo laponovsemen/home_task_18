@@ -11,6 +11,7 @@ import { DataSource, Repository } from "typeorm";
 import {QuizQuestionsRepository} from "../quiz/sa.quiz.questions.repository";
 import { PairGameQuizRepository } from "../pair.quiz.game/pair.game.quiz.repository";
 import { APIQuizQuestionAnswer } from "../entities/api-quiz-question-answer-entity";
+import { TRUNCATE } from "./truncate.all.tables.SQL.script";
 
 
 @Injectable()
@@ -37,17 +38,18 @@ export class TestingService {
     //   console.log(e)
     //   return null
     // }
-    await Promise.all([
-     this.blogsRepository.deleteAllData(),
-     this.postsRepository.deleteAllData(),
-     this.usersRepository.deleteAllData(),
-     this.commentsRepository.deleteAllData(),
-     this.likeRepository.deleteAllData(),
-     this.securityDevicesRepository.deleteAllData(),
-     this.bansRepository.deleteAllData(),
-     this.quizQuestionsRepository.deleteAllData(),
-     this.pairGameQuizRepository.deleteAllData(),
-     this.answerRepository.delete({})
-      ])
+    // await Promise.all([
+    //  this.blogsRepository.deleteAllData(),
+    //  this.postsRepository.deleteAllData(),
+    //  this.usersRepository.deleteAllData(),
+    //  this.commentsRepository.deleteAllData(),
+    //  this.likeRepository.deleteAllData(),
+    //  this.securityDevicesRepository.deleteAllData(),
+    //  this.bansRepository.deleteAllData(),
+    //  this.quizQuestionsRepository.deleteAllData(),
+    //  this.pairGameQuizRepository.deleteAllData(),
+    //  this.answerRepository.delete({})
+    //   ])
+    await  this.dataSource.query(TRUNCATE)
   }
 }
