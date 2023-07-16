@@ -14,7 +14,7 @@ export class PairGameQuiz {
     @JoinColumn()
     firstPlayer : User
 
-    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfFirstUser)
+    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfFirstUser, {nullable : true, onDelete : 'SET NULL'})
     answersOfFirstUser : APIQuizQuestionAnswer[]
 
     @Column()
@@ -24,7 +24,7 @@ export class PairGameQuiz {
     @JoinColumn()
     secondPlayer : User
 
-    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfSecondUser, )
+    @OneToMany(() => APIQuizQuestionAnswer, qqa => qqa.gameOfSecondUser, {nullable : true, onDelete : 'SET NULL'} )
     answersOfSecondUser : APIQuizQuestionAnswer[]
 
     @Column()
@@ -131,14 +131,13 @@ export class PairGameQuiz {
 
     static updateScore(oldGame: PairGameQuiz,
                        numberOfUserInGame: userNumberInGame.first | userNumberInGame.second,
-                       newScore: number ) {
+                       newScore: number) {
         const newGameWhichUserParticipateIn = new PairGameQuiz()
 
         newGameWhichUserParticipateIn.id = oldGame.id
         newGameWhichUserParticipateIn.firstPlayer = oldGame.firstPlayer
         newGameWhichUserParticipateIn.secondPlayer = oldGame.secondPlayer
-        newGameWhichUserParticipateIn.answersOfFirstUser = oldGame.answersOfFirstUser
-        newGameWhichUserParticipateIn.answersOfSecondUser = oldGame.answersOfSecondUser
+
 
         if (numberOfUserInGame === userNumberInGame.first){
             newGameWhichUserParticipateIn.firstPlayerScore = newScore

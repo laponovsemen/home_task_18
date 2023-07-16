@@ -25,11 +25,11 @@ import { userNumberInGame } from "../pair.quiz.game/view.model.classess/user.num
 export class APIQuizQuestionAnswer {
     @PrimaryColumn({type : 'uuid'})
     id: string;
-    @ManyToOne(() => PairGameQuiz, u => u.answersOfFirstUser)
+    @ManyToOne(() => PairGameQuiz, u => u.answersOfFirstUser, {nullable : true, onDelete : 'SET NULL'})
 
     gameOfFirstUser : PairGameQuiz
 
-    @ManyToOne(() => PairGameQuiz, u => u.answersOfSecondUser)
+    @ManyToOne(() => PairGameQuiz, u => u.answersOfSecondUser, {nullable : true, onDelete : 'SET NULL'})
 
     gameOfSecondUser : PairGameQuiz
 
@@ -44,9 +44,6 @@ export class APIQuizQuestionAnswer {
     @JoinColumn()
     question : APIQuizQuestion
 
-    @ManyToOne(() => User, {onDelete : 'SET NULL'})
-    @JoinColumn()
-    answerer : User
 
     @Column({nullable : true})
     addedAt	: string; //Game finishes immediately after both players have answered all the questions
@@ -81,7 +78,6 @@ export class APIQuizQuestionAnswer {
         }
         newAnswerToSaveInDb.answerStatus = answerStatus
         newAnswerToSaveInDb.question = questionToAnwser
-        newAnswerToSaveInDb.answerer = user
         newAnswerToSaveInDb.addedAt = new Date().toISOString()
 
         return newAnswerToSaveInDb

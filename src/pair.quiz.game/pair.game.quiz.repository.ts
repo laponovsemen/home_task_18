@@ -12,6 +12,7 @@ import { APIQuizQuestionAnswer } from "../entities/api-quiz-question-answer-enti
 import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
+import { AnswersViewModel } from "./view.model.classess/answers.view.model";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -117,8 +118,8 @@ export class PairGameQuizRepository {
                 })
               )*/
               .where( new Brackets(qb => {
-                    qb.where("game.status = :status", {status : GameStatuses.PendingSecondPlayer})
-                      .orWhere("game.status = :status", {status : GameStatuses.Active})
+                    qb.where(`game.status = '${GameStatuses.PendingSecondPlayer}'`)
+                      .orWhere(`game.status = '${GameStatuses.Active}'`)
                 })
               )
               .andWhere(new Brackets(qb => {
@@ -131,20 +132,21 @@ export class PairGameQuizRepository {
             //check if user is participating in another game
             if (checkOfParticipatingInAnotherGame) return null;
 
+
             console.log(pairGameQuizRepoFromQueryRunner
               .createQueryBuilder("game")
               .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
               .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
-              /*.where( new Brackets(qb => {
+              .where( new Brackets(qb => {
                     qb.where("game.status = 'PendingSecondPlayer'")
                       .orWhere("game.status = 'Active'");
                 })
-              )*/
-              .where( new Brackets(qb => {
+              )
+              /*.where( new Brackets(qb => {
                     qb.where("game.status = ':status'", {status : GameStatuses.PendingSecondPlayer})
                       .orWhere("game.status = ':status'", {status : GameStatuses.Active})
                 })
-              )
+              )*/
               .andWhere(new Brackets(qb => {
                   qb.where('game.firstPlayer.id = :userId', { userId: user.id})
                     .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
@@ -202,7 +204,7 @@ export class PairGameQuizRepository {
       return game
   }
 
-    async answerNextQuestion(user: User, answer: AnswersInputModel) {
+    async answerNextQuestion(user: User, answer: AnswersInputModel) : Promise<AnswersViewModel> {
         const queryRunner : QueryRunner =  this.dataSource.createQueryRunner()
         let result
         await queryRunner.connect()
@@ -233,29 +235,31 @@ export class PairGameQuizRepository {
             const numberOfUserInGame : userNumberInGame = PairGameQuiz.findoutNumberOfUser(user, gameWhichUserParticipateIn)
             if(numberOfUserInGame === userNumberInGame.none) return null; // user don't participate in game
 
-            const answersOfUser : APIQuizQuestionAnswer[] = PairGameQuiz.getAnswersOfUserByQueue(numberOfUserInGame, gameWhichUserParticipateIn)
-            console.log(answersOfUser, " answersOfUser");
-            if(answersOfUser.length > 4) return null; // too many answers for questions
-
+            const answersOfUserFromDB : APIQuizQuestionAnswer[] = PairGameQuiz.getAnswersOfUserByQueue(numberOfUserInGame, gameWhichUserParticipateIn)
+            console.log(answersOfUserFromDB, " answersOfUserFromDB");
+            if(answersOfUserFromDB.length > 4) return null; // too many answers for questions
+            console.log("length of users answers is less then 5 and actually equals", answersOfUserFromDB.length)
             const questionToAnwser : APIQuizQuestion = await apiQuizQuestionRepoFromQueryRunner
-              .findOneBy({id : gameWhichUserParticipateIn.questions[answersOfUser.length]})
+              .findOneBy({id : gameWhichUserParticipateIn.questions[answersOfUserFromDB.length]})
             //find question in db by length of answers
-
-            const answerOfUser = APIQuizQuestionAnswer
+            console.log("question to answer", questionToAnwser);
+            const answerOfUser : APIQuizQuestionAnswer = APIQuizQuestionAnswer
               .createAnswer(answer, questionToAnwser, user, numberOfUserInGame, gameWhichUserParticipateIn) // create instance of answer
-             await answerRepoFromQueryRunner.save(answerOfUser)
-
+            console.log(answerOfUser, " answerOfUser");
+            await answerRepoFromQueryRunner.save(answerOfUser)
+            console.log(" answer saved");
             const previousScore = PairGameQuiz.getScoreOfUser(gameWhichUserParticipateIn, numberOfUserInGame)
             const scoreToAdd : number = answerOfUser.answerStatus === AnswerStatuses.Correct ? 1 : 0
             const newScore : number = previousScore + scoreToAdd
+            console.log(newScore, " newScore");
             const gameWithUpdatedScore : PairGameQuiz = PairGameQuiz.updateScore(gameWhichUserParticipateIn,
               numberOfUserInGame,
               newScore)
+            result = gameWithUpdatedScore
+            console.log(result);
 
-            const result = answerOfUser
             await pairGameQuizRepoFromQueryRunner.save(gameWithUpdatedScore)
             await queryRunner.commitTransaction()
-            console.log(result, " result ");
 
         } catch (e) {
             console.log(" catch error")
@@ -266,7 +270,6 @@ export class PairGameQuizRepository {
             await queryRunner.release()
             // ask why it works if I don't use release transaction
         }
-
         return result
     }
 }

@@ -24,10 +24,10 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
 
   }
 
-  async execute(command: CreateOrConnectPairCommand) {
+  async execute(command: CreateOrConnectPairCommand) : Promise<PairGameQuiz | null> {
     const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
 
-    const resultOfCreationOrConnectionPair = await this.pairGameQuizRepository.createOrConnectPair(user)
+    const resultOfCreationOrConnectionPair  = await this.pairGameQuizRepository.createOrConnectPair(user)
     return resultOfCreationOrConnectionPair
 
 
