@@ -53,7 +53,7 @@ export class PairQuizGameController {
         console.log("start returnCurrentUnfinishedUserGame procedure");
         const resultOfGetting = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
         if(!resultOfGetting){
-            console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame must throw 403");
+            console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame must throw 404");
             throw new NotFoundException()
         } else {
             console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame");

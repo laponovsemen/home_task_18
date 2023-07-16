@@ -141,7 +141,31 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
         .expect(200)
 
+      const foundMyCurrentGameWhereStatusIsPendingSeconfUser = await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
+        .expect(200)
+
       expect(foundGameByIdWhereStatusIsPendingSeconfUser.body).toEqual({
+        finishGameDate: null,
+        firstPlayerProgress: {
+          answers: [],
+          player: {
+            id: expect.any(String),
+            login: "login1"
+          },
+          score: 0
+
+        },
+        id: expect.any(String),
+        pairCreatedDate: expect.any(String),
+        questions: null,
+        secondPlayerProgress: null,
+        startGameDate: null,
+        status: "PendingSecondPlayer"
+      });
+
+      expect(foundMyCurrentGameWhereStatusIsPendingSeconfUser.body).toEqual({
         finishGameDate: null,
         firstPlayerProgress: {
           answers: [],

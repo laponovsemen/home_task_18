@@ -189,14 +189,27 @@ export class PairGameQuizRepository {
   async findUnfinishedGameWhereUserParticipate(user: User) {
       const game = await this.pairGameQuizTypeORMRepository
         .createQueryBuilder("game")
-        .where(`game.status = '${GameStatuses.Active}'`)
+        .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
+        .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+        .where(
+      new Brackets(qb => {
+          qb.where(`game.status = '${GameStatuses.PendingSecondPlayer}'`)
+            .orWhere(`game.status = '${GameStatuses.Active}'`);
+      }))
         .andWhere(new Brackets(qb => {
             qb.where('game.firstPlayerId = :userId', { userId: user.id})
               .orWhere('game.secondPlayerId = :userId', { userId: user.id});
         }))
         .getOne()
 
-      return game
+      console.log(game, 'found game');
+      if (!game) return null;
+      const questionsList : APIQuizQuestion[] = await this.quizQuestionsRepository
+        .findQuizQuestionsListByListOfIds(game.questions)
+
+      const result : PairGameQuizViewModel = PairGameQuizViewModel.getViewModelForFront(game, questionsList)
+      console.log(result);
+      return result
   }
 
     async answerNextQuestion(user: User, answer: AnswersInputModel) : Promise<AnswersViewModel> {
@@ -231,25 +244,7 @@ export class PairGameQuizRepository {
             if(numberOfUserInGame === userNumberInGame.none) return null; // user don't participate in game
 
             const answersOfUserFromDB : APIQuizQuestionAnswer[] = PairGameQuiz.getAnswersOfUserByQueue(numberOfUserInGame, gameWhichUserParticipateIn)
-            /*const answersOfUserFromDB : APIQuizQuestionAnswer[] = await answerRepoFromQueryRunner.find({
-                relations : {
-                    gameOfFirstUser : true,
-                    gameOfSecondUser : true,
-                    question : true
-                },
-                where  : [
-                    {
-                        gameOfFirstUser: {
-                            id: gameWhichUserParticipateIn.id
-                        }
-                    },
-                    {
-                        gameOfSecondUser: {
-                            id: gameWhichUserParticipateIn.id
-                        }
-                    }
-                ]
-            })*/
+
             console.log(answersOfUserFromDB, " answersOfUserFromDB");
             if(answersOfUserFromDB.length > 4) return null; // too many answers for questions
             console.log("length of users answers is less then 5 and actually equals", answersOfUserFromDB.length)
