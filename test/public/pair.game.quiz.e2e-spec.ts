@@ -246,6 +246,17 @@ describe("start creating quiz question", () => {
         .send({"answer":"correct"})
         .expect(403);
 
+      await request(server)
+        .post(`/pair-game-quiz/pairs/my-current/answers`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .send({"answer":"correct"})
+        .expect(403);
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(404);
+
     },60000)
 
 

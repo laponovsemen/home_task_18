@@ -250,10 +250,12 @@ export class PairGameQuizRepository {
             const gameWithUpdatedScore : PairGameQuiz = PairGameQuiz.updateScore(gameWhichUserParticipateIn,
               numberOfUserInGame,
               newScore)
-            result = gameWithUpdatedScore
-            console.log(result);
 
-            await pairGameQuizRepoFromQueryRunner.save(gameWithUpdatedScore)
+            const resultOfMakingAnswer = PairGameQuiz.checkForFinishingTheGame(gameWithUpdatedScore)
+            result = resultOfMakingAnswer
+            console.log(resultOfMakingAnswer);
+
+            await pairGameQuizRepoFromQueryRunner.save(resultOfMakingAnswer)
             await queryRunner.commitTransaction()
 
         } catch (e) {

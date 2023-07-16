@@ -157,6 +157,43 @@ export class PairGameQuiz {
     }
 
 
+  static checkForFinishingTheGame(gameWithUpdatedScore: PairGameQuiz) {
+    if(gameWithUpdatedScore.secondPlayerScore === 5 && gameWithUpdatedScore.firstPlayerScore === 5){
+        return  PairGameQuiz.finishGame(gameWithUpdatedScore)
+    } else {
+        return gameWithUpdatedScore
+    }
+  }
+
+    private static finishGame(gameWithUpdatedScore: PairGameQuiz) {
+        const finishedGame = new PairGameQuiz()
+        let additionalMarkForFirstUser : number
+        let additionalMarkForSecondUser : number
+        if(gameWithUpdatedScore.answersOfFirstUser[4].addedAt < gameWithUpdatedScore.answersOfSecondUser[4].addedAt ){
+            additionalMarkForFirstUser = 1
+            additionalMarkForSecondUser = 0
+        } else {
+            additionalMarkForFirstUser = 0
+            additionalMarkForSecondUser = 1
+        }
+
+        finishedGame.id = gameWithUpdatedScore.id
+        finishedGame.firstPlayer = gameWithUpdatedScore.firstPlayer
+        finishedGame.answersOfFirstUser  = gameWithUpdatedScore.answersOfFirstUser
+        finishedGame.firstPlayerScore = gameWithUpdatedScore.firstPlayerScore + additionalMarkForFirstUser
+        finishedGame.secondPlayer = gameWithUpdatedScore.secondPlayer
+        finishedGame.answersOfSecondUser = gameWithUpdatedScore.answersOfSecondUser
+        finishedGame.secondPlayerScore = gameWithUpdatedScore.secondPlayerScore+ additionalMarkForSecondUser
+
+        finishedGame.questions = gameWithUpdatedScore.questions
+        finishedGame.status =  GameStatuses.Finished;
+
+        finishedGame.pairCreatedDate	= gameWithUpdatedScore.pairCreatedDate  //Date when first player initialized the pair
+        finishedGame.startGameDate = gameWithUpdatedScore.startGameDate; //Game starts immediately after second player connection to this pair
+        finishedGame.finishGameDate = new Date().toISOString();; //Game finishes immediately after both players have answered all the questions
+
+        return finishedGame
+    }
 }
 
 
