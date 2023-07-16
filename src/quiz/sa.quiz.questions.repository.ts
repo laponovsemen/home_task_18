@@ -113,7 +113,6 @@ export class QuizQuestionsRepository {
         const queryResult : APIQuizQuestion[] = await this.dataSource
             .getRepository(APIQuizQuestion)
             .createQueryBuilder("question")
-            .select("id")
             .orderBy('RANDOM()')
             .take(5)
             .getMany();

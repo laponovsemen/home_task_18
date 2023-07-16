@@ -83,7 +83,6 @@ export class PairGameQuiz {
         newPairGameQuiz.answersOfFirstUser  = []
         newPairGameQuiz.firstPlayerScore = 0
 
-        newPairGameQuiz.secondPlayer = null
         newPairGameQuiz.answersOfSecondUser = []
         newPairGameQuiz.secondPlayerScore = 0
 

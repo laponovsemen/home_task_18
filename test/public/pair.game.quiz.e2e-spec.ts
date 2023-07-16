@@ -119,6 +119,14 @@ describe("start creating quiz question", () => {
             .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
             .expect(200)
 
+      expect(createPair.body.firstPlayer.id).toEqual(createFirstUser.body.id)
+      console.log(createPair.body, " createPair.body.");
+
+      await request(server)
+        .post(`/pair-game-quiz/pairs/connection`)
+        .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
+        .expect(403)
+
         //expect(createPair.body).toEqual({})
         console.log("add second user to pair");
         const connectToTheCreatedPair = await request(server)

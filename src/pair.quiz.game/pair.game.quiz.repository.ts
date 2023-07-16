@@ -8,6 +8,7 @@ import { User } from "../entities/user-entity";
 import { QuizQuestionsRepository } from "../quiz/sa.quiz.questions.repository";
 import { isLogLevelEnabled } from "@nestjs/common/services/utils";
 import { AnswersInputModel } from "./view.model.classess/answers.input.model";
+import { first } from "rxjs";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -94,21 +95,38 @@ export class PairGameQuizRepository {
             const checkOfParticipatingInAnotherGame : PairGameQuiz
               = await pairGameQuizRepoFromQueryRunner
               .createQueryBuilder("game")
+              .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
+              .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
               .where( new Brackets(qb => {
-                    qb.where('game.status = :status', { status: GameStatuses.PendingSecondPlayer})
-                      .orWhere('game.status = :status', { status: GameStatuses.Active});
+                    qb.where("game.status = 'PendingSecondPlayer'")
+                      .orWhere("game.status = 'Active'");
                 })
               )
               .andWhere(new Brackets(qb => {
-                  qb.where('game.firstPlayerId = :userId', { userId: user.id})
-                    .orWhere('game.secondPlayerId = :userId', { userId: user.id});
+                  qb.where('game.firstPlayer.id = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
               }))
               .getOne()
 
-            console.log(await pairGameQuizRepoFromQueryRunner.find({}), " all games in db");
             console.log(checkOfParticipatingInAnotherGame, " checkOfParticipatingInAnotherGame")
             //check if user is participating in another game
             if (checkOfParticipatingInAnotherGame) return null;
+
+            console.log(pairGameQuizRepoFromQueryRunner
+              .createQueryBuilder("game")
+              .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
+              .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+              .where( new Brackets(qb => {
+                    qb.where("game.status = 'PendingSecondPlayer'")
+                      .orWhere("game.status = 'Active'");
+                })
+              )
+              .andWhere(new Brackets(qb => {
+                  qb.where('game.firstPlayer.id = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
+              }))
+              .getSql());
+
 
             const gameWithPendingSecondUser : PairGameQuiz = await pairGameQuizRepoFromQueryRunner.findOne({
                   where: {
@@ -122,6 +140,7 @@ export class PairGameQuizRepository {
                 result = await pairGameQuizRepoFromQueryRunner.save(gameWithAddedSecondUser)
             } else {
                 const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
+                console.log(fiveQuestions, " fiveQuestions");
                 const newGame = PairGameQuiz.create(user, fiveQuestions)
                 console.log(newGame, " new game")
                 result = await pairGameQuizRepoFromQueryRunner.save(newGame);

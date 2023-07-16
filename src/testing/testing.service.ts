@@ -9,6 +9,7 @@ import { BansRepository } from "../blogs/bans.repository";
 import {InjectDataSource} from "@nestjs/typeorm";
 import {DataSource} from "typeorm";
 import {QuizQuestionsRepository} from "../quiz/sa.quiz.questions.repository";
+import { PairGameQuizRepository } from "../pair.quiz.game/pair.game.quiz.repository";
 
 
 @Injectable()
@@ -21,6 +22,7 @@ export class TestingService {
               private readonly bansRepository: BansRepository,
               private readonly securityDevicesRepository: SecurityDevicesRepository,
               private readonly quizQuestionsRepository : QuizQuestionsRepository,
+              private readonly pairGameQuizRepository : PairGameQuizRepository,
               @InjectDataSource() private dataSource: DataSource
               ) {
   }
@@ -41,5 +43,6 @@ export class TestingService {
     await this.securityDevicesRepository.deleteAllData()
     await this.bansRepository.deleteAllData()
     await this.quizQuestionsRepository.deleteAllData()
+    await this.pairGameQuizRepository.deleteAllData()
   }
 }
