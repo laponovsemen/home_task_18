@@ -142,8 +142,16 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
     ttl: 10,
     limit: 500,
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+
+    }),
     TypeOrmModule.forRoot({
+      /*type: 'postgres',
+      host: "localhost",
+      port: 5432,
+      username: 'postgres',
+      password: "2233",
+      database: 'postgres',*/
       type: 'postgres',
       host: "lucky.db.elephantsql.com",
       port: 5432,
