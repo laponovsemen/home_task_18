@@ -1,29 +1,9 @@
-import {
-    Column,
-    Entity,
-    JoinColumn, JoinTable,
-    ManyToMany,
-    ManyToOne,
-    OneToMany,
-    PrimaryColumn,
-    PrimaryGeneratedColumn
-} from "typeorm";
-import {APIPost} from "./api-post-entity";
-import {APILike} from "./api-like-entity";
-import {CommentForSpecifiedPostDTO} from "../input.classes";
-import {randomUUID} from "crypto";
-import {User} from "./user-entity";
-import {APIQuizQuestion} from "./quiz-entity";
-import {GameStatuses} from "../pair.quiz.game/view.model.classess/game.statuses.enum";
-import {APIComment} from "./api-comment-entity";
-import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
-
-
-
-
-
-
-
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { randomUUID } from "crypto";
+import { User } from "./user-entity";
+import { GameStatuses } from "../pair.quiz.game/view.model.classess/game.statuses.enum";
+import { APIQuizQuestionAnswer } from "./api-quiz-question-answer-entity";
+import { userNumberInGame } from "../pair.quiz.game/view.model.classess/user.number.in.game.enum";
 
 
 @Entity({ database: "tfaepjvr" })
@@ -118,6 +98,63 @@ export class PairGameQuiz {
         newPairGameQuizWithAddedSecondUser.finishGameDate = null; //Game finishes immediately after both players have answered all the questions
 
         return newPairGameQuizWithAddedSecondUser
+    }
+
+    static findoutNumberOfUser(user: User, gameWhichUserParticipateIn: PairGameQuiz) {
+        if(gameWhichUserParticipateIn.firstPlayer.id === user.id){
+            return userNumberInGame.first
+        } else if(gameWhichUserParticipateIn.secondPlayer.id === user.id){
+            return userNumberInGame.second
+        } else {
+            return userNumberInGame.none
+        }
+  }
+
+
+    static getAnswersOfUserByQueue(numberOfUserInGame: userNumberInGame.first | userNumberInGame.second | userNumberInGame.none,
+                                   gameWhichUserParticipateIn: PairGameQuiz) {
+        if(numberOfUserInGame === userNumberInGame.first){
+            return gameWhichUserParticipateIn.answersOfFirstUser
+        } else {
+            return gameWhichUserParticipateIn.answersOfSecondUser
+        }
+    }
+
+    static getScoreOfUser(game : PairGameQuiz, numberOfUserInGame: userNumberInGame.first | userNumberInGame.second) {
+        if(numberOfUserInGame === userNumberInGame.first){
+            return  game.firstPlayerScore
+        } else {
+            return  game.secondPlayerScore
+        }
+
+    }
+
+    static updateScore(oldGame: PairGameQuiz,
+                       numberOfUserInGame: userNumberInGame.first | userNumberInGame.second,
+                       newScore: number ) {
+        const newGameWhichUserParticipateIn = new PairGameQuiz()
+
+        newGameWhichUserParticipateIn.id = oldGame.id
+        newGameWhichUserParticipateIn.firstPlayer = oldGame.firstPlayer
+        newGameWhichUserParticipateIn.secondPlayer = oldGame.secondPlayer
+        newGameWhichUserParticipateIn.answersOfFirstUser = oldGame.answersOfFirstUser
+        newGameWhichUserParticipateIn.answersOfSecondUser = oldGame.answersOfSecondUser
+
+        if (numberOfUserInGame === userNumberInGame.first){
+            newGameWhichUserParticipateIn.firstPlayerScore = newScore
+            newGameWhichUserParticipateIn.secondPlayerScore = oldGame.secondPlayerScore
+        } else {
+            newGameWhichUserParticipateIn.firstPlayerScore = oldGame.firstPlayerScore
+            newGameWhichUserParticipateIn.secondPlayerScore = newScore
+        }
+
+        newGameWhichUserParticipateIn.questions = oldGame.questions
+        newGameWhichUserParticipateIn.status = oldGame.status
+        newGameWhichUserParticipateIn.pairCreatedDate = oldGame.pairCreatedDate
+        newGameWhichUserParticipateIn.startGameDate = oldGame.startGameDate
+        newGameWhichUserParticipateIn.finishGameDate = oldGame.finishGameDate
+
+        return newGameWhichUserParticipateIn
     }
 }
 

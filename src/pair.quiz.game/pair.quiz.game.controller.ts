@@ -97,7 +97,14 @@ export class PairQuizGameController {
                                @User() tokenPayload : TokenPayload,
                                @Param("quizQuestionId") quizQuestionId
     ) {
+        console.log("start sendAnswerForNextQuestion procedure");
         const answerProcedure = await  this.commandBus.execute(new sendAnswerForNextQuestionCommand(tokenPayload, answer))
+
+        if (!answerProcedure){
+            throw new ForbiddenException()
+        } else {
+            return answerProcedure
+        }
     }
 
 }

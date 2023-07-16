@@ -42,7 +42,7 @@ describe("start creating quiz question", () => {
                 .set(auth, basic)
                 .send({
                     body : createQuestionDTO.body + `${i}`,
-                    correctAnswers: [createQuestionDTO.correctAnswers[0] + `${i}`]
+                    correctAnswers: [createQuestionDTO.correctAnswers[0]]
                 })
                 .expect(201)
 
@@ -170,7 +170,11 @@ describe("start creating quiz question", () => {
 
       expect(foundGameByIdByUserOne.body).toEqual(foundGameByIdByUserTwo.body)
 
-
+      await request(server)
+        .post(`/pair-game-quiz/pairs/my-current/answers`)
+        .auth(loginOfThirdUser.body.accessToken, { type: "bearer" })
+        .send({"answer":"correct answer"})
+        .expect(403);
 
     },30000)
 

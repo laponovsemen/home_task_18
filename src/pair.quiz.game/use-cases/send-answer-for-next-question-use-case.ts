@@ -25,6 +25,6 @@ export class sendAnswerForNextQuestionUseCase implements ICommandHandler<sendAns
     const user = await this.usersRepository.findUserById(command.tokenPayload.userId)
     const answerProcedure = await this.pairGameQuizRepository
       .answerNextQuestion(user, command.answer)
-
+    return answerProcedure
   }
 }

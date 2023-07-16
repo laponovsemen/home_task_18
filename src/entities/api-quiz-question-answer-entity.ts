@@ -18,6 +18,8 @@ import {GameStatuses} from "../pair.quiz.game/view.model.classess/game.statuses.
 import {APIComment} from "./api-comment-entity";
 import {AnswerStatuses} from "../pair.quiz.game/view.model.classess/answer.statuses.enum";
 import {PairGameQuiz} from "./api-pair-game-quiz-entity";
+import { AnswersInputModel } from "../pair.quiz.game/view.model.classess/answers.input.model";
+import { userNumberInGame } from "../pair.quiz.game/view.model.classess/user.number.in.game.enum";
 
 @Entity({ database: "tfaepjvr" })
 export class APIQuizQuestionAnswer {
@@ -42,6 +44,10 @@ export class APIQuizQuestionAnswer {
     @JoinColumn()
     question : APIQuizQuestion
 
+    @ManyToOne(() => User)
+    @JoinColumn()
+    answerer : User
+
     @Column({nullable : true})
     addedAt	: string; //Game finishes immediately after both players have answered all the questions
 
@@ -56,6 +62,30 @@ export class APIQuizQuestionAnswer {
     }
 
 
+    static createAnswer(answer: AnswersInputModel,
+                       questionToAnwser: APIQuizQuestion,
+                       user: User,
+                       numberOfUserInGame: userNumberInGame.first | userNumberInGame.second,
+                       game : PairGameQuiz) {
+
+        const newAnswerToSaveInDb = new APIQuizQuestionAnswer()
+        const answerStatus  = AnswerStatuses.Correct as AnswerStatuses ?
+          questionToAnwser.correctAnswers.find(element => element === answer.answer) :
+          AnswerStatuses.Incorrect as AnswerStatuses
+
+        newAnswerToSaveInDb.id = randomUUID()
+        if (numberOfUserInGame === userNumberInGame.first ){
+            newAnswerToSaveInDb.gameOfFirstUser = game
+        } else {
+            newAnswerToSaveInDb.gameOfSecondUser = game
+        }
+        newAnswerToSaveInDb.answerStatus = answerStatus as AnswerStatuses
+        newAnswerToSaveInDb.question = questionToAnwser
+        newAnswerToSaveInDb.answerer = user
+        newAnswerToSaveInDb.addedAt = new Date().toISOString()
+
+        return newAnswerToSaveInDb
+    }
 }
 
 
