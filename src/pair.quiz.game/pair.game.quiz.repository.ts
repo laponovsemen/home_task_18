@@ -231,6 +231,25 @@ export class PairGameQuizRepository {
             if(numberOfUserInGame === userNumberInGame.none) return null; // user don't participate in game
 
             const answersOfUserFromDB : APIQuizQuestionAnswer[] = PairGameQuiz.getAnswersOfUserByQueue(numberOfUserInGame, gameWhichUserParticipateIn)
+            /*const answersOfUserFromDB : APIQuizQuestionAnswer[] = await answerRepoFromQueryRunner.find({
+                relations : {
+                    gameOfFirstUser : true,
+                    gameOfSecondUser : true,
+                    question : true
+                },
+                where  : [
+                    {
+                        gameOfFirstUser: {
+                            id: gameWhichUserParticipateIn.id
+                        }
+                    },
+                    {
+                        gameOfSecondUser: {
+                            id: gameWhichUserParticipateIn.id
+                        }
+                    }
+                ]
+            })*/
             console.log(answersOfUserFromDB, " answersOfUserFromDB");
             if(answersOfUserFromDB.length > 4) return null; // too many answers for questions
             console.log("length of users answers is less then 5 and actually equals", answersOfUserFromDB.length)
@@ -242,16 +261,26 @@ export class PairGameQuizRepository {
               .createAnswer(answer, questionToAnwser, user, numberOfUserInGame, gameWhichUserParticipateIn) // create instance of answer
             console.log(answerOfUser, " answerOfUser");
             await answerRepoFromQueryRunner.save(answerOfUser)
+            const gameAfterAnswerCreation = await pairGameQuizRepoFromQueryRunner.findOne({
+                relations : {
+                    answersOfFirstUser : true,
+                    answersOfSecondUser : true,
+                    firstPlayer : true,
+                    secondPlayer : true
+                }, where:{
+                    id : gameWhichUserParticipateIn.id
+                }
+            })
             console.log(" answer saved");
-            const previousScore = PairGameQuiz.getScoreOfUser(gameWhichUserParticipateIn, numberOfUserInGame)
+            const previousScore = PairGameQuiz.getScoreOfUser(gameAfterAnswerCreation, numberOfUserInGame)
             const scoreToAdd : number = answerOfUser.answerStatus === AnswerStatuses.Correct ? 1 : 0
             const newScore : number = previousScore + scoreToAdd
             console.log(newScore, " newScore");
-            const gameWithUpdatedScore : PairGameQuiz = PairGameQuiz.updateScore(gameWhichUserParticipateIn,
+            const gameWithUpdatedScore : PairGameQuiz = PairGameQuiz.updateScore(gameAfterAnswerCreation,
               numberOfUserInGame,
               newScore)
 
-            const resultOfMakingAnswer = PairGameQuiz.checkForFinishingTheGame(gameWithUpdatedScore)
+            const resultOfMakingAnswer : PairGameQuiz = PairGameQuiz.checkForFinishingTheGame(gameWithUpdatedScore)
             result = resultOfMakingAnswer
             console.log(resultOfMakingAnswer);
 

@@ -227,7 +227,7 @@ describe("start creating quiz question", () => {
       console.log("start making answers for the quiz")
 
       for (let i = 0; i < 5; i++){
-        console.log(i, " attempt");
+        console.log(i + 1, " attempt");
         await request(server)
           .post(`/pair-game-quiz/pairs/my-current/answers`)
           .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
@@ -240,6 +240,7 @@ describe("start creating quiz question", () => {
           .send({"answer":"correct"})
           .expect(200);
       }
+      console.log("hard place num 1");
       await request(server)
         .post(`/pair-game-quiz/pairs/my-current/answers`)
         .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })

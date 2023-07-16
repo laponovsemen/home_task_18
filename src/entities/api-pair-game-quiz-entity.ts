@@ -147,6 +147,8 @@ export class PairGameQuiz {
             newGameWhichUserParticipateIn.secondPlayerScore = newScore
         }
 
+        newGameWhichUserParticipateIn.answersOfFirstUser = oldGame.answersOfFirstUser
+        newGameWhichUserParticipateIn.answersOfSecondUser = oldGame.answersOfSecondUser
         newGameWhichUserParticipateIn.questions = oldGame.questions
         newGameWhichUserParticipateIn.status = oldGame.status
         newGameWhichUserParticipateIn.pairCreatedDate = oldGame.pairCreatedDate
@@ -158,7 +160,8 @@ export class PairGameQuiz {
 
 
   static checkForFinishingTheGame(gameWithUpdatedScore: PairGameQuiz) {
-    if(gameWithUpdatedScore.secondPlayerScore === 5 && gameWithUpdatedScore.firstPlayerScore === 5){
+      console.log(gameWithUpdatedScore, " gameWithUpdatedScore");
+    if(gameWithUpdatedScore.answersOfFirstUser.length === 5 && gameWithUpdatedScore.answersOfSecondUser.length === 5){
         return  PairGameQuiz.finishGame(gameWithUpdatedScore)
     } else {
         return gameWithUpdatedScore
@@ -169,6 +172,8 @@ export class PairGameQuiz {
         const finishedGame = new PairGameQuiz()
         let additionalMarkForFirstUser : number
         let additionalMarkForSecondUser : number
+        console.log(gameWithUpdatedScore.answersOfFirstUser, " gameWithUpdatedScore.answersOfFirstUser");
+        console.log(gameWithUpdatedScore.answersOfFirstUser[4], " gameWithUpdatedScore.answersOfFirstUser[4]");
         if(gameWithUpdatedScore.answersOfFirstUser[4].addedAt < gameWithUpdatedScore.answersOfSecondUser[4].addedAt ){
             additionalMarkForFirstUser = 1
             additionalMarkForSecondUser = 0
