@@ -127,6 +127,30 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
         .expect(403)
 
+      const foundGameByIdWhereStatusIsPendingSeconfUser = await request(server)
+        .get(`/pair-game-quiz/pairs/${createPair.body.id}`)
+        .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
+        .expect(200)
+
+      expect(foundGameByIdWhereStatusIsPendingSeconfUser.body).toEqual({
+        finishGameDate: null,
+        firstPlayerProgress: {
+          answers: [],
+          player: {
+            id: expect.any(String),
+            login: "login1"
+          },
+          score: 0
+
+        },
+        id: expect.any(String),
+        pairCreatedDate: expect.any(String),
+        questions: null,
+        secondPlayerProgress: null,
+        startGameDate: null,
+        status: "PendingSecondPlayer"
+      });
+
         //expect(createPair.body).toEqual({})
         console.log("add second user to pair");
         const connectToTheCreatedPair = await request(server)
@@ -176,6 +200,10 @@ describe("start creating quiz question", () => {
         .send({"answer":"correct answer"})
         .expect(403);
 
+
+      expect(foundGameByIdByUserOne.body).toEqual({})
+      const questionsOfTheGame = foundGameByIdByUserOne.body.questions
+      console.log(questionsOfTheGame);
     },30000)
 
 

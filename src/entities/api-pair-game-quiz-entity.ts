@@ -55,7 +55,7 @@ export class PairGameQuiz {
 
 
 
-    static create( user: User, randomlyGeneratedFiveQuestionsIds : string[]) {
+    static create( user: User) {
         const newPairGameQuiz = new PairGameQuiz()
 
         newPairGameQuiz.id = randomUUID()
@@ -66,7 +66,7 @@ export class PairGameQuiz {
         newPairGameQuiz.answersOfSecondUser = []
         newPairGameQuiz.secondPlayerScore = 0
 
-        newPairGameQuiz.questions = randomlyGeneratedFiveQuestionsIds
+        newPairGameQuiz.questions = null
         newPairGameQuiz.status =  GameStatuses.PendingSecondPlayer;
 
         newPairGameQuiz.pairCreatedDate	= new Date().toISOString();  //Date when first player initialized the pair
@@ -78,7 +78,7 @@ export class PairGameQuiz {
 
 
 
-    static addSecondUser(gameWithPengingSecondUser: PairGameQuiz, user: User) {
+    static addSecondUser(gameWithPengingSecondUser: PairGameQuiz, user: User,randomlyGeneratedFiveQuestionsIds : string[]) {
         const newPairGameQuizWithAddedSecondUser = new PairGameQuiz()
 
         newPairGameQuizWithAddedSecondUser.id = gameWithPengingSecondUser.id
@@ -90,7 +90,7 @@ export class PairGameQuiz {
         newPairGameQuizWithAddedSecondUser.answersOfSecondUser = gameWithPengingSecondUser.answersOfSecondUser
         newPairGameQuizWithAddedSecondUser.secondPlayerScore = gameWithPengingSecondUser.secondPlayerScore
 
-        newPairGameQuizWithAddedSecondUser.questions = gameWithPengingSecondUser.questions
+        newPairGameQuizWithAddedSecondUser.questions = randomlyGeneratedFiveQuestionsIds
         newPairGameQuizWithAddedSecondUser.status =  GameStatuses.Active;
 
         newPairGameQuizWithAddedSecondUser.pairCreatedDate	= gameWithPengingSecondUser.pairCreatedDate;  //Date when first player initialized the pair
@@ -156,6 +156,8 @@ export class PairGameQuiz {
 
         return newGameWhichUserParticipateIn
     }
+
+
 }
 
 

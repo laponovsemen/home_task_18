@@ -11,6 +11,7 @@ import { userNumberInGame } from "./view.model.classess/user.number.in.game.enum
 import { APIQuizQuestionAnswer } from "../entities/api-quiz-question-answer-entity";
 import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
+import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -41,30 +42,41 @@ export class PairGameQuizRepository {
     }
 
     async createNewGame(user: User) {
-        const fiveQuestions : string[] = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
-        const newGame = PairGameQuiz.create(user, fiveQuestions)
+        const newGame = PairGameQuiz.create(user)
         console.log(newGame, " new game")
         return this.pairGameQuizTypeORMRepository.create(newGame);
     }
 
     async addSecondUserToPendingGame(gameWithPengingSecondUser: PairGameQuiz, user: User) {
-        const gameWithAddedSecondUser  = PairGameQuiz.addSecondUser(gameWithPengingSecondUser, user)
+        const fiveQuestions : string[] = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
+        const gameWithAddedSecondUser  = PairGameQuiz.addSecondUser(gameWithPengingSecondUser, user,fiveQuestions)
         return await this.pairGameQuizTypeORMRepository
           .save(gameWithAddedSecondUser)
     }
 
     async findGameByIdWhereUserIsParticipate(user: User, gameId: string) {
-        const game = await this.pairGameQuizTypeORMRepository
+        const game : PairGameQuiz | null = await this.pairGameQuizTypeORMRepository
             .createQueryBuilder("game")
+            .leftJoinAndSelect("game.firstPlayer", "firstUser")
+            .leftJoinAndSelect("game.secondPlayer", "secondUser")
             .where('game.id = :id', {
                 id : gameId
             })
             .andWhere(new Brackets(qb => {
-                qb.where('game.firstPlayerId = :userId', { userId: user.id})
-                    .orWhere('game.secondPlayerId = :userId', { userId: user.id});
+                qb.where('game.firstPlayer.id = :userId', { userId: user.id})
+                    .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
             }))
           .getOne()
-        return game
+
+
+        console.log(game, 'found game');
+        if (!game) return null;
+        const questionsList : APIQuizQuestion[] = await this.quizQuestionsRepository
+          .findQuizQuestionsListByListOfIds(game.questions)
+
+        const result : PairGameQuizViewModel = PairGameQuizViewModel.getViewModelForFront(game, questionsList)
+        console.log(result);
+        return result
     }
 
     async checkOfParticipatingUserInAnotherGame(user: User) : Promise<boolean> {
@@ -138,12 +150,13 @@ export class PairGameQuizRepository {
 
 
             if (gameWithPendingSecondUser) {
-                const gameWithAddedSecondUser = PairGameQuiz.addSecondUser(gameWithPendingSecondUser, user)
+                const fiveQuestions : string[] = await this.quizQuestionsRepository.generateFiveRandomQuestions()
+                console.log(fiveQuestions, " fiveQuestions");
+                const gameWithAddedSecondUser = PairGameQuiz.addSecondUser(gameWithPendingSecondUser, user, fiveQuestions)
                 result = await pairGameQuizRepoFromQueryRunner.save(gameWithAddedSecondUser)
             } else {
-                const fiveQuestions = await this.quizQuestionsRepository.generateFiveRandomQuestions() // how to generate
-                console.log(fiveQuestions, " fiveQuestions");
-                const newGame = PairGameQuiz.create(user, fiveQuestions)
+
+                const newGame = PairGameQuiz.create(user)
                 console.log(newGame, " new game")
                 result = await pairGameQuizRepoFromQueryRunner.save(newGame);
                 //console.log(p);

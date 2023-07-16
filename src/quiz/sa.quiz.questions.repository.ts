@@ -122,4 +122,14 @@ export class QuizQuestionsRepository {
         console.log(array, " resultant array");
         return array
     }
+
+    async findQuizQuestionsListByListOfIds(questions: string[]) {
+        const array : APIQuizQuestion[] = []
+        if (!questions) return null;
+        for (const item of questions) {
+            const question : APIQuizQuestion = await this.findQuizQuestionById(item)
+            array.push(question)
+        }
+        return array
+    }
 }
