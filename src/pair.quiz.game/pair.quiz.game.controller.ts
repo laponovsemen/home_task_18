@@ -101,7 +101,7 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId", new ParseUUIDPipe()) gameId : string
+      @Param("gameId", new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) gameId : string
     ) {
         console.log(" returnGameById Procedure Controller");
         const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
