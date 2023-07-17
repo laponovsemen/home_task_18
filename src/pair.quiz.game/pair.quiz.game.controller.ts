@@ -35,6 +35,7 @@ import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view
 
 export class GetGameByIdDto {
     @IsUUID()
+    @IsString()
     gameId: string
 }
 
@@ -109,10 +110,10 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param() { gameId } : GetGameByIdDto
+      @Param("gameId") gameId : GetGameByIdDto
     ) : Promise<PairGameQuizViewModel> {
 
-
+        if(!isUUID(gameId)) throw new BadRequestException()
         console.log(gameId," returnGameById Procedure Controller");
         const resultOfGetting = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId));
         if(!resultOfGetting){

@@ -7,6 +7,7 @@ import {LikeStatusDTO, PublishedDTO, QuizDTO} from "../input.classes";
 import {randomUUID} from "crypto";
 import {PairGameQuiz} from "./api-pair-game-quiz-entity";
 import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
+import { PairGameQuizQuestion } from "../pair.quiz.game/view.model.classess/pair.game.quiz.question";
 
 @Entity({ database: "tfaepjvr" })
 export class APIQuizQuestion{
@@ -72,4 +73,14 @@ export class APIQuizQuestion{
 
         return newAPIQuizQuestionToPublish
     }
+
+  static getViewModelForList(questionsList: APIQuizQuestion[]) {
+        if(!questionsList || questionsList.length === 0){
+            return questionsList
+        } else {
+            let array :PairGameQuizQuestion[] = []
+            questionsList.forEach(item => { array.push(PairGameQuizQuestion.getViewModel(item))})
+            return array
+        }
+  }
 }

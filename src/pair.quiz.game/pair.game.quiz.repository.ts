@@ -13,6 +13,7 @@ import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
+import { GetGameByIdDto } from "./pair.quiz.game.controller";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -55,7 +56,7 @@ export class PairGameQuizRepository {
           .save(gameWithAddedSecondUser)
     }
 
-    async findGameByIdWhereUserIsParticipate(user: User, gameId: string) {
+    async findGameByIdWhereUserIsParticipate(user: User, gameId: GetGameByIdDto) {
         const game : PairGameQuiz | null = await this.pairGameQuizTypeORMRepository
             .createQueryBuilder("game")
             .leftJoinAndSelect("game.firstPlayer", "firstUser")
