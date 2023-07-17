@@ -134,28 +134,13 @@ export class PairGameQuizRepository {
             if (checkOfParticipatingInAnotherGame) return null;
 
 
-            console.log(pairGameQuizRepoFromQueryRunner
-              .createQueryBuilder("game")
-              .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
-              .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
-              .where( new Brackets(qb => {
-                    qb.where("game.status = 'PendingSecondPlayer'")
-                      .orWhere("game.status = 'Active'");
-                })
-              )
-              /*.where( new Brackets(qb => {
-                    qb.where("game.status = ':status'", {status : GameStatuses.PendingSecondPlayer})
-                      .orWhere("game.status = ':status'", {status : GameStatuses.Active})
-                })
-              )*/
-              .andWhere(new Brackets(qb => {
-                  qb.where('game.firstPlayer.id = :userId', { userId: user.id})
-                    .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
-              }))
-              .getSql());
-
-
             const gameWithPendingSecondUser : PairGameQuiz = await pairGameQuizRepoFromQueryRunner.findOne({
+                relations : {
+                  firstPlayer : true,
+                  secondPlayer : true,
+                  answersOfSecondUser :true,
+                  answersOfFirstUser : true
+                },
                   where: {
                       status: GameStatuses.PendingSecondPlayer
                   }
@@ -173,8 +158,6 @@ export class PairGameQuizRepository {
                 console.log(newGame, " new game")
                 rawResult = await pairGameQuizRepoFromQueryRunner.save(newGame);
                 //console.log(p);
-
-
             }
             const questionsList : APIQuizQuestion[] = await this.quizQuestionsRepository
               .findQuizQuestionsListByListOfIds(rawResult.questions)
@@ -191,7 +174,6 @@ export class PairGameQuizRepository {
             await queryRunner.release()
             // ask why it works if I don't use release transaction
         }
-
         return result
     }
 

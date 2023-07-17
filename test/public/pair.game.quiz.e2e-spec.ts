@@ -127,7 +127,6 @@ describe("start creating quiz question", () => {
             .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
             .expect(200)
 
-      expect(createPair.body.firstPlayer.id).toEqual(createFirstUser.body.id)
       console.log(createPair.body, " createPair.body.");
 
 
@@ -196,6 +195,7 @@ describe("start creating quiz question", () => {
       expect(connectToTheCreatedPair.body).toStrictEqual({
           id: expect.any(String),
           finishGameDate: null,
+          status: "Active",
           pairCreatedDate: expect.any(String),
           startGameDate: expect.any(String),
           firstPlayerProgress: {

@@ -28,14 +28,10 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
   async execute(command: CreateOrConnectPairCommand) : Promise<PairGameQuizViewModel | null> {
     const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
 
-    const resultOfCreationOrConnectionPair : PairGameQuizViewModel = await this.pairGameQuizRepository.createOrConnectPair(user)
+    const resultOfCreationOrConnectionPair : PairGameQuizViewModel
+      = await this.pairGameQuizRepository.createOrConnectPair(user)
+
     return resultOfCreationOrConnectionPair
-
-
-
-
-
-
 
   }
 }

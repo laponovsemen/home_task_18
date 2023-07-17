@@ -75,7 +75,9 @@ export class PairQuizGameController {
     ) : Promise<PairGameQuizViewModel>{
 
         const pairConnection : PairGameQuizViewModel =
-          await this.commandBus.execute<CreateOrConnectPairCommand, PairGameQuizViewModel>(new CreateOrConnectPairCommand(tokenPayload))
+          await this.commandBus.execute<CreateOrConnectPairCommand, PairGameQuizViewModel>(
+            new CreateOrConnectPairCommand(tokenPayload))
+
         console.log(pairConnection, " pairConnection")
         if (!pairConnection){
             throw new ForbiddenException()
