@@ -61,33 +61,7 @@ export class PairQuizGameController {
         }
     }
 
-    @Get(`/:gameId`)
-    @HttpCode(200)
-    async returnGameById(@Res({passthrough : true}) res: Response,
-                         @User() tokenPayload : TokenPayload,
-                         @Param("gameId", new ParseUUIDPipe()) gameId : string
-    ) {
-        console.log(" returnGameById Procedure Controller");
-        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
-        if(!resultOfGetting){
-            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
-            throw new NotFoundException()
-        } else if (
-          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
-          && resultOfGetting.secondPlayerProgress === null)
-          ||
-          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
-          && resultOfGetting.secondPlayerProgress.player.id !== tokenPayload.userId)
-        ) {
 
-            console.log(resultOfGetting, " resultOfGetting in returnGameById 403");
-            throw new ForbiddenException()
-        } else {
-            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller");
-            return resultOfGetting
-        }
-
-    }
 
     @Post("/connection")
     @HttpCode(200)
@@ -121,4 +95,33 @@ export class PairQuizGameController {
         }
     }
 
+
+
+    @Get(`/:gameId`)
+    @HttpCode(200)
+    async returnGameById(
+      @User() tokenPayload : TokenPayload,
+      @Param("gameId", new ParseUUIDPipe()) gameId : string
+    ) {
+        console.log(" returnGameById Procedure Controller");
+        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
+        if(!resultOfGetting){
+            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
+            throw new NotFoundException()
+        } else if (
+          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
+            && resultOfGetting.secondPlayerProgress === null)
+          ||
+          (resultOfGetting.firstPlayerProgress.player.id !== tokenPayload.userId
+            && resultOfGetting.secondPlayerProgress.player.id !== tokenPayload.userId)
+        ) {
+
+            console.log(resultOfGetting, " resultOfGetting in returnGameById 403");
+            throw new ForbiddenException()
+        } else {
+            console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller");
+            return resultOfGetting
+        }
+
+    }
 }

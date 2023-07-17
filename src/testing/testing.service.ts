@@ -38,7 +38,7 @@ export class TestingService {
     //   console.log(e)
     //   return null
     // }
-    await Promise.all([
+    /*await Promise.all([
      this.blogsRepository.deleteAllData(),
      this.postsRepository.deleteAllData(),
      this.usersRepository.deleteAllData(),
@@ -49,7 +49,10 @@ export class TestingService {
      this.quizQuestionsRepository.deleteAllData(),
      this.pairGameQuizRepository.deleteAllData(),
      this.answerRepository.delete({})
-      ])
-    //await  this.dataSource.query(TRUNCATE)
+      ])*/
+    await  this.dataSource.query(`
+    delete from "likes";
+    delete from "comments";
+    `)
   }
 }
