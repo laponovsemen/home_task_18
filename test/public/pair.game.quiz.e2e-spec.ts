@@ -336,7 +336,7 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
         .expect(200);
 
-      /*expect(finishedGame.body).toEqual({
+      expect(finishedGame.body).toEqual({
         finishGameDate: expect.any(String),
         firstPlayerProgress: {
           answers: [
@@ -371,7 +371,7 @@ describe("start creating quiz question", () => {
         },
         startGameDate: expect.any(String),
         status: "Finished"
-      })*/
+      })
 
       const createSecondPair = await request(server)
         .post(`/pair-game-quiz/pairs/connection`)

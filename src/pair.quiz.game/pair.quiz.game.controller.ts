@@ -33,11 +33,11 @@ import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-ne
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 
 
-export class GetGameByIdDto {
+/*export class GetGameByIdDto {
     @IsUUID()
     @IsString()
     gameId: string
-}
+}*/
 
 
 @UseGuards(AuthGuard)
