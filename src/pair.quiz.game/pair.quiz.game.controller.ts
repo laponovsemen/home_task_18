@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete, ForbiddenException,
@@ -17,7 +18,7 @@ import {
     PostsPaginationCriteriaType,
 } from '../appTypes';
 import express, {Request, Response} from 'express';
-import { isNotEmpty, IsNotEmpty, IsString, IsUrl, Length } from "class-validator";
+import { isNotEmpty, IsNotEmpty, IsString, IsUrl, isUUID, Length } from "class-validator";
 import { AllPostsForSpecificBlogGuard, AuthGuard, BasicAuthGuard } from "../auth/auth.guard";
 import {BanBlogDTO, BlogDTO, PostForSpecificBlogDTO, PublishedDTO, QuizDTO} from "../input.classes";
 import { CommandBus } from "@nestjs/cqrs";
@@ -101,8 +102,13 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId", new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })) gameId : string
+      @Param("gameId", new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST})) gameId : string
     ) {
+        if (!isUUID(gameId)) throw new BadRequestException([{
+            message: "wrong format in id in param",
+            field: "gameId"
+        }]);
+
         console.log(" returnGameById Procedure Controller");
         const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
         if(!resultOfGetting){
