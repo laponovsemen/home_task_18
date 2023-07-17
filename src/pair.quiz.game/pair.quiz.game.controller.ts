@@ -110,7 +110,7 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId") gameId : GetGameByIdDto
+      @Param("gameId") gameId : string
     ) : Promise<PairGameQuizViewModel> {
 
         if(!isUUID(gameId)) throw new BadRequestException()

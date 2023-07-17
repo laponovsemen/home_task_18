@@ -9,7 +9,7 @@ import { GetGameByIdDto } from "../pair.quiz.game.controller";
 
 export class returnGameByIdCommand{
   constructor(public tokenPayload : TokenPayload,
-              public gameId : GetGameByIdDto
+              public gameId : string
   ) {}
 }
 @CommandHandler(returnGameByIdCommand)

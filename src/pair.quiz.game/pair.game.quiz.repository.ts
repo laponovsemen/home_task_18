@@ -56,7 +56,7 @@ export class PairGameQuizRepository {
           .save(gameWithAddedSecondUser)
     }
 
-    async findGameByIdWhereUserIsParticipate(user: User, gameId: GetGameByIdDto) {
+    async findGameByIdWhereUserIsParticipate(user: User, gameId: string) {
         const game : PairGameQuiz | null = await this.pairGameQuizTypeORMRepository
             .createQueryBuilder("game")
             .leftJoinAndSelect("game.firstPlayer", "firstUser")
