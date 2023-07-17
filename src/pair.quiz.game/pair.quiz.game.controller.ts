@@ -102,7 +102,7 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId", new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST})) gameId : string
+      @Param("gameId") gameId : string
     ) {
         if (!isUUID(gameId)) throw new BadRequestException([{
             message: "wrong format in id in param",
