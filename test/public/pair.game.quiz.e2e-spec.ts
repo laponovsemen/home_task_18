@@ -284,9 +284,56 @@ describe("start creating quiz question", () => {
         .expect(404);
 
       await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(loginOfSecondUser.body.accessToken, { type: "bearer" })
+        .expect(404);
+
+      await request(server)
         .get(`/pair-game-quiz/pairs/2281337`)
         .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
         .expect(400);
+
+      const finishedGame = await request(server)
+        .get(`/pair-game-quiz/pairs/${createPair.body.id}`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(200);
+
+      expect(finishedGame.body).toEqual({
+        finishGameDate: expect.any(String),
+        firstPlayerProgress: {
+          answers: [
+            {},
+            {},
+            {},
+          {},
+            {}],
+          player: {
+            id: expect.any(String),
+            login: "login1"
+          },
+          score: 6
+
+        },
+        id: expect.any(String),
+        pairCreatedDate: expect.any(String),
+        questions: [{},{},{},{},{}],
+        secondPlayerProgress: {
+          answers: [
+            {},
+            {},
+            {},
+            {},
+            {}],
+          player: {
+            id: expect.any(String),
+            login: "login2"
+          },
+          score: 5
+
+        },
+        startGameDate: expect.any(String),
+        status: "Finished"
+      })
 
     },60000)
 
