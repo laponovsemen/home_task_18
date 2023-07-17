@@ -197,6 +197,8 @@ export class PairGameQuizRepository {
         .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
         .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
         .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
+        .leftJoinAndSelect("answersOfFirstUser.question", "questionOne")
+        .leftJoinAndSelect("answersOfSecondUser.question", "questionTwo")
         .where(
       new Brackets(qb => {
           qb.where(`game.status = '${GameStatuses.PendingSecondPlayer}'`)

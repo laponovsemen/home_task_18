@@ -62,7 +62,6 @@ export class TestingService {
     delete from "api_quiz_question";
     delete from "pair_game_quiz";
     delete from "user";
-   
     `)
   }
 }
