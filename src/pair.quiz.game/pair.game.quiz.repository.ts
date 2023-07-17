@@ -271,7 +271,7 @@ export class PairGameQuizRepository {
               newScore)
 
             const resultOfMakingAnswer : PairGameQuiz = PairGameQuiz.checkForFinishingTheGame(gameWithUpdatedScore)
-            result = resultOfMakingAnswer
+            result = AnswersViewModel.getViewModelFromDBClass(answerOfUser)
             console.log(resultOfMakingAnswer);
 
             await pairGameQuizRepoFromQueryRunner.save(resultOfMakingAnswer)

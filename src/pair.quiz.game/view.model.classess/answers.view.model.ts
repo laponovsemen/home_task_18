@@ -22,4 +22,12 @@ export class AnswersViewModel {
         newAnswer.addedAt = item.addedAt
         return newAnswer
     }
+
+    static getViewModelFromDBClass(answerOfUser: APIQuizQuestionAnswer) {
+        const n = new AnswersViewModel()
+        n.addedAt = answerOfUser.addedAt
+        n.answerStatus = answerOfUser.answerStatus
+        n.questionId = answerOfUser.question.id
+        return n
+    }
 }

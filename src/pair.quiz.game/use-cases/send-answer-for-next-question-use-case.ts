@@ -5,6 +5,7 @@ import {PairGameQuizRepository} from "../pair.game.quiz.repository";
 import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
 import { AnswersInputModel } from "../view.model.classess/answers.input.model";
 import { UsersRepository } from "../../users/users.reposiroty";
+import { AnswersViewModel } from "../view.model.classess/answers.view.model";
 
 export class sendAnswerForNextQuestionCommand{
   constructor(public tokenPayload : TokenPayload,
@@ -21,9 +22,9 @@ export class sendAnswerForNextQuestionUseCase implements ICommandHandler<sendAns
 
   }
 
-  async execute(command: sendAnswerForNextQuestionCommand) {
+  async execute(command: sendAnswerForNextQuestionCommand) : Promise<AnswersViewModel> {
     const user = await this.usersRepository.findUserById(command.tokenPayload.userId)
-    const answerProcedure = await this.pairGameQuizRepository
+    const answerProcedure : AnswersViewModel = await this.pairGameQuizRepository
       .answerNextQuestion(user, command.answer)
     return answerProcedure
   }

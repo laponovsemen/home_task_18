@@ -31,6 +31,7 @@ import {returnGameByIdCommand} from "./use-cases/return-game-by-id-use-case";
 import { AnswersInputModel } from "./view.model.classess/answers.input.model";
 import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-next-question-use-case";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
+import { AnswersViewModel } from "./view.model.classess/answers.view.model";
 
 
 /*export class GetGameByIdDto {
@@ -93,9 +94,11 @@ export class PairQuizGameController {
                                @Body() answer : AnswersInputModel,
                                @User() tokenPayload : TokenPayload,
 
-    ) {
+    ) : Promise<AnswersViewModel> {
         console.log("start sendAnswerForNextQuestion procedure");
-        const answerProcedure = await  this.commandBus.execute(new sendAnswerForNextQuestionCommand(tokenPayload, answer))
+        const answerProcedure : AnswersViewModel
+          = await  this.commandBus.execute<sendAnswerForNextQuestionCommand, AnswersViewModel>
+        (new sendAnswerForNextQuestionCommand(tokenPayload, answer))
 
         if (!answerProcedure){
             throw new ForbiddenException()
