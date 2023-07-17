@@ -102,12 +102,12 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId") gameId : string
+      @Param("gameId", ParseUUIDPipe) gameId : string
     ) {
-        if (!isUUID(gameId)) throw new BadRequestException([{
+        /*if (!isUUID(gameId)) throw new BadRequestException([{
             message: "wrong format in id in param",
             field: "gameId"
-        }]);
+        }]);*/
 
         console.log(" returnGameById Procedure Controller");
         const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
