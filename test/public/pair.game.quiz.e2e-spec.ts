@@ -375,6 +375,13 @@ describe("start creating quiz question", () => {
           .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
           .expect(200);
         expect(currentGameOfSecondUser.body).toEqual({})
+
+        const currentGameOfSecondUserById = await request(server)
+          .get(`/pair-game-quiz/pairs/${createSecondPair.body.id}`)
+          .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+          .expect(200);
+
+        expect(currentGameOfSecondUser.body).toStrictEqual(currentGameOfSecondUserById.body)
       }
 
     },60000)

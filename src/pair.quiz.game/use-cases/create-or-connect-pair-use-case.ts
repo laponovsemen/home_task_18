@@ -8,6 +8,7 @@ import {Inject} from "@nestjs/common";
 import {TypeORMTransactionService} from "../../transaction.service";
 import {User} from "../../entities/user-entity";
 import {PairGameQuiz} from "../../entities/api-pair-game-quiz-entity";
+import { PairGameQuizViewModel } from "../view.model.classess/pair.game.quiz.view.model";
 
 export class CreateOrConnectPairCommand{
   constructor(public tokenPayload : TokenPayload) {}
@@ -24,10 +25,10 @@ export class CreateOrConnectPairUseCase implements ICommandHandler<CreateOrConne
 
   }
 
-  async execute(command: CreateOrConnectPairCommand) : Promise<PairGameQuiz | null> {
+  async execute(command: CreateOrConnectPairCommand) : Promise<PairGameQuizViewModel | null> {
     const user : User = await this.usersRepository.findUserById(command.tokenPayload.userId)
 
-    const resultOfCreationOrConnectionPair  = await this.pairGameQuizRepository.createOrConnectPair(user)
+    const resultOfCreationOrConnectionPair : PairGameQuizViewModel = await this.pairGameQuizRepository.createOrConnectPair(user)
     return resultOfCreationOrConnectionPair
 
 

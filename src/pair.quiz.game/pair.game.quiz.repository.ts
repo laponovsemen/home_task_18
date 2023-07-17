@@ -99,9 +99,10 @@ export class PairGameQuizRepository {
         return !!game
     }
 
-    async createOrConnectPair(user: User) : Promise<PairGameQuiz> {
+    async createOrConnectPair(user: User) : Promise<PairGameQuizViewModel> {
         const queryRunner : QueryRunner =  this.dataSource.createQueryRunner()
         let result
+        let rawResult
         await queryRunner.connect()
         await queryRunner.startTransaction()
         const pairGameQuizRepoFromQueryRunner = queryRunner.manager.getRepository(PairGameQuiz)
@@ -165,15 +166,19 @@ export class PairGameQuizRepository {
                 const fiveQuestions : string[] = await this.quizQuestionsRepository.generateFiveRandomQuestions()
                 console.log(fiveQuestions, " fiveQuestions");
                 const gameWithAddedSecondUser = PairGameQuiz.addSecondUser(gameWithPendingSecondUser, user, fiveQuestions)
-                result = await pairGameQuizRepoFromQueryRunner.save(gameWithAddedSecondUser)
+                rawResult = await pairGameQuizRepoFromQueryRunner.save(gameWithAddedSecondUser)
             } else {
 
                 const newGame = PairGameQuiz.create(user)
                 console.log(newGame, " new game")
-                result = await pairGameQuizRepoFromQueryRunner.save(newGame);
+                rawResult = await pairGameQuizRepoFromQueryRunner.save(newGame);
                 //console.log(p);
 
+
             }
+            const questionsList : APIQuizQuestion[] = await this.quizQuestionsRepository
+              .findQuizQuestionsListByListOfIds(rawResult.questions)
+            result = PairGameQuizViewModel.getViewModelForFront(rawResult, questionsList)
             await queryRunner.commitTransaction()
             console.log(result, " result ");
 
