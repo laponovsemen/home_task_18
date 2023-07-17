@@ -4,6 +4,7 @@ import {TokenPayload} from "../../working.classess";
 import {PairGameQuizRepository} from "../pair.game.quiz.repository";
 import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
 import {UsersRepository} from "../../users/users.reposiroty";
+import { PairGameQuizViewModel } from "../view.model.classess/pair.game.quiz.view.model";
 
 export class returnGameByIdCommand{
   constructor(public tokenPayload : TokenPayload,
@@ -11,7 +12,7 @@ export class returnGameByIdCommand{
   ) {}
 }
 @CommandHandler(returnGameByIdCommand)
-export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdCommand> {
+export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdCommand, PairGameQuizViewModel> {
   constructor(
     protected common: Common,
     protected quizQuestionsRepository: QuizQuestionsRepository,
@@ -21,7 +22,7 @@ export class returnGameByIdUseCase implements ICommandHandler<returnGameByIdComm
 
   }
 
-  async execute(command: returnGameByIdCommand) {
+  async execute(command: returnGameByIdCommand) : Promise<PairGameQuizViewModel> {
     console.log("start returnGameByIdCommand");
     const user = await this.usersRepositiry.findUserById(command.tokenPayload.userId)
     console.log(user , " user in returnGameByIdCommand");

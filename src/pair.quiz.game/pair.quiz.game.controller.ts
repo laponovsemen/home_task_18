@@ -50,9 +50,9 @@ export class PairQuizGameController {
     async returnCurrentUnfinishedUserGame(@Query() QueryParams,
                                           @Res({ passthrough: true }) res: Response,
                                           @User() tokenPayload: TokenPayload
-                                ) {
+                                ) : Promise<PairGameQuizViewModel> {
         console.log("start returnCurrentUnfinishedUserGame procedure");
-        const resultOfGetting = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
+        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
         if(!resultOfGetting){
             console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame must throw 404");
             throw new NotFoundException()
@@ -102,15 +102,15 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId", ParseUUIDPipe) gameId : string
-    ) {
-        /*if (!isUUID(gameId)) throw new BadRequestException([{
+      @Param("gameId") gameId : string
+    ) : Promise<PairGameQuizViewModel> {
+        if (!isUUID(gameId)) throw new BadRequestException([{
             message: "wrong format in id in param",
             field: "gameId"
-        }]);*/
+        }]);
 
         console.log(" returnGameById Procedure Controller");
-        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnGameByIdCommand(tokenPayload, gameId))
+        const resultOfGetting  = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId))
         if(!resultOfGetting){
             console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
             throw new NotFoundException()
