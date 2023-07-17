@@ -164,6 +164,7 @@ describe("start creating quiz question", () => {
         startGameDate: null,
         status: "PendingSecondPlayer"
       });
+      expect(foundGameByIdWhereStatusIsPendingSeconfUser.body).toStrictEqual(createPair.body)
 
       expect(foundMyCurrentGameWhereStatusIsPendingSeconfUser.body).toEqual({
         finishGameDate: null,
@@ -190,6 +191,37 @@ describe("start creating quiz question", () => {
             .post(`/pair-game-quiz/pairs/connection`)
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(200)
+
+      /*expect(connectToTheCreatedPair.body).toStrictEqual({
+          id: expect.any(String),
+          finishGameDate: null,
+          pairCreatedDate: expect.any(String),
+          pairCreatedDate: expect.any(String),
+          firstPlayerProgress: {
+            answers: [],
+            player: {
+              id: expect.any(String),
+              login: "login1"
+            },
+            score: 0
+          },
+          secondPlayerProgress: {
+            answers: [],
+            player: {
+              id: expect.any(String),
+              login: "login2"
+            },
+            score: 0
+          },
+
+          questions: [{ body: expect.any(String), id: expect.any(String) },
+            { body: expect.any(String), id: expect.any(String) },
+            { body: expect.any(String), id: expect.any(String) },
+            { body: expect.any(String), id: expect.any(String) },
+            { body: expect.any(String), id: expect.any(String) }
+          ]
+        }*/
+
 
         console.log("must return 403 because of action of user 2 in another game");
         await request(server)
