@@ -54,7 +54,7 @@ export class TestingService {
     delete from "api_like";
     delete from "api_comment";
     delete from "api_post";
-    delete from "blogger_bans_for_specific_blogs";
+    delete from "blogger_bans_for_specific_blog";
     delete from "blog_ban";
     delete from "blog";
     delete from "api_session";
