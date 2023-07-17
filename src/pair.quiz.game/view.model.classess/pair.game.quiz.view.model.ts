@@ -22,8 +22,15 @@ export class PairGameQuizViewModel {
         console.log(game, " new answer");
         console.log(questionsList, " questionsList");
         console.log(APIQuizQuestion.getViewModelForList(questionsList), " question of new answer");
-        const answersOfFirstUser : AnswersViewModel[] =  AnswersViewModel.getViewModelOfListOfAnswers(game.answersOfFirstUser)
-        const answersOfSecondUser : AnswersViewModel[] = AnswersViewModel.getViewModelOfListOfAnswers(game.answersOfSecondUser)
+        const answersOfFirstUser : AnswersViewModel[]
+          =  AnswersViewModel.getViewModelOfListOfAnswers(
+            game.answersOfFirstUser.sort((a,b) => a.addedAt.localeCompare(b.addedAt))
+        )
+
+        const answersOfSecondUser : AnswersViewModel[]
+          = AnswersViewModel.getViewModelOfListOfAnswers(
+            game.answersOfSecondUser.sort((a,b) => a.addedAt.localeCompare(b.addedAt))
+            )
         const firstPlayerProgress : GamePlayerProgressViewModel | null =
           GamePlayerProgressViewModel.getViewModel(answersOfFirstUser, game.firstPlayer, game.firstPlayerScore)
         const secondPlayerProgress : GamePlayerProgressViewModel | null =
