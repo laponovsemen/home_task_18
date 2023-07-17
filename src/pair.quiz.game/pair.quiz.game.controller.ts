@@ -40,7 +40,7 @@ import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view
 }*/
 
 
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 @Controller('/pair-game-quiz/pairs')
 export class PairQuizGameController {
     constructor(
@@ -92,7 +92,7 @@ export class PairQuizGameController {
     async sendAnswerForNextQuestion(@Res({passthrough : true}) res: Response,
                                @Body() answer : AnswersInputModel,
                                @User() tokenPayload : TokenPayload,
-                               @Param("quizQuestionId") quizQuestionId
+
     ) {
         console.log("start sendAnswerForNextQuestion procedure");
         const answerProcedure = await  this.commandBus.execute(new sendAnswerForNextQuestionCommand(tokenPayload, answer))
@@ -109,11 +109,12 @@ export class PairQuizGameController {
     @Get(`/:gameId`)
     @HttpCode(200)
     async returnGameById(
+      @Res({passthrough : true}) res: Response,
       @User() tokenPayload : TokenPayload,
       @Param("gameId") gameId : string
     ) : Promise<PairGameQuizViewModel> {
 
-        if(!isUUID(gameId)) throw new BadRequestException()
+        if(!isUUID(gameId)) throw new BadRequestException({message : ["bad game id format"], field : "gameId"});
         console.log(gameId," returnGameById Procedure Controller");
         const resultOfGetting = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId));
         if(!resultOfGetting){

@@ -13,7 +13,6 @@ import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
-import { GetGameByIdDto } from "./pair.quiz.game.controller";
 
 @Injectable()
 export class PairGameQuizRepository {

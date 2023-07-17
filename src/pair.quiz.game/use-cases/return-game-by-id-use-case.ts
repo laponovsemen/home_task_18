@@ -5,7 +5,6 @@ import {PairGameQuizRepository} from "../pair.game.quiz.repository";
 import {QuizQuestionsRepository} from "../../quiz/sa.quiz.questions.repository";
 import {UsersRepository} from "../../users/users.reposiroty";
 import { PairGameQuizViewModel } from "../view.model.classess/pair.game.quiz.view.model";
-import { GetGameByIdDto } from "../pair.quiz.game.controller";
 
 export class returnGameByIdCommand{
   constructor(public tokenPayload : TokenPayload,
