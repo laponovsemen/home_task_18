@@ -40,7 +40,7 @@ import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view
 }*/
 
 
-//@UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Controller('/pair-game-quiz/pairs')
 export class PairQuizGameController {
     constructor(
@@ -115,6 +115,7 @@ export class PairQuizGameController {
     ) : Promise<PairGameQuizViewModel> {
 
         if(!isUUID(gameId)) throw new BadRequestException({message : ["bad game id format"], field : "gameId"});
+        // HLEB HELP
         console.log(gameId," returnGameById Procedure Controller");
         const resultOfGetting = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId));
         if(!resultOfGetting){
