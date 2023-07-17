@@ -51,8 +51,18 @@ export class TestingService {
      this.answerRepository.delete({})
       ])*/
     await  this.dataSource.query(`
-    delete from "likes";
-    delete from "comments";
+    delete from "api_like";
+    delete from "api_comment";
+    delete from "api_post";
+    delete from "blogger_bans_for_specific_blogs";
+    delete from "blog_ban";
+    delete from "blog";
+    delete from "api_session";
+    delete from "api_quiz_question_answer";
+    delete from "api_quiz_question";
+    delete from "pair_game_quiz";
+    delete from "user";
+   
     `)
   }
 }
