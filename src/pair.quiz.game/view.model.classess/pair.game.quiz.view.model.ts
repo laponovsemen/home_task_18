@@ -20,7 +20,7 @@ export class PairGameQuizViewModel {
     static getViewModelForFront(game : PairGameQuiz, questionsList : APIQuizQuestion[] | null) : PairGameQuizViewModel {
         const newGameForFront = new PairGameQuizViewModel()
         const answersOfFirstUser : AnswersViewModel[] =  AnswersViewModel.getViewModelOfListOfQuestion(game.answersOfFirstUser)
-        const answersOfSecondUser : AnswersViewModel[] = AnswersViewModel.getViewModelOfListOfQuestion(game.answersOfFirstUser)
+        const answersOfSecondUser : AnswersViewModel[] = AnswersViewModel.getViewModelOfListOfQuestion(game.answersOfSecondUser)
         const firstPlayerProgress : GamePlayerProgressViewModel | null =
           GamePlayerProgressViewModel.getViewModel(answersOfFirstUser, game.firstPlayer, game.firstPlayerScore)
         const secondPlayerProgress : GamePlayerProgressViewModel | null =

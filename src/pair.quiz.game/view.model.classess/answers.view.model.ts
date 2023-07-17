@@ -6,11 +6,11 @@ export class AnswersViewModel {
     answerStatus : AnswerStatuses
     addedAt : string
 
-    static getViewModelOfListOfQuestion(answersOfFirstUser: APIQuizQuestionAnswer[]) : AnswersViewModel[] {
-
+    static getViewModelOfListOfQuestion(answersOfUser: APIQuizQuestionAnswer[]) : AnswersViewModel[] {
+        console.log(answersOfUser, " answersOfUser");
         let array : AnswersViewModel[] = []
-        if(!answersOfFirstUser) return array;
-        answersOfFirstUser.forEach(item => { return AnswersViewModel.getViewModel(item)})
+        if(!answersOfUser) return array;
+        answersOfUser.forEach(item => { array.push(AnswersViewModel.getViewModel(item))})
         return array
     }
 

@@ -60,6 +60,10 @@ export class PairGameQuizRepository {
             .createQueryBuilder("game")
             .leftJoinAndSelect("game.firstPlayer", "firstUser")
             .leftJoinAndSelect("game.secondPlayer", "secondUser")
+            .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
+            .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
+            .leftJoinAndSelect("answersOfFirstUser.question", "questionOne")
+            .leftJoinAndSelect("answersOfSecondUser.question", "questionTwo")
             .where('game.id = :id', {
                 id : gameId
             })
@@ -191,6 +195,8 @@ export class PairGameQuizRepository {
         .createQueryBuilder("game")
         .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
         .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+        .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
+        .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
         .where(
       new Brackets(qb => {
           qb.where(`game.status = '${GameStatuses.PendingSecondPlayer}'`)
