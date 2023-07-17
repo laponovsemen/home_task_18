@@ -52,7 +52,7 @@ export class PairQuizGameController {
                                           @User() tokenPayload: TokenPayload
                                 ) : Promise<PairGameQuizViewModel> {
         console.log("start returnCurrentUnfinishedUserGame procedure");
-        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
+        const resultOfGetting : PairGameQuizViewModel = await this.commandBus.execute<returnCurrentUnfinishedUserGameCommand, PairGameQuizViewModel>(new returnCurrentUnfinishedUserGameCommand(tokenPayload))
         if(!resultOfGetting){
             console.log(resultOfGetting, "resultOfGetting in returnCurrentUnfinishedUserGame must throw 404");
             throw new NotFoundException()
@@ -110,7 +110,7 @@ export class PairQuizGameController {
         }]);
 
         console.log(" returnGameById Procedure Controller");
-        const resultOfGetting  = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId))
+        const resultOfGetting = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId));
         if(!resultOfGetting){
             console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
             throw new NotFoundException()
