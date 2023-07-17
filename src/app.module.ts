@@ -152,6 +152,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
       username: 'tfaepjvr',
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',*/
+      type: 'postgres',
       url : "postgres://laponovsemen:jb5zyBeHskM2@ep-floral-block-080205-pooler.eu-central-1.aws.neon.tech/neondb",
       ssl : true,
       /*host: "localhost",
