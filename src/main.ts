@@ -11,6 +11,7 @@ const appSettings = (app: INestApplication) => {
   app.use(cookieParser())
   app.useGlobalPipes(new ValidationPipe(
       {
+        transform: true,
         stopAtFirstError: true,
         exceptionFactory: (errors) => {
           const errorsForResponse = []
