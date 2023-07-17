@@ -8,6 +8,7 @@ import {AppModule} from "../../src/app.module";
 import cookieParser from "cookie-parser";
 import {getAppAndCleanDB} from "../test-utils";
 import {QuizDTO} from "../../src/input.classes";
+import { PairGameQuizViewModel } from "../../src/pair.quiz.game/view.model.classess/pair.game.quiz.view.model";
 
 const auth = "Authorization"
 const basic = 'Basic YWRtaW46cXdlcnR5'
@@ -187,16 +188,16 @@ describe("start creating quiz question", () => {
 
         //expect(createPair.body).toEqual({})
         console.log("add second user to pair");
-        const connectToTheCreatedPair = await request(server)
+        const connectToTheCreatedPair  = await request(server)
             .post(`/pair-game-quiz/pairs/connection`)
             .auth(loginOfSecondUser.body.accessToken, {type : 'bearer'})
             .expect(200)
 
-      /*expect(connectToTheCreatedPair.body).toStrictEqual({
+      expect(connectToTheCreatedPair.body).toStrictEqual({
           id: expect.any(String),
           finishGameDate: null,
           pairCreatedDate: expect.any(String),
-          pairCreatedDate: expect.any(String),
+          startGameDate: expect.any(String),
           firstPlayerProgress: {
             answers: [],
             player: {
@@ -220,7 +221,7 @@ describe("start creating quiz question", () => {
             { body: expect.any(String), id: expect.any(String) },
             { body: expect.any(String), id: expect.any(String) }
           ]
-        }*/
+        })
 
 
         console.log("must return 403 because of action of user 2 in another game");

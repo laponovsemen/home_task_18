@@ -3,7 +3,7 @@ import {
     Body,
     Controller,
     Delete, ForbiddenException,
-    Get, HttpCode, HttpStatus, NotFoundException,
+    Get, HttpCode, HttpStatus, NotFoundException, Optional,
     Param, ParseUUIDPipe,
     Post,
     Put,
@@ -18,7 +18,7 @@ import {
     PostsPaginationCriteriaType,
 } from '../appTypes';
 import express, {Request, Response} from 'express';
-import { isNotEmpty, IsNotEmpty, IsString, IsUrl, isUUID, Length } from "class-validator";
+import { isNotEmpty, IsNotEmpty, IsOptional, IsString, IsUrl, IsUUID, isUUID, Length } from "class-validator";
 import { AllPostsForSpecificBlogGuard, AuthGuard, BasicAuthGuard } from "../auth/auth.guard";
 import {BanBlogDTO, BlogDTO, PostForSpecificBlogDTO, PublishedDTO, QuizDTO} from "../input.classes";
 import { CommandBus } from "@nestjs/cqrs";
@@ -33,6 +33,10 @@ import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-ne
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 
 
+export class GetGameByIdDto {
+    @IsUUID()
+    gameId: string
+}
 
 
 @UseGuards(AuthGuard)
@@ -103,14 +107,11 @@ export class PairQuizGameController {
     @HttpCode(200)
     async returnGameById(
       @User() tokenPayload : TokenPayload,
-      @Param("gameId", new ParseUUIDPipe()) gameId : string
+      @Param() { gameId } : GetGameByIdDto
     ) : Promise<PairGameQuizViewModel> {
-        /*if (!isUUID(gameId)) throw new BadRequestException([{
-            message: "wrong format in id in param",
-            field: "gameId"
-        }]);*/
 
-        console.log(" returnGameById Procedure Controller");
+
+        console.log(gameId," returnGameById Procedure Controller");
         const resultOfGetting = await this.commandBus.execute<returnGameByIdCommand, PairGameQuizViewModel>(new returnGameByIdCommand(tokenPayload, gameId));
         if(!resultOfGetting){
             console.log(resultOfGetting, " resultOfGetting in returnGameById Procedure Controller, must throw new error NotFoundException");
