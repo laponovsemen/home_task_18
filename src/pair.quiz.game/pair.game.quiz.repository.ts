@@ -131,6 +131,8 @@ export class PairGameQuizRepository {
               }))
               .getOne()
 
+            //[{status:active, firtsId: id,}, { status: active, secondId: id }]
+
             console.log(checkOfParticipatingInAnotherGame, " checkOfParticipatingInAnotherGame")
             //check if user is participating in another game
             if (checkOfParticipatingInAnotherGame) return null;
