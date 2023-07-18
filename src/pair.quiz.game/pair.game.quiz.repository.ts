@@ -310,7 +310,7 @@ export class PairGameQuizRepository {
         const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
         const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-        console.log(this.pairGameQuizTypeORMRepository
+        /*console.log(this.pairGameQuizTypeORMRepository
           .createQueryBuilder("game")
           .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
           .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
@@ -325,7 +325,7 @@ export class PairGameQuizRepository {
           .orderBy(`game."${sortBy}"`, sortDirection.toUpperCase() as "ASC" | "DESC")
           .skip(ToSkip)
           .take(pageSize)
-          .getSql() , " SQL QUERY");
+          .getSql() , " SQL QUERY");*/
 
         const allGamesForSpecificUserTypeORMQuery = await this.pairGameQuizTypeORMRepository
           .createQueryBuilder("game")
@@ -338,6 +338,7 @@ export class PairGameQuizRepository {
           .where('game.firstPlayerId = :userId', { userId: user.id})
           .orWhere('game.secondPlayerId = :userId', { userId: user.id})
           .orderBy(`game.${sortBy}`, sortDirection.toUpperCase() as "ASC" | "DESC")
+          .orderBy(`game."pairCreatedDate"`,"DESC")
           .skip(ToSkip)
           .take(pageSize)
           .getMany()
