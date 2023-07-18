@@ -13,6 +13,23 @@ export type paginationCriteriaType = {
   banStatus : "all" | "banned" | "notBanned"
 };
 
+export class paginationGamesCriteriaType {
+  pageNumber: number;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
+  pageSize: number;
+
+  static bindWithPagination(pagination: paginationGamesCriteriaType, array: any[], pagesCount: number, totalCount: number) {
+    return {
+      pageSize: pagination.pageSize,
+      totalCount: totalCount,
+      pagesCount: pagesCount,
+      page: pagination.pageNumber,
+      items: array
+    };
+  }
+}
+
 export enum sortDirectionEnum {
   asc = 'asc',
   desc = 'desc',

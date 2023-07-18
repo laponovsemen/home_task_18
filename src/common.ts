@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Mongoose } from 'mongoose';
-import { BlogViewModelType, paginationCriteriaType, PostDBModel } from "./appTypes";
+import { BlogViewModelType, paginationCriteriaType, paginationGamesCriteriaType, PostDBModel } from "./appTypes";
 
 import { Injectable } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -12,6 +12,8 @@ import {APIPost} from "./entities/api-post-entity";
 import {APIComment} from "./entities/api-comment-entity";
 import {Blog} from "./entities/blog-entity";
 import {User} from "./entities/user-entity";
+
+
 
 @Injectable()
 export class Common {
@@ -246,5 +248,20 @@ export class Common {
         newestLikes: [],
       },
     };
+  }
+
+  getGamesPaginationCriteria(QueryParams: any) : paginationGamesCriteriaType {
+
+      const pageNumber: number = QueryParams.pageNumber ? parseInt(QueryParams.pageNumber.toString(), 10) : 1;
+      const pageSize: number = QueryParams.pageSize ? parseInt(QueryParams.pageSize.toString(), 10) : 10;
+      const sortBy: string = QueryParams.sortBy ? QueryParams.sortBy.toString() : 'pairCreatedDate';
+      const sortDirection: 'asc' | 'desc' = QueryParams.sortDirection === 'asc' ? 'asc' : 'desc';
+      return {
+
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      };
   }
 }

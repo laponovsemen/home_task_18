@@ -13,6 +13,8 @@ import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
+import { paginationGamesCriteriaType, PaginatorViewModelType } from "../appTypes";
+import { PairGameQuizQuestion } from "./view.model.classess/pair.game.quiz.question";
 
 @Injectable()
 export class PairGameQuizRepository {
@@ -287,5 +289,56 @@ export class PairGameQuizRepository {
             // ask why it works if I don't use release transaction
         }
         return result
+    }
+
+    async findAllGamesWhereUserIsParticipate(user: User, paginationCriteria: paginationGamesCriteriaType)
+     : Promise<PaginatorViewModelType<PairGameQuizViewModel[]>> {
+        const totalCount = await this.pairGameQuizTypeORMRepository
+          .count({
+              where: [
+                  { firstPlayer: { id: user.id } },
+                  { secondPlayer: { id: user.id } }
+              ]
+          });
+        const pageSize = paginationCriteria.pageSize;
+        const pagesCount = Math.ceil(totalCount / pageSize);
+        const page = paginationCriteria.pageNumber;
+        const sortBy = paginationCriteria.sortBy;
+        const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
+        const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
+
+        const allGamesForSpecificUserTypeORMQuery = await this.pairGameQuizTypeORMRepository
+          .createQueryBuilder("game")
+          .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
+          .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+          .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
+          .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
+          .leftJoinAndSelect("answersOfFirstUser.question", "question1")
+          .leftJoinAndSelect("answersOfSecondUser.question", "question2")
+          .andWhere(new Brackets(qb => {
+              qb.where('game.firstPlayer.id = :userId', { userId: user.id})
+                .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
+          }))
+          .orderBy(sortBy, sortDirection.toUpperCase() as "ASC" | "DESC")
+          .skip(ToSkip)
+          .take(pageSize)
+          .getMany()
+
+
+        let array : PairGameQuizViewModel[] = []
+        for (const item of allGamesForSpecificUserTypeORMQuery) {
+            const questions :  APIQuizQuestion[] = await this.quizQuestionsRepository
+              .findQuizQuestionsListByListOfIds(item.questions)
+            array.push(PairGameQuizViewModel.getViewModelForFront(item, questions))
+        }
+
+
+        return paginationGamesCriteriaType
+          .bindWithPagination(
+            paginationCriteria,
+            array,
+            pagesCount,
+            totalCount,
+            )
     }
 }

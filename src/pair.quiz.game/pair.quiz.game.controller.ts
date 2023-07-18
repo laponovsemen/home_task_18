@@ -32,6 +32,7 @@ import { AnswersInputModel } from "./view.model.classess/answers.input.model";
 import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-next-question-use-case";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
+import { returnAllMyGamesCommand } from "./use-cases/return-all-my-games-use-case";
 
 
 /*export class GetGameByIdDto {
@@ -49,6 +50,23 @@ export class PairQuizGameController {
         private readonly commandBus: CommandBus,
     ) {}
 
+
+
+    @Get("/my")
+    @HttpCode(200)
+    async returnAllMyGames(@Query() QueryParams,
+                                          @Res({ passthrough: true }) res: Response,
+                                          @User() tokenPayload: TokenPayload
+    ) : Promise<PairGameQuizViewModel[]> {
+        console.log("start returnAllMyGames procedure");
+        const resultOfGetting : PairGameQuizViewModel[]
+          = await this.commandBus.execute<returnAllMyGamesCommand, PairGameQuizViewModel[]>(
+            new returnAllMyGamesCommand(tokenPayload, QueryParams)
+        )
+
+        return resultOfGetting
+
+    }
 
 
     @Get("/my-current")
