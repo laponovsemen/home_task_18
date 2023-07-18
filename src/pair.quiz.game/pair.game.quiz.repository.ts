@@ -319,7 +319,7 @@ export class PairGameQuizRepository {
               qb.where('game.firstPlayer.id = :userId', { userId: user.id})
                 .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
           }))
-          .orderBy(sortBy, sortDirection.toUpperCase() as "ASC" | "DESC")
+          .orderBy(`"${sortBy}"`, sortDirection.toUpperCase() as "ASC" | "DESC")
           .skip(ToSkip)
           .take(pageSize)
           .getMany()

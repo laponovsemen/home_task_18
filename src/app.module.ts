@@ -111,6 +111,10 @@ import {
 } from "./pair.quiz.game/use-cases/send-answer-for-next-question-use-case";
 import {PairGameQuizRepository} from "./pair.quiz.game/pair.game.quiz.repository";
 import {TypeORMTransactionService} from "./transaction.service";
+import {
+  returnAllMyGamesCommand,
+  returnAllMyGamesUseCase
+} from "./pair.quiz.game/use-cases/return-all-my-games-use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -122,12 +126,14 @@ const repositories = [BlogsRepository, PostsRepository, UsersRepository,Comments
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,GetAllCommentForUserUseCase,
   GettingAllBlogsForSpecifiedBloggerUseCase, BanBlogUseCase,BanUserByBloggerUseCase , GetBannedUsersForSpecificBlogUseCase,
   CreateNewQuestionOfQuizUseCase, deleteQuestionOfQuizUseCase, getAllQuestionsOfQuizUseCase, publishOrUnpublishQuestionOfQuizByIdUseCase,
-  updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase, returnGameByIdUseCase, sendAnswerForNextQuestionUseCase]
+  updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
+  returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,GetAllCommentForUserCommand,
   GettingAllBlogsForSpecifiedBloggerCommand, BanBlogCommand,BanUserByBloggerCommand, GetBannedUsersForSpecificBlogCommand,
-  CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand, publishOrUnpublishQuestionOfQuizByIdCommand,
-  updateQuestionOfQuizCommand, CreateOrConnectPairCommand, returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand]
+  CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand,
+  publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
+  returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 

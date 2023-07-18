@@ -446,6 +446,14 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
         .expect(404);
 
+
+      const firstUserGamesAfterTwoGames = await request(server)
+        .get(`/pair-game-quiz/pairs/my`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(200);
+
+      expect(firstUserGamesAfterTwoGames.body).toEqual({})
+
     },60000)
 
 
