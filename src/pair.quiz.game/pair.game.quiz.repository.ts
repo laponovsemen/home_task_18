@@ -338,7 +338,7 @@ export class PairGameQuizRepository {
           .where('game.firstPlayerId = :userId', { userId: user.id})
           .orWhere('game.secondPlayerId = :userId', { userId: user.id})
           .orderBy(`game.${sortBy}`, sortDirection.toUpperCase() as "ASC" | "DESC")
-          .addOrderBy(`game."pairCreatedDate"`,"DESC")
+          .addOrderBy(`game.pairCreatedDate`,"DESC")
           .skip(ToSkip)
           .take(pageSize)
           .getMany()
