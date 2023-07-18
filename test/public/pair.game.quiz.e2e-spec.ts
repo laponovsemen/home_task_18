@@ -136,6 +136,13 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})
         .expect(403)
 
+      const firstUserGamesAfterBeforeActiveGames = await request(server)
+        .get(`/pair-game-quiz/pairs/my`)
+        .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
+        .expect(200);
+
+      expect(firstUserGamesAfterBeforeActiveGames.body).toEqual({})
+
       const foundGameByIdWhereStatusIsPendingSeconfUser = await request(server)
         .get(`/pair-game-quiz/pairs/${createPair.body.id}`)
         .auth(loginOfFirstUser.body.accessToken, {type : 'bearer'})

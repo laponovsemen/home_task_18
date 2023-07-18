@@ -300,6 +300,7 @@ export class PairGameQuizRepository {
                   { secondPlayer: { id: user.id } }
               ]
           });
+        console.log(totalCount, " totalCount of games for specific user");
         const pageSize = paginationCriteria.pageSize;
         const pagesCount = Math.ceil(totalCount / pageSize);
         const page = paginationCriteria.pageNumber;
@@ -307,19 +308,34 @@ export class PairGameQuizRepository {
         const sortDirection: 'asc' | 'desc' = paginationCriteria.sortDirection;
         const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
+        console.log(this.pairGameQuizTypeORMRepository
+          .createQueryBuilder("game")
+          .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
+          .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
+          .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
+          .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
+          .leftJoinAndSelect("answersOfFirstUser.question", "questionOne")
+          .leftJoinAndSelect("answersOfSecondUser.question", "questionOne")
+          .where(new Brackets(qb => {
+              qb.where('game.firstPlayer.id = :userId', { userId: user.id})
+                .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
+          }))
+          .orderBy(`game."${sortBy}"`, sortDirection.toUpperCase() as "ASC" | "DESC")
+          .skip(ToSkip)
+          .take(pageSize)
+          .getSql() , " SQL QUERY");
+
         const allGamesForSpecificUserTypeORMQuery = await this.pairGameQuizTypeORMRepository
           .createQueryBuilder("game")
           .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
           .leftJoinAndSelect("game.secondPlayer", "secondPlayer")
           .leftJoinAndSelect("game.answersOfFirstUser", "answersOfFirstUser")
           .leftJoinAndSelect("game.answersOfSecondUser", "answersOfSecondUser")
-          .leftJoinAndSelect("answersOfFirstUser.question", "question1")
-          .leftJoinAndSelect("answersOfSecondUser.question", "question2")
-          .andWhere(new Brackets(qb => {
-              qb.where('game.firstPlayer.id = :userId', { userId: user.id})
-                .orWhere('game.secondPlayer.id = :userId', { userId: user.id});
-          }))
-          .orderBy(`"${sortBy}"`, sortDirection.toUpperCase() as "ASC" | "DESC")
+          .leftJoinAndSelect("answersOfFirstUser.question", "questionOne")
+          .leftJoinAndSelect("answersOfSecondUser.question", "questionTwo")
+          .where('game.firstPlayerId = :userId', { userId: user.id})
+          .orWhere('game.secondPlayerId = :userId', { userId: user.id})
+          .orderBy(`game.${sortBy}`, sortDirection.toUpperCase() as "ASC" | "DESC")
           .skip(ToSkip)
           .take(pageSize)
           .getMany()
