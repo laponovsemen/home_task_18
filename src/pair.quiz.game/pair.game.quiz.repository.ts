@@ -477,12 +477,31 @@ export class PairGameQuizRepository implements OnModuleInit{
 
     async getTopOfUsersAccordingTogamesStatistics(paginationCriteria: paginationTopUsersCriteriaType)
       : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>>> {
+        const totalCount = await this.dataSource.query(`
+         select
+           count(*)
+         from "user" u
+        left join "pair_game_quiz" fpg
+        on fpg."firstPlayerId" = u."id"
+        left join "pair_game_quiz" spg
+        on spg."secondPlayerId" = u."id"
+        group by u."id"
+        `)
+        console.log(totalCount);
+        const pageSize = paginationCriteria.pageSize
+        const pagesCount = Math.ceil(totalCount / pageSize);
+        const page = paginationCriteria.pageNumber;
+        const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
+
         let sortParams : string[] = []
+        console.log(paginationCriteria, " paginationCriteria");
         paginationCriteria.sort.split("&").forEach(item =>  {
             sortParams.push(`"${item.split(" ")[0]}" ${item.split(" ")[1]}`)
         })
         console.log(sortParams);
         console.log(sortParams.join(", "));
+
+
         const query = `
            select
            u."id",
@@ -563,14 +582,16 @@ export class PairGameQuizRepository implements OnModuleInit{
         on spg."secondPlayerId" = u."id"
         
         group by u."id"
-        order by  $1`
-        const result : WithPlayerCredentials<StaticsViewModel>[] = await this.dataSource.query(query, [sortParams.join(", ")])
+        order by  $1
+        limit $2 offset $3       `
+        const result : WithPlayerCredentials<StaticsViewModel>[]
+          = await this.dataSource.query(query, [sortParams.join(", "), pageSize, ToSkip])
 
         return {
-            pagesCount: 0,
-            page: 0,
-            pageSize: 0,
-            totalCount: 0,
+            pagesCount,
+            page,
+            pageSize,
+            totalCount: totalCount[0].totalCount,
             items : result
         };
     }
