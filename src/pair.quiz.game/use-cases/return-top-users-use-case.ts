@@ -22,7 +22,7 @@ export class returnTopUsersCommand{
 
 @CommandHandler(returnTopUsersCommand)
 export class returnTopUsersUseCase
-  implements ICommandHandler<returnTopUsersCommand, PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]>> {
+  implements ICommandHandler<returnTopUsersCommand, PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>>> {
   constructor(
     protected common: Common,
     protected quizQuestionsRepository: QuizQuestionsRepository,
@@ -32,11 +32,11 @@ export class returnTopUsersUseCase
 
   }
 
-  async execute(command: returnTopUsersCommand) : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]>> {
+  async execute(command: returnTopUsersCommand) : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>>> {
     console.log("start returnGameByIdCommand");
     const paginationCriteria: paginationTopUsersCriteriaType = this.common.getGamesTopUsersPaginationCriteria(command.queryParams);
     console.log(paginationCriteria , " paginationCriteria in returnGameByIdCommand");
-    const foundTop : PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]> = await this.pairGameQuizRepository
+    const foundTop : PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>> = await this.pairGameQuizRepository
         .getTopOfUsersAccordingTogamesStatistics(paginationCriteria)
 
     return foundTop

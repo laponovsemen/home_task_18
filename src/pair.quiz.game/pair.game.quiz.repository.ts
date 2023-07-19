@@ -34,7 +34,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         //     from (select cast(count(*) as integer) from pair_game_quiz where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89' or "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') as gamesCount
         //     from (select count("firstPlayerScores") from pair_game_quiz where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89' ) as winsCount
         // `
-        const query = `
+        /*const query = `
            select
            u."id",
            u."login",
@@ -58,8 +58,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         `
 
         const result = await this.dataSource.query(query)
-        console.log(result, " result of sql query for getting statistics");
-
+        console.log(result, " result of sql query for getting statistics");*/
     }
 
     async deleteAllData() {
