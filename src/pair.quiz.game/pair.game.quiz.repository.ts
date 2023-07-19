@@ -499,60 +499,60 @@ export class PairGameQuizRepository implements OnModuleInit{
         (round((
         (select cast(sum("firstPlayerScore") as numeric)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
+        where "firstPlayerId" = u."id") 
         + 
         (select cast(sum("secondPlayerScore") as numeric)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1))
+        where "secondPlayerId" = u."id"))
          /
          ((select count(*)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
+        where "firstPlayerId" = u."id") 
         + 
         (select count(*)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1)), 2))
+        where "secondPlayerId" = u."id")), 2))
         as "avgScores",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
+        where "firstPlayerId" = u."id") 
         + 
         (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1))
+        where "secondPlayerId" = u."id"))
         as "gamesCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1
+        where "firstPlayerId" = u."id"
         and "firstPlayerScore" > "secondPlayerScore") 
         + 
         (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1
+        where "secondPlayerId" = u."id"
         and "firstPlayerScore" < "secondPlayerScore"))
         as "winsCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1
+        where "firstPlayerId" = u."id"
         and "firstPlayerScore" < "secondPlayerScore") 
         + 
         (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1
+        where "secondPlayerId" = u."id"
         and "firstPlayerScore" > "secondPlayerScore"))
         as "lossesCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1
+        where "firstPlayerId" = u."id"
         and "firstPlayerScore" = "secondPlayerScore") 
         + 
         (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1
+        where "secondPlayerId" = u."id"
         and "firstPlayerScore" = "secondPlayerScore"))
         as "drawsCount"
         
