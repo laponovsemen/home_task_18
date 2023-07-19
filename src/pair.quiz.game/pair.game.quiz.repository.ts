@@ -15,7 +15,7 @@ import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
 import { paginationGamesCriteriaType, paginationTopUsersCriteriaType, PaginatorViewModelType } from "../appTypes";
 import { PairGameQuizQuestion } from "./view.model.classess/pair.game.quiz.question";
-import { WithPlayerCredentials } from "../mongo/mongooseSchemas";
+import { WithPlayerCredentials, WithPlayerRawCredentials } from "../mongo/mongooseSchemas";
 import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
 
 @Injectable()
@@ -476,34 +476,41 @@ export class PairGameQuizRepository implements OnModuleInit{
     }
 
     async getTopOfUsersAccordingTogamesStatistics(paginationCriteria: paginationTopUsersCriteriaType)
-      : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>>> {
+      : Promise<PaginatorViewModelType<StaticsViewModel>> {
         const totalCount = await this.dataSource.query(`
-         select
-           count(*)
-         from "user" u
+        select cast(count(*) as integer)
+        from
+        (select
+        count(u."id")
+        from "user" u
         left join "pair_game_quiz" fpg
         on fpg."firstPlayerId" = u."id"
         left join "pair_game_quiz" spg
         on spg."secondPlayerId" = u."id"
-        group by u."id"
+        group by u."id") ds
         `)
-        console.log(totalCount);
+        console.log(totalCount, " total count");
         const pageSize = paginationCriteria.pageSize
-        const pagesCount = Math.ceil(totalCount / pageSize);
+        const pagesCount = Math.ceil(totalCount[0].count / pageSize);
         const page = paginationCriteria.pageNumber;
         const ToSkip = paginationCriteria.pageSize * (paginationCriteria.pageNumber - 1);
 
-        let sortParams : string[] = []
+        // let sortParams : string[] = []
         console.log(paginationCriteria, " paginationCriteria");
-        paginationCriteria.sort.split("&").forEach(item =>  {
-            sortParams.push(`"${item.split(" ")[0]}" ${item.split(" ")[1]}`)
+        const sortParams  = paginationCriteria.sort.split(",").map(item =>  {
+
+            const [field, direction] = item.split(' ')
+            return `"${field}" ${direction}`
         })
-        console.log(sortParams);
-        console.log(sortParams.join(", "));
+          .join(", ")
+
+
 
 
         const query = `
-           select
+        select *
+        from
+           (select
            u."id",
            u."login",
         ((select cast(sum("firstPlayerScore") as integer)
@@ -582,17 +589,22 @@ export class PairGameQuizRepository implements OnModuleInit{
         on spg."secondPlayerId" = u."id"
         
         group by u."id"
-        order by  $1
-        limit $2 offset $3       `
-        const result : WithPlayerCredentials<StaticsViewModel>[]
-          = await this.dataSource.query(query, [sortParams.join(", "), pageSize, ToSkip])
+        order by ${sortParams}
+        limit $1 offset $2     
+        ) dr  `
+        const result : WithPlayerRawCredentials<StaticsViewModel>[]
+          = await this.dataSource.query(query, [ pageSize, ToSkip])
 
         return {
             pagesCount,
             page,
             pageSize,
             totalCount: totalCount[0].totalCount,
-            items : result
+            items : result.map(item => {
+                console.log(item , " item while last mapping");
+                const newItem = StaticsViewModel.getViewModelForTopOfPlayers(item)
+                return newItem
+            })
         };
     }
 }
