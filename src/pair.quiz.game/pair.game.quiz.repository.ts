@@ -13,8 +13,10 @@ import { APIQuizQuestion } from "../entities/quiz-entity";
 import { AnswerStatuses } from "./view.model.classess/answer.statuses.enum";
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
-import { paginationGamesCriteriaType, PaginatorViewModelType } from "../appTypes";
+import { paginationGamesCriteriaType, paginationTopUsersCriteriaType, PaginatorViewModelType } from "../appTypes";
 import { PairGameQuizQuestion } from "./view.model.classess/pair.game.quiz.question";
+import { WithPlayerCredentials } from "../mongo/mongooseSchemas";
+import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
 
 @Injectable()
 export class PairGameQuizRepository implements OnModuleInit{
@@ -34,77 +36,28 @@ export class PairGameQuizRepository implements OnModuleInit{
         // `
         const query = `
            select
+           u."id",
+           u."login",
         ((select cast(sum("firstPlayerScore") as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
+        where "firstPlayerId" = u."id") 
         + 
         (select cast(sum("secondPlayerScore") as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1))
-        as sumScore,
-      
-        (round((
-        (select cast(sum("firstPlayerScore") as numeric)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
-        + 
-        (select cast(sum("secondPlayerScore") as numeric)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1))
-         /
-         ((select cast(count(*) as numeric)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
-        + 
-        (select cast(count(*) as numeric)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1)), 2))
-        as avgScores,
+        where "secondPlayerId" = u."id"))
+        as "sumScore"
         
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1) 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1))
-        as gamesCount,
+        from "user" u
+        left join "pair_game_quiz" fpg
+        on fpg."firstPlayerId" = u."id"
+        left join "pair_game_quiz" spg
+        on spg."secondPlayerId" = u."id"
         
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1
-        and "firstPlayerScore" > "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1
-        and "firstPlayerScore" < "secondPlayerScore"))
-        as winsCount,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1
-        and "firstPlayerScore" < "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1
-        and "firstPlayerScore" > "secondPlayerScore"))
-        as lossesCount,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = $1
-        and "firstPlayerScore" = "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = $1
-        and "firstPlayerScore" = "secondPlayerScore"))
-        as drawsCount
+        group by u."id"
+        order by 
         `
 
-        const result = await this.dataSource.query(query, ['a8319e67-bd82-49d2-a379-97426a8474f9'])
+        const result = await this.dataSource.query(query)
         console.log(result, " result of sql query for getting statistics");
 
     }
@@ -262,7 +215,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         return result
     }
 
-  async findUnfinishedGameWhereUserParticipate(user: User) {
+    async findUnfinishedGameWhereUserParticipate(user: User) {
       const game = await this.pairGameQuizTypeORMRepository
         .createQueryBuilder("game")
         .leftJoinAndSelect("game.firstPlayer", "firstPlayer")
@@ -519,7 +472,107 @@ export class PairGameQuizRepository implements OnModuleInit{
 
         const result = await this.dataSource.query(query, [user.id])
         console.log(result, " result of sql query for getting statistics");
-        result[0].avgScores = Number.parseFloat(result[0].avgScores)
+        result[0].avgScores = Number(result[0].avgScores)
         return result[0];
+    }
+
+    async getTopOfUsersAccordingTogamesStatistics(paginationCriteria: paginationTopUsersCriteriaType)
+      : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>>> {
+        let sortParams : string[] = []
+        paginationCriteria.sort.split("&").forEach(item =>  {
+            sortParams.push(`"${item.split(" ")[0]}" ${item.split(" ")[1]}`)
+        })
+        console.log(sortParams);
+        console.log(sortParams.join(", "));
+        const query = `
+           select
+           u."id",
+           u."login",
+        ((select cast(sum("firstPlayerScore") as integer)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = u."id") 
+        + 
+        (select cast(sum("secondPlayerScore") as integer)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = u."id"))
+        as "sumScore",
+        
+        (round((
+        (select cast(sum("firstPlayerScore") as numeric)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select cast(sum("secondPlayerScore") as numeric)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1))
+         /
+         ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1)), 2))
+        as "avgScores",
+        
+        ((select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1))
+        as "gamesCount",
+        
+        ((select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" > "secondPlayerScore") 
+        + 
+        (select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" < "secondPlayerScore"))
+        as "winsCount",
+        
+        ((select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" < "secondPlayerScore") 
+        + 
+        (select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" > "secondPlayerScore"))
+        as "lossesCount",
+        
+        ((select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" = "secondPlayerScore") 
+        + 
+        (select cast(count(*) as integer)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" = "secondPlayerScore"))
+        as "drawsCount"
+        
+        from "user" u
+        left join "pair_game_quiz" fpg
+        on fpg."firstPlayerId" = u."id"
+        left join "pair_game_quiz" spg
+        on spg."secondPlayerId" = u."id"
+        
+        group by u."id"
+        order by  $1`
+        const result : WithPlayerCredentials<StaticsViewModel>[] = await this.dataSource.query(query, [sortParams.join(", ")])
+
+        return {
+            pagesCount: 0,
+            page: 0,
+            pageSize: 0,
+            totalCount: 0,
+            items : result
+        };
     }
 }

@@ -29,6 +29,21 @@ export class paginationGamesCriteriaType {
     };
   }
 }
+export class paginationTopUsersCriteriaType {
+  pageNumber: number;
+  sort: string;
+  pageSize: number;
+
+  static bindWithPagination(pagination: paginationGamesCriteriaType, array: any[], pagesCount: number, totalCount: number) {
+    return {
+      pageSize: pagination.pageSize,
+      totalCount: totalCount,
+      pagesCount: pagesCount,
+      page: pagination.pageNumber,
+      items: array
+    };
+  }
+}
 
 export enum sortDirectionEnum {
   asc = 'asc',
@@ -102,6 +117,7 @@ export type PaginatorViewModelType<Data> = {
   totalCount: number;
   items: Data[];
 };
+
 
 export type BlogsPaginationCriteriaType = {
   pageNumber: number;

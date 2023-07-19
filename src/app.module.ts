@@ -119,6 +119,7 @@ import {
   returnStatisticForSpecificUserCommand, returnStatisticForSpecificUserUseCase
 } from "./pair.quiz.game/use-cases/return-statistic-for-specific-user-use-case";
 import { PairQuizGameUsersController } from "./pair.quiz.game/pair.quiz.game.users.controller";
+import { returnTopUsersCommand, returnTopUsersUseCase } from "./pair.quiz.game/use-cases/return-top-users-use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -133,7 +134,8 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   CreateNewQuestionOfQuizUseCase, deleteQuestionOfQuizUseCase, getAllQuestionsOfQuizUseCase,
   publishOrUnpublishQuestionOfQuizByIdUseCase,
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
-  returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase]
+  returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
+  returnTopUsersUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -141,7 +143,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand,
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
-  returnStatisticForSpecificUserCommand]
+  returnStatisticForSpecificUserCommand, returnTopUsersCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 

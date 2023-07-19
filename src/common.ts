@@ -1,6 +1,12 @@
 import { ObjectId } from 'mongodb';
 import { Mongoose } from 'mongoose';
-import { BlogViewModelType, paginationCriteriaType, paginationGamesCriteriaType, PostDBModel } from "./appTypes";
+import {
+  BlogViewModelType,
+  paginationCriteriaType,
+  paginationGamesCriteriaType,
+  paginationTopUsersCriteriaType,
+  PostDBModel
+} from "./appTypes";
 
 import { Injectable } from "@nestjs/common";
 import { Types } from "mongoose";
@@ -263,5 +269,18 @@ export class Common {
         sortBy,
         sortDirection,
       };
+  }
+
+  getGamesTopUsersPaginationCriteria(QueryParams: any) : paginationTopUsersCriteriaType {
+    const pageNumber: number = QueryParams.pageNumber ? parseInt(QueryParams.pageNumber.toString(), 10) : 1;
+    const pageSize: number = QueryParams.pageSize ? parseInt(QueryParams.pageSize.toString(), 10) : 10;
+    const sort: string  = QueryParams.sort ? QueryParams.sort.toString() : 'sort=avgScores desc&sort=sumScore desc';
+
+    return {
+      pageNumber,
+      pageSize,
+      sort ,
+
+    };
   }
 }

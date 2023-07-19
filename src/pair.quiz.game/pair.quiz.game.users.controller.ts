@@ -35,6 +35,8 @@ import { AnswersViewModel } from "./view.model.classess/answers.view.model";
 import { returnAllMyGamesCommand } from "./use-cases/return-all-my-games-use-case";
 import { returnStatisticForSpecificUserCommand } from "./use-cases/return-statistic-for-specific-user-use-case";
 import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
+import { WithPagination, WithPlayerCredentials } from "../mongo/mongooseSchemas";
+import { returnTopUsersCommand } from "./use-cases/return-top-users-use-case";
 
 
 /*export class GetGameByIdDto {
@@ -63,6 +65,21 @@ export class PairQuizGameUsersController {
           = await this.commandBus.execute<returnStatisticForSpecificUserCommand, StaticsViewModel>(
           new returnStatisticForSpecificUserCommand(tokenPayload)
         )
+
+        return resultOfGetting
+    }
+    @Get("/top")
+    @HttpCode(200)
+    async returnTopUsers(
+      @Res({ passthrough: true }) res: Response,
+      @Query() queryParams: any
+    ) : Promise<PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]>> {
+        console.log("start returnTopUsers procedure");
+        const resultOfGetting : PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]>
+          = await this.commandBus.execute<
+          returnTopUsersCommand,
+          PaginatorViewModelType<WithPlayerCredentials<StaticsViewModel>[]>
+        >(new returnTopUsersCommand(queryParams))
 
         return resultOfGetting
     }

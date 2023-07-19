@@ -7,6 +7,7 @@ import {BloggerBansForSpecificBlog} from "../entities/blogger-bans-for-specific-
 
 
 export type WithMongoId<Type> = Type & { _id: ObjectId };
+export type WithPlayerCredentials<Type> = Type & { player: { id : string, login : string } };
 export type WithPagination<Type> = Type & paginationCriteriaType;
 export class NewestLike {
   addedAt: Date;
