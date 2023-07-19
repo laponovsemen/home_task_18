@@ -1,5 +1,5 @@
 import { Common } from "../common";
-import { Injectable } from "@nestjs/common";
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Brackets, DataSource, QueryRunner, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PairGameQuiz } from "../entities/api-pair-game-quiz-entity";
@@ -17,7 +17,7 @@ import { paginationGamesCriteriaType, PaginatorViewModelType } from "../appTypes
 import { PairGameQuizQuestion } from "./view.model.classess/pair.game.quiz.question";
 
 @Injectable()
-export class PairGameQuizRepository {
+export class PairGameQuizRepository implements OnModuleInit{
     constructor(
         @InjectRepository(PairGameQuiz) protected pairGameQuizTypeORMRepository: Repository<PairGameQuiz>,
         protected quizQuestionsRepository: QuizQuestionsRepository,
@@ -26,7 +26,84 @@ export class PairGameQuizRepository {
     ) {
     }
 
-
+    async onModuleInit () {
+        // const query = `
+        //     select gamesCount, winsCount
+        //     from (select cast(count(*) as integer) from pair_game_quiz where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89' or "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') as gamesCount
+        //     from (select count("firstPlayerScores") from pair_game_quiz where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89' ) as winsCount
+        // `
+        const query = `
+           select 
+           
+           ((select sum("firstPlayerScore")
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        + 
+        (select sum("secondPlayerScore")
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'))
+        as sumScore,
+      
+        (round((cast(((select sum("firstPlayerScore")
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        + 
+        (select sum("secondPlayerScore")
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89')) as numeric)
+         /
+         ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'))), 2))
+        as avgScores,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89')) 
+        as gamesCount,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" > "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" < "secondPlayerScore")) 
+        as winsCount,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" < "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" > "secondPlayerScore")) 
+        as lossesCount,
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" = "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        and "firstPlayerScore" = "secondPlayerScore")) 
+        as drawsCount
+        `
+        console.log(await this.dataSource.query(query));
+    }
 
     async deleteAllData() {
         await this.pairGameQuizTypeORMRepository.delete({})
@@ -359,5 +436,81 @@ export class PairGameQuizRepository {
             pagesCount,
             totalCount,
             )
+    }
+
+    async findStatisticForSpecificUser(user: User) {
+        const query = `
+           select 
+           ((select sum("firstPlayerScore")
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select sum("secondPlayerScore")
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1))
+        as sumScore,
+      
+        (round((cast(((select sum("firstPlayerScore")
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select sum("secondPlayerScore")
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1)) as numeric)
+         /
+         ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1))), 2))
+        as avgScores,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1) 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1)) 
+        as gamesCount,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" > "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" < "secondPlayerScore")) 
+        as winsCount,
+        
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" < "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" > "secondPlayerScore")) 
+        as lossesCount,
+        ((select count(*)
+        from "pair_game_quiz" 
+        where "firstPlayerId" = $1
+        and "firstPlayerScore" = "secondPlayerScore") 
+        + 
+        (select count(*)
+        from "pair_game_quiz" 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" = "secondPlayerScore")) 
+        as drawsCount
+        `
+
+        const result = await this.dataSource.query(query, [user.id])
+        console.log(result, " result of sql query for getting statistics");
+        return result[0];
     }
 }

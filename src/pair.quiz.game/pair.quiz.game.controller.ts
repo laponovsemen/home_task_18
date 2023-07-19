@@ -33,6 +33,8 @@ import { sendAnswerForNextQuestionCommand } from "./use-cases/send-answer-for-ne
 import { PairGameQuizViewModel } from "./view.model.classess/pair.game.quiz.view.model";
 import { AnswersViewModel } from "./view.model.classess/answers.view.model";
 import { returnAllMyGamesCommand } from "./use-cases/return-all-my-games-use-case";
+import { returnStatisticForSpecificUserCommand } from "./use-cases/return-statistic-for-specific-user-use-case";
+import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
 
 
 /*export class GetGameByIdDto {
@@ -49,6 +51,21 @@ export class PairQuizGameController {
         private readonly common: Common,
         private readonly commandBus: CommandBus,
     ) {}
+
+    @Get("/my-statistic")
+    @HttpCode(200)
+    async returnStatisticForSpecificUser(
+                           @Res({ passthrough: true }) res: Response,
+                           @User() tokenPayload: TokenPayload
+    ) : Promise<StaticsViewModel> {
+        console.log("start returnStatisticForSpecificUser procedure");
+        const resultOfGetting : StaticsViewModel
+          = await this.commandBus.execute<returnStatisticForSpecificUserCommand, StaticsViewModel>(
+          new returnStatisticForSpecificUserCommand(tokenPayload)
+        )
+
+        return resultOfGetting
+    }
 
 
 
