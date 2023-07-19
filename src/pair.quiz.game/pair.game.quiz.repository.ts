@@ -454,7 +454,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         (select sum("secondPlayerScore")
         from "pair_game_quiz" 
         where "secondPlayerId" = $1))
-        as sumScore,
+        as "sumScore",
       
         (round((
         (select cast(sum("firstPlayerScore") as numeric)
@@ -472,7 +472,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         (select count(*)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1)), 2))
-        as avgScores,
+        as "avgScores",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
@@ -481,7 +481,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         (select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1))
-        as gamesCount,
+        as "gamesCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
@@ -492,7 +492,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
         and "firstPlayerScore" < "secondPlayerScore"))
-        as winsCount,
+        as "winsCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
@@ -503,7 +503,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
         and "firstPlayerScore" > "secondPlayerScore"))
-        as lossesCount,
+        as "lossesCount",
         
         ((select cast(count(*) as integer)
         from "pair_game_quiz" 
@@ -514,7 +514,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
         and "firstPlayerScore" = "secondPlayerScore"))
-        as drawsCount
+        as "drawsCount"
         
        
         `
