@@ -33,12 +33,12 @@ export class PairGameQuizRepository implements OnModuleInit{
         //     from (select count("firstPlayerScores") from pair_game_quiz where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89' ) as winsCount
         // `
         const query = `
-           select 
+           select
         ((select cast(sum("firstPlayerScore") as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
-        (select sum("secondPlayerScore")
+        (select cast(sum("secondPlayerScore") as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1))
         as sumScore,
@@ -52,11 +52,11 @@ export class PairGameQuizRepository implements OnModuleInit{
         from "pair_game_quiz" 
         where "secondPlayerId" = $1))
          /
-         ((select count(*)
+         ((select cast(count(*) as numeric)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
-        (select count(*)
+        (select cast(count(*) as numeric)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1)), 2))
         as avgScores,
@@ -102,11 +102,9 @@ export class PairGameQuizRepository implements OnModuleInit{
         where "secondPlayerId" = $1
         and "firstPlayerScore" = "secondPlayerScore"))
         as drawsCount
-        
-       
         `
 
-        const result = await this.dataSource.query(query, ['d5af8ddf-145d-4b58-9124-23fc14b08f89'])
+        const result = await this.dataSource.query(query, ['a8319e67-bd82-49d2-a379-97426a8474f9'])
         console.log(result, " result of sql query for getting statistics");
 
     }
@@ -451,7 +449,7 @@ export class PairGameQuizRepository implements OnModuleInit{
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
-        (select sum("secondPlayerScore")
+        (select cast(sum("secondPlayerScore") as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1))
         as "sumScore",
@@ -521,6 +519,7 @@ export class PairGameQuizRepository implements OnModuleInit{
 
         const result = await this.dataSource.query(query, [user.id])
         console.log(result, " result of sql query for getting statistics");
+        result[0].avgScores = Number.parseFloat(result[0].avgScores)
         return result[0];
     }
 }
