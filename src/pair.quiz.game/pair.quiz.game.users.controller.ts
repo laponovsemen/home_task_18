@@ -46,14 +46,14 @@ import { returnTopUsersCommand } from "./use-cases/return-top-users-use-case";
 }*/
 
 
-@UseGuards(AuthGuard)
+
 @Controller('/pair-game-quiz/users')
 export class PairQuizGameUsersController {
     constructor(
         private readonly common: Common,
         private readonly commandBus: CommandBus,
     ) {}
-
+    @UseGuards(AuthGuard)
     @Get("/my-statistic")
     @HttpCode(200)
     async returnStatisticForSpecificUser(
@@ -68,6 +68,7 @@ export class PairQuizGameUsersController {
 
         return resultOfGetting
     }
+
     @Get("/top")
     @HttpCode(200)
     async returnTopUsers(
