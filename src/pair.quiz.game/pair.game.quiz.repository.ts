@@ -34,75 +34,81 @@ export class PairGameQuizRepository implements OnModuleInit{
         // `
         const query = `
            select 
-           
-           ((select sum("firstPlayerScore")
+        ((select cast(sum("firstPlayerScore") as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        where "firstPlayerId" = $1) 
         + 
         (select sum("secondPlayerScore")
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'))
+        where "secondPlayerId" = $1))
         as sumScore,
       
-        (round((cast(((select sum("firstPlayerScore")
+        (round((
+        (select cast(sum("firstPlayerScore") as numeric)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        where "firstPlayerId" = $1) 
         + 
-        (select sum("secondPlayerScore")
+        (select cast(sum("secondPlayerScore") as numeric)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89')) as numeric)
+        where "secondPlayerId" = $1))
          /
          ((select count(*)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        where "firstPlayerId" = $1) 
         + 
         (select count(*)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'))), 2))
+        where "secondPlayerId" = $1)), 2))
         as avgScores,
         
-        ((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89') 
+        where "firstPlayerId" = $1) 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89')) 
+        where "secondPlayerId" = $1))
         as gamesCount,
         
-        ((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        where "firstPlayerId" = $1
         and "firstPlayerScore" > "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
-        and "firstPlayerScore" < "secondPlayerScore")) 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" < "secondPlayerScore"))
         as winsCount,
         
-        ((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        where "firstPlayerId" = $1
         and "firstPlayerScore" < "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
-        and "firstPlayerScore" > "secondPlayerScore")) 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" > "secondPlayerScore"))
         as lossesCount,
-        ((select count(*)
+        
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "firstPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
+        where "firstPlayerId" = $1
         and "firstPlayerScore" = "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = 'd5af8ddf-145d-4b58-9124-23fc14b08f89'
-        and "firstPlayerScore" = "secondPlayerScore")) 
+        where "secondPlayerId" = $1
+        and "firstPlayerScore" = "secondPlayerScore"))
         as drawsCount
+        
+       
         `
-        console.log(await this.dataSource.query(query));
+
+        const result = await this.dataSource.query(query, ['d5af8ddf-145d-4b58-9124-23fc14b08f89'])
+        console.log(result, " result of sql query for getting statistics");
+
     }
 
     async deleteAllData() {
@@ -441,22 +447,23 @@ export class PairGameQuizRepository implements OnModuleInit{
     async findStatisticForSpecificUser(user: User) {
         const query = `
            select 
-           (cast((select sum("firstPlayerScore")
+        ((select cast(sum("firstPlayerScore") as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
         (select sum("secondPlayerScore")
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1)) as numeric)
+        where "secondPlayerId" = $1))
         as sumScore,
       
-        (cast(round((cast(((select sum("firstPlayerScore")
+        (round((
+        (select cast(sum("firstPlayerScore") as numeric)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
-        (select sum("secondPlayerScore")
+        (select cast(sum("secondPlayerScore") as numeric)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1)) as numeric)
+        where "secondPlayerId" = $1))
          /
          ((select count(*)
         from "pair_game_quiz" 
@@ -464,50 +471,52 @@ export class PairGameQuizRepository implements OnModuleInit{
         + 
         (select count(*)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1))), 2)) as integer)
+        where "secondPlayerId" = $1)), 2))
         as avgScores,
         
-        (cast((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1) 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
-        where "secondPlayerId" = $1)) as integer)
+        where "secondPlayerId" = $1))
         as gamesCount,
         
-        (cast((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1
         and "firstPlayerScore" > "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
-        and "firstPlayerScore" < "secondPlayerScore")) as integer)
+        and "firstPlayerScore" < "secondPlayerScore"))
         as winsCount,
         
-        (cast((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1
         and "firstPlayerScore" < "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
-        and "firstPlayerScore" > "secondPlayerScore")) as integer)
+        and "firstPlayerScore" > "secondPlayerScore"))
         as lossesCount,
         
-        (cast((select count(*)
+        ((select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "firstPlayerId" = $1
         and "firstPlayerScore" = "secondPlayerScore") 
         + 
-        (select count(*)
+        (select cast(count(*) as integer)
         from "pair_game_quiz" 
         where "secondPlayerId" = $1
-        and "firstPlayerScore" = "secondPlayerScore")) as integer)
+        and "firstPlayerScore" = "secondPlayerScore"))
         as drawsCount
+        
+       
         `
 
         const result = await this.dataSource.query(query, [user.id])

@@ -174,6 +174,8 @@ export class PairGameQuiz {
         let additionalMarkForSecondUser : number
         console.log(gameWithUpdatedScore.answersOfFirstUser, " gameWithUpdatedScore.answersOfFirstUser");
         console.log(gameWithUpdatedScore.answersOfFirstUser[4], " gameWithUpdatedScore.answersOfFirstUser[4]");
+        console.log(gameWithUpdatedScore.answersOfSecondUser, " gameWithUpdatedScore.answersOfSecondUser");
+        console.log(gameWithUpdatedScore.answersOfSecondUser[4], " gameWithUpdatedScore.answersOfSecondUser[4]");
         if(gameWithUpdatedScore.answersOfFirstUser[4].addedAt < gameWithUpdatedScore.answersOfSecondUser[4].addedAt &&
             gameWithUpdatedScore.firstPlayerScore > 0){
             additionalMarkForFirstUser = 1
