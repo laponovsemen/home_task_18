@@ -46,27 +46,11 @@ import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
 
 @UseGuards(AuthGuard)
 @Controller('/pair-game-quiz/pairs')
-export class PairQuizGameController {
+export class PairQuizGamePairsController {
     constructor(
         private readonly common: Common,
         private readonly commandBus: CommandBus,
     ) {}
-
-    @Get("/my-statistic")
-    @HttpCode(200)
-    async returnStatisticForSpecificUser(
-                           @Res({ passthrough: true }) res: Response,
-                           @User() tokenPayload: TokenPayload
-    ) : Promise<StaticsViewModel> {
-        console.log("start returnStatisticForSpecificUser procedure");
-        const resultOfGetting : StaticsViewModel
-          = await this.commandBus.execute<returnStatisticForSpecificUserCommand, StaticsViewModel>(
-          new returnStatisticForSpecificUserCommand(tokenPayload)
-        )
-
-        return resultOfGetting
-    }
-
 
 
     @Get("/my")

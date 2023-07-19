@@ -94,7 +94,7 @@ import {
   updateQuestionOfQuizCommand,
   updateQuestionOfQuizUseCase
 } from "./quiz/use-cases/update-question-of-quiz-by-id-use-case";
-import {PairQuizGameController} from "./pair.quiz.game/pair.quiz.game.controller";
+import {PairQuizGamePairsController} from "./pair.quiz.game/pair.quiz.game.pairs.controller";
 import {APIQuizQuestionAnswer} from "./entities/api-quiz-question-answer-entity";
 import {PairGameQuiz} from "./entities/api-pair-game-quiz-entity";
 import {
@@ -118,6 +118,7 @@ import {
 import {
   returnStatisticForSpecificUserCommand, returnStatisticForSpecificUserUseCase
 } from "./pair.quiz.game/use-cases/return-statistic-for-specific-user-use-case";
+import { PairQuizGameUsersController } from "./pair.quiz.game/pair.quiz.game.users.controller";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -182,7 +183,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
   controllers: [AppController, BloggerBlogsController, TestingController,BlogsController,SABlogsController,SAUsersController,
     PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController,
-    SAQuizController, PairQuizGameController],
+    SAQuizController, PairQuizGamePairsController, PairQuizGameUsersController],
 
   providers: [...modules,
     ...services,
