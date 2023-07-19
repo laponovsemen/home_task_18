@@ -178,7 +178,7 @@ export class PairGameQuiz {
             gameWithUpdatedScore.firstPlayerScore > 0){
             additionalMarkForFirstUser = 1
             additionalMarkForSecondUser = 0
-        } else if(gameWithUpdatedScore.answersOfFirstUser[4].addedAt > gameWithUpdatedScore.answersOfSecondUser[4].addedAt &&
+        } else if(gameWithUpdatedScore.answersOfSecondUser[4].addedAt < gameWithUpdatedScore.answersOfFirstUser[4].addedAt &&
           gameWithUpdatedScore.secondPlayerScore > 0){
             additionalMarkForFirstUser = 0
             additionalMarkForSecondUser = 1
