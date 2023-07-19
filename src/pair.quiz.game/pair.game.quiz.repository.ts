@@ -599,7 +599,7 @@ export class PairGameQuizRepository implements OnModuleInit{
             pagesCount,
             page,
             pageSize,
-            totalCount: totalCount[0].totalCount,
+            totalCount: totalCount[0].count,
             items : result.map(item => {
                 console.log(item , " item while last mapping");
                 const newItem = StaticsViewModel.getViewModelForTopOfPlayers(item)
