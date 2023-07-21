@@ -17,6 +17,7 @@ import { paginationGamesCriteriaType, paginationTopUsersCriteriaType, PaginatorV
 import { PairGameQuizQuestion } from "./view.model.classess/pair.game.quiz.question";
 import { WithPlayerCredentials, WithPlayerRawCredentials } from "../mongo/mongooseSchemas";
 import { StaticsViewModel } from "./view.model.classess/statistics.view.model";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class PairGameQuizRepository implements OnModuleInit{
@@ -606,5 +607,21 @@ export class PairGameQuizRepository implements OnModuleInit{
                 return newItem
             })
         };
+    }
+
+    async findAllActiveGames() {
+        const result =  await this.dataSource
+          .getRepository(PairGameQuiz)
+          .find({
+              relations: {
+                  answersOfFirstUser: true,
+                  answersOfSecondUser: true
+              },
+              where: {
+                  status: GameStatuses.Active
+              }
+          })
+        console.log(result, " result");
+        return result
     }
 }

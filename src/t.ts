@@ -1,60 +1,30 @@
-const a = `
-(round((
-        (select cast(sum("firstPlayerScore") as numeric)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id) 
-        + 
-        (select cast(sum("secondPlayerScore") as numeric)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id))
-         /
-         ((select cast(count(*) as numeric)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id) 
-        + 
-        (select cast(count(*) as numeric)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id)), 2))
-        as avgScores,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id) 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id))
-        as gamesCount,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id
-        and "firstPlayerScore" > "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id
-        and "firstPlayerScore" < "secondPlayerScore"))
-        as winsCount,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id
-        and "firstPlayerScore" < "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id
-        and "firstPlayerScore" > "secondPlayerScore"))
-        as lossesCount,
-        
-        ((select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "firstPlayerId" = id
-        and "firstPlayerScore" = "secondPlayerScore") 
-        + 
-        (select cast(count(*) as integer)
-        from "pair_game_quiz" 
-        where "secondPlayerId" = id
-        and "firstPlayerScore" = "secondPlayerScore"))
-        as drawsCount`
+/*console.log("if answersOfSecondUser == 5 && item.answersOfSecondUser.length !== 5");
+
+
+            return null
+        } else if (item.answersOfFirstUser.length !== 5 && item.answersOfSecondUser.length === 5){
+
+            console.log("item.answersOfSecondUser.length !== 5 && item.answersOfSecondUser.length === 5");
+            const sortedAnswersOfFirstUser = item.answersOfFirstUser
+              .sort((n1,n2) => {
+                  if (n1.addedAt > n2.addedAt) {
+                      return 1;
+                  }
+                  if (n1.addedAt < n2.addedAt) {
+                      return -1;
+                  }
+                  return 0;
+              })
+            const sortedAnswersOfSecondUser = item.answersOfSecondUser
+              .sort((n1,n2) => {
+                  if (n1.addedAt > n2.addedAt) {
+                      return 1;
+                  }
+                  if (n1.addedAt < n2.addedAt) {
+                      return -1;
+                  }
+                  return 0;
+              })
+            console.log(sortedAnswersOfFirstUser, " sortedAnswersOfFirstUser");
+            console.log(sortedAnswersOfSecondUser, " sortedAnswersOfSecondUser");
+*/

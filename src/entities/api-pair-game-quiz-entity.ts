@@ -6,6 +6,7 @@ import { APIQuizQuestionAnswer } from "./api-quiz-question-answer-entity";
 import { userNumberInGame } from "../pair.quiz.game/view.model.classess/user.number.in.game.enum";
 
 
+
 @Entity({ database: "tfaepjvr" })
 export class PairGameQuiz {
     @PrimaryColumn({type : 'uuid'})
@@ -202,6 +203,64 @@ export class PairGameQuiz {
 
         finishedGame.pairCreatedDate	= gameWithUpdatedScore.pairCreatedDate  //Date when first player initialized the pair
         finishedGame.startGameDate = gameWithUpdatedScore.startGameDate; //Game starts immediately after second player connection to this pair
+        finishedGame.finishGameDate = new Date().toISOString();; //Game finishes immediately after both players have answered all the questions
+
+        return finishedGame
+    }
+
+    static checkForCompletedAnswersOfAnyUserInTheGame(item: PairGameQuiz) : number | null{
+        if(item.answersOfFirstUser.length !== 5 && item.answersOfSecondUser.length !== 5){
+            return null
+        } else if (item.answersOfFirstUser.length === 5 && item.answersOfSecondUser.length !== 5){
+            return 1
+        } else {
+            return 2
+        }
+    }
+
+    static finishEscapedBySecondUserGame(item: PairGameQuiz) {
+        const finishedGame = new PairGameQuiz()
+        let additionalMarkForFirstUser : number = 1
+        let additionalMarkForSecondUser : number = 0
+
+
+        finishedGame.id = item.id
+        finishedGame.firstPlayer = item.firstPlayer
+        finishedGame.answersOfFirstUser  = item.answersOfFirstUser
+        finishedGame.firstPlayerScore = item.firstPlayerScore + additionalMarkForFirstUser
+        finishedGame.secondPlayer = item.secondPlayer
+        finishedGame.answersOfSecondUser = item.answersOfSecondUser
+        finishedGame.secondPlayerScore = item.secondPlayerScore+ additionalMarkForSecondUser
+
+        finishedGame.questions = item.questions
+        finishedGame.status =  GameStatuses.Finished;
+
+        finishedGame.pairCreatedDate	= item.pairCreatedDate  //Date when first player initialized the pair
+        finishedGame.startGameDate = item.startGameDate; //Game starts immediately after second player connection to this pair
+        finishedGame.finishGameDate = new Date().toISOString();; //Game finishes immediately after both players have answered all the questions
+
+        return finishedGame
+    }
+
+    static finishEscapedByFirstUserGame(item: PairGameQuiz) {
+        const finishedGame = new PairGameQuiz()
+        let additionalMarkForFirstUser : number = 0
+        let additionalMarkForSecondUser : number = 1
+
+
+        finishedGame.id = item.id
+        finishedGame.firstPlayer = item.firstPlayer
+        finishedGame.answersOfFirstUser  = item.answersOfFirstUser
+        finishedGame.firstPlayerScore = item.firstPlayerScore + additionalMarkForFirstUser
+        finishedGame.secondPlayer = item.secondPlayer
+        finishedGame.answersOfSecondUser = item.answersOfSecondUser
+        finishedGame.secondPlayerScore = item.secondPlayerScore+ additionalMarkForSecondUser
+
+        finishedGame.questions = item.questions
+        finishedGame.status =  GameStatuses.Finished;
+
+        finishedGame.pairCreatedDate	= item.pairCreatedDate  //Date when first player initialized the pair
+        finishedGame.startGameDate = item.startGameDate; //Game starts immediately after second player connection to this pair
         finishedGame.finishGameDate = new Date().toISOString();; //Game finishes immediately after both players have answered all the questions
 
         return finishedGame

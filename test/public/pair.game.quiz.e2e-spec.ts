@@ -9,6 +9,9 @@ import cookieParser from "cookie-parser";
 import {getAppAndCleanDB} from "../test-utils";
 import {QuizDTO} from "../../src/input.classes";
 import { PairGameQuizViewModel } from "../../src/pair.quiz.game/view.model.classess/pair.game.quiz.view.model";
+import { delay } from "rxjs";
+import setTimeout = jest.setTimeout;
+import { Common } from "../../src/common";
 
 const auth = "Authorization"
 const basic = 'Basic YWRtaW46cXdlcnR5'
@@ -459,15 +462,134 @@ describe("start creating quiz question", () => {
         .auth(loginOfFirstUser.body.accessToken, { type: "bearer" })
         .expect(200);
 
-      expect(firstUserGamesAfterTwoGames.body).toEqual({})
+      //expect(firstUserGamesAfterTwoGames.body).toEqual({})
 
     },60000)
-    it("get top",async () => {
-      const top = await request(server)
-        .get("/pair-game-quiz/users/top")
+    it("clone of test home task №27",async () => {
+      console.warn("Homework 27 > Top players DELETE -> \"/testing/all-data\":" +
+        " should remove all data; status 204;");
+      await request(server).delete("/testing/all-data").expect(204)
+
+      console.warn(" Homework 27 > Top players POST -> \"/sa/quiz/questions\"," +
+        " PUT -> \"/sa/quiz/questions/:questionId/publish\":" +
+        " should create and publish several questions; status 201;" +
+        " content: created question;");
+
+      const createQuestionDTO : QuizDTO = {
+        body : "question",
+        correctAnswers : ["correct"]
+      }
+
+      for(let i = 0; i < 5 ; i++){
+        const createdQuestion = await request(server)
+          .post("/sa/quiz/questions")
+          .set(auth, basic)
+          .send({
+            body : createQuestionDTO.body + `${i}`,
+            correctAnswers: [createQuestionDTO.correctAnswers[0]]
+          })
+          .expect(201)
+
+        await request(server)
+          .put(`/sa/quiz/questions/${createdQuestion.body.id}/publish`)
+          .set(auth, basic)
+          .send({
+            "published": true
+          })
+          .expect(204)
+      }
+
+      console.warn("Homework 27 > Top players POST -> \"/sa/users\"," +
+        " \"/auth/login\": should create and login 5 users; status 201; content: created users;");
+
+      let usersArray = []
+      for(let i = 0; i < 5 ; i++){
+        const createdUser = await request(server)
+          .post(`/sa/users`)
+          .set(auth, basic)
+          .send({
+            login : `login${i}`,
+            email : "simsbury65@gmail.com",
+            password : `password${i}`
+          })
+          .expect(201)
+
+        console.log(createdUser, " createdUser" );
+
+        const loginOfCreatedUser = await request(server)
+          .post(`/auth/login`)
+          .send({
+            loginOrEmail : `login${i}`,
+            password : `password${i}`
+          })
+          .expect(200)
+
+        console.log(loginOfCreatedUser, " loginOfCreatedUser" );
+
+        usersArray.push({
+          id : createdUser.body.id,
+          login : createdUser.body.login,
+          password : createdUser.body.password,
+          accessToken : loginOfCreatedUser.body.accessToken,
+        })
+      }
+
+      console.log(usersArray, " usersArray");
+
+      console.warn("Homework 27 > Top players\n" +
+        "POST -> \"/pair-game-quiz/pairs/my-current/answers\"," +
+        " GET -> \"/pair-game-quiz/pairs\", GET -> \"/pair-game-quiz/pairs/my-current\": " +
+        "create game by user1, connect to the game by user2, then: add correct answer by firstPlayer;" +
+        " add incorrect answer by firstPlayer; add correct answer by secondPlayer; add incorrect answer by secondPlayer; " +
+        "add incorrect answer by secondPlayer; add incorrect answer by secondPlayer; add incorrect answer by secondPlayer;" +
+        " add correct answer by firstPlayer; add correct answer by firstPlayer; add incorrect answer by firstPlayer;" +
+        " firstPlayer should win, scores: 3 - 2; ; status 200;");
+
+      const createPairByUser1 = await request(server)
+        .post(`/pair-game-quiz/pairs/connection`)
+        .auth(usersArray[0].accessToken, {type : 'bearer'})
         .expect(200)
 
-      expect(top.body).toEqual({})
+      const connectToTheCreatedPairByUser2  = await request(server)
+        .post(`/pair-game-quiz/pairs/connection`)
+        .auth(usersArray[1].accessToken, {type : 'bearer'})
+        .expect(200)
+
+
+      const createdGameId  = connectToTheCreatedPairByUser2.body.id
+      
+      for (let i = 0; i < 5; i++){
+        console.log(i + 1, " attempt");
+        const answerOfFirstUser = await request(server)
+          .post(`/pair-game-quiz/pairs/my-current/answers`)
+          .auth(usersArray[0].accessToken, { type: "bearer" })
+          .send({"answer":"correct"})
+          .expect(200);
+
+        expect(answerOfFirstUser.body).toEqual({
+          questionId : expect.any(String),
+          answerStatus : "Correct",
+          addedAt : expect.any(String)
+        })
+        const common = new Common()
+        await common.delay(3000)
+
+
+        await request(server)
+          .get(`/pair-game-quiz/pairs/my-current`)
+          .auth(usersArray[1].accessToken, {type : 'bearer'})
+          .expect(200)
+
+        await common.delay(7000)
+
+        /*await request(server)
+          .get(`/pair-game-quiz/pairs/my-current`)
+          .auth(usersArray[1].accessToken, {type : 'bearer'})
+          .expect(403)*/
+      }
+
+
+
 
     })
 

@@ -120,6 +120,11 @@ import {
 } from "./pair.quiz.game/use-cases/return-statistic-for-specific-user-use-case";
 import { PairQuizGameUsersController } from "./pair.quiz.game/pair.quiz.game.users.controller";
 import { returnTopUsersCommand, returnTopUsersUseCase } from "./pair.quiz.game/use-cases/return-top-users-use-case";
+import { ScheduleModule } from "@nestjs/schedule";
+import {
+  autoFinishingEscapedGamesCommand,
+  autoFinishingEscapedGamesUseCase
+} from "./pair.quiz.game/use-cases/auto-checking-for-unfinished-games-use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -135,7 +140,7 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   publishOrUnpublishQuestionOfQuizByIdUseCase,
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
-  returnTopUsersUseCase]
+  returnTopUsersUseCase, autoFinishingEscapedGamesUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -143,7 +148,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand,
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
-  returnStatisticForSpecificUserCommand, returnTopUsersCommand]
+  returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
@@ -158,7 +163,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
     ttl: 10,
     limit: 500,
     }),
-
+    ScheduleModule.forRoot(),
 
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -169,13 +174,13 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',*/
       type: 'postgres',
-      url : "postgres://laponovsemen:jb5zyBeHskM2@ep-floral-block-080205-pooler.eu-central-1.aws.neon.tech/neondb",
-      ssl : true,
-      /*host: "localhost",
+      /*url : "postgres://laponovsemen:jb5zyBeHskM2@ep-floral-block-080205-pooler.eu-central-1.aws.neon.tech/neondb",
+      ssl : true,*/
+      host: "localhost",
       port: 5432,
       username: 'postgres',
       password: '2233',
-      database: 'postgres',*/
+      database: 'postgres',
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
         APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz],
       autoLoadEntities: true,

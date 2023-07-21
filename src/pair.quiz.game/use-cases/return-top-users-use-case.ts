@@ -34,6 +34,7 @@ export class returnTopUsersUseCase
 
   async execute(command: returnTopUsersCommand) : Promise<PaginatorViewModelType<StaticsViewModel>> {
     console.log("start returnGameByIdCommand");
+
     const paginationCriteria: paginationTopUsersCriteriaType = this.common.getGamesTopUsersPaginationCriteria(command.queryParams);
     console.log(paginationCriteria , " paginationCriteria in returnGameByIdCommand");
     const foundTop : PaginatorViewModelType<StaticsViewModel> = await this.pairGameQuizRepository
