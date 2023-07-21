@@ -571,22 +571,28 @@ describe("start creating quiz question", () => {
           answerStatus : "Correct",
           addedAt : expect.any(String)
         })
-        const common = new Common()
-        await common.delay(3000)
 
-
-        await request(server)
-          .get(`/pair-game-quiz/pairs/my-current`)
-          .auth(usersArray[1].accessToken, {type : 'bearer'})
-          .expect(200)
-
-        await common.delay(7000)
-
-        /*await request(server)
-          .get(`/pair-game-quiz/pairs/my-current`)
-          .auth(usersArray[1].accessToken, {type : 'bearer'})
-          .expect(403)*/
       }
+      await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(usersArray[1].accessToken, {type : 'bearer'})
+        .expect(200)
+
+      const common = new Common()
+      await common.delay(3000)
+
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(usersArray[1].accessToken, {type : 'bearer'})
+        .expect(200)
+
+      await common.delay(7000)
+
+      await request(server)
+        .get(`/pair-game-quiz/pairs/my-current`)
+        .auth(usersArray[1].accessToken, {type : 'bearer'})
+        .expect(404)
 
 
 

@@ -31,7 +31,7 @@ export class autoFinishingEscapedGamesUseCase
 
   @Cron(CronExpression.EVERY_SECOND)
   async execute() {
-
+  const timeToGiveAnAnswer = 9
     console.log("start autoFinishingEscapedGamesCommand");
 
     const queryRunner: QueryRunner =  await this.dataSource.createQueryRunner()
@@ -48,6 +48,8 @@ export class autoFinishingEscapedGamesUseCase
       const listOfActiveGames: PairGameQuiz[] = await pairGameQuizRepoFromQueryRunner
         .find({
           relations: {
+            firstPlayer : true,
+            secondPlayer : true,
             answersOfFirstUser: true,
             answersOfSecondUser: true
           },
@@ -85,9 +87,15 @@ export class autoFinishingEscapedGamesUseCase
           console.log(sortedAnswersOfSecondUser, " sortedAnswersOfSecondUser");
 
 
-          if (sortedAnswersOfSecondUser[sortedAnswersOfSecondUser.length - 1].addedAt
-            < addSeconds(new Date(), -10).toISOString()){
+          if (
+            (sortedAnswersOfFirstUser[sortedAnswersOfFirstUser.length - 1].addedAt
+            < addSeconds(new Date(), -timeToGiveAnAnswer).toISOString() && sortedAnswersOfSecondUser.length === 0)
+            ||
+            sortedAnswersOfSecondUser[sortedAnswersOfSecondUser.length - 1].addedAt
+            < addSeconds(new Date(), -timeToGiveAnAnswer).toISOString()){
             const finishedAheadOfScheduleGame = PairGameQuiz.finishEscapedBySecondUserGame(item);
+            console.log(" ban nahui ", finishedAheadOfScheduleGame);
+            console.log("my time");
             await pairGameQuizRepoFromQueryRunner.save(finishedAheadOfScheduleGame)
           }
         }
@@ -118,8 +126,13 @@ export class autoFinishingEscapedGamesUseCase
           console.log(sortedAnswersOfSecondUser, " sortedAnswersOfSecondUser");
 
 
-          if (sortedAnswersOfFirstUser[sortedAnswersOfFirstUser.length - 1].addedAt
-            < addSeconds(new Date(), -10).toISOString()){
+          if (
+            (sortedAnswersOfSecondUser[sortedAnswersOfSecondUser.length - 1].addedAt
+              < addSeconds(new Date(), -timeToGiveAnAnswer).toISOString()
+              && sortedAnswersOfFirstUser.length === 0)
+            ||
+            sortedAnswersOfFirstUser[sortedAnswersOfFirstUser.length - 1].addedAt
+            < addSeconds(new Date(), -timeToGiveAnAnswer).toISOString()){
             const finishedAheadOfScheduleGame = PairGameQuiz.finishEscapedByFirstUserGame(item);
             await pairGameQuizRepoFromQueryRunner.save(finishedAheadOfScheduleGame)
           }
