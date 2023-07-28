@@ -29,7 +29,7 @@ export class autoFinishingEscapedGamesUseCase
 
   }
 
-  @Cron(CronExpression.EVERY_SECOND)
+  //@Cron(CronExpression.EVERY_SECOND)
   async execute() {
   const timeToGiveAnAnswer = 9
     console.log("start autoFinishingEscapedGamesCommand");

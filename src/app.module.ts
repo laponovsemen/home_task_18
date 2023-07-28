@@ -125,6 +125,9 @@ import {
   autoFinishingEscapedGamesCommand,
   autoFinishingEscapedGamesUseCase
 } from "./pair.quiz.game/use-cases/auto-checking-for-unfinished-games-use-case";
+import { AvatarController } from "./avatar/avatar.controller";
+import { FileSystemAdapter } from "./utils/fs-utils";
+import { SaveAvatarToFSCommand, SaveAvatarToFSUseCase } from "./utils/use-cases/save-avatar-to-file-system.use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -140,7 +143,7 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   publishOrUnpublishQuestionOfQuizByIdUseCase,
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
-  returnTopUsersUseCase, autoFinishingEscapedGamesUseCase]
+  returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -148,9 +151,9 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand,
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
-  returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand]
+  returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand]
 
-const adapters = [EmailAdapter, Common, BlogIdExistsRule]
+const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter]
 
 
 @Module({
@@ -190,7 +193,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule]
 
   controllers: [AppController, BloggerBlogsController, TestingController,BlogsController,SABlogsController,SAUsersController,
     PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController,
-    SAQuizController, PairQuizGamePairsController, PairQuizGameUsersController],
+    SAQuizController, PairQuizGamePairsController, PairQuizGameUsersController, AvatarController],
 
   providers: [...modules,
     ...services,
