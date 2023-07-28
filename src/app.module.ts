@@ -128,6 +128,7 @@ import {
 import { AvatarController } from "./avatar/avatar.controller";
 import { FileSystemAdapter } from "./utils/fs-utils";
 import { SaveAvatarToFSCommand, SaveAvatarToFSUseCase } from "./utils/use-cases/save-avatar-to-file-system.use-case";
+import { Storage } from "@google-cloud/storage";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -153,7 +154,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
   returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand]
 
-const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter]
+const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
 
 
 @Module({

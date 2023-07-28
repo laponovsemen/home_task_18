@@ -15,15 +15,7 @@ export class BlogBan {
 
 
 
-    /*static create(DTO : BanBlogDTO, blog : Blog) {
-        const newBan = new BlogBan()
-        newBan.id = randomUUID()
-        newBan.isBanned = DTO.isBanned
-        newBan.banDate = new Date().toISOString()
-        newBan.blog = blog
-        return newBan
 
-    }*/
     static create() {
         const newBan = new BlogBan()
         newBan.id = randomUUID()
