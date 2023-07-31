@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import path from "node:path";
 import { FileSystemAdapter } from "../fs-utils";
-import { GoogleStorageService } from "../firebase-adapter/google.storage.service";
+import { GoogleStorageService } from "../google-storage-adapter/google.storage.service";
 
 
 export class SaveAvatarToFSCommand{

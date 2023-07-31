@@ -26,8 +26,8 @@ export class AvatarController {
   @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatarPage(@UploadedFile() avatar: Express.Multer.File & {buffer: any}) {
 
-    // const userId = '10'
-    // await this.commandBus.execute(new SaveAvatarToFSCommand(userId, avatar.originalname, avatar.mimetype, avatar.buffer))
+     const userId = '10'
+     await this.commandBus.execute(new SaveAvatarToFSCommand(userId, avatar.originalname, avatar.mimetype, avatar.buffer))
 
     return 'avatar saved'
   }

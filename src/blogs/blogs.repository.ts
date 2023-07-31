@@ -401,21 +401,19 @@ export class BlogsRepository {
 
 
     async getBlogByIdWithBloggerInfo(blogId) {
-        //const blogId = this.common.tryConvertToObjectId(id)
         if (!blogId) {
             return null
         }
-        /*const foundBlogQuery = await this.dataSource.query(`
-        SELECT * FROM public."BlogsTable"
-        WHERE "id" = $1
-        `, [parseInt(blogId,10 )])*/
+
         let foundBlogQuery
 
         try {
             foundBlogQuery = await this.blogsTypeORMRepository.findOne({
                     where: {id: blogId},
                     relations: {
-                        blogOwner: true
+                        blogOwner: true,
+                        blogBan : true,
+                        posts : true
                     },
                     select: {
                         blogOwner: {
@@ -430,20 +428,12 @@ export class BlogsRepository {
             return null
         }
 
-        console.log(foundBlogQuery, " ffoundBlogQuery  in getBlogByIdWithBloggerInfo")
+        console.log(foundBlogQuery, " foundBlogQuery  in getBlogByIdWithBloggerInfo")
         if (!foundBlogQuery) {
             return null
         }
-        const foundBlog = foundBlogQuery
-        return {
-            id: blogId,
-            name: foundBlog.name,
-            description: foundBlog.description,
-            websiteUrl: foundBlog.websiteUrl,
-            isMembership: foundBlog.isMembership,
-            createdAt: foundBlog.createdAt,
-            blogOwner: foundBlog.blogOwner
-        }
+        return foundBlogQuery
+
     }
 
 

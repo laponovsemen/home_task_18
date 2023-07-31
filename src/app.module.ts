@@ -130,7 +130,7 @@ import { FileSystemAdapter } from "./utils/fs-utils";
 import { SaveAvatarToFSCommand, SaveAvatarToFSUseCase } from "./utils/use-cases/save-avatar-to-file-system.use-case";
 import { Storage } from "@google-cloud/storage";
 import { MulterModule } from "@nestjs/platform-express";
-import { GoogleStorageService } from "./utils/firebase-adapter/google.storage.service";
+import { GoogleStorageService } from "./utils/google-storage-adapter/google.storage.service";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
