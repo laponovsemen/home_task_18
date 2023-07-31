@@ -37,9 +37,12 @@ export class Blog {
     @OneToOne(() => BlogBan, {onDelete: "SET NULL"})
     @JoinColumn()
     blogBan : BlogBan
-    @Column()
+    @Column('varchar', {
+        array : true,
+        nullable : true
+    })
     main: string[];
-    @Column()
+    @Column({nullable : true})
     wallpaper: string | null;
 
 
