@@ -14,12 +14,10 @@ export class BlogImagesViewModel {
         return viewModel
     }
 
-    static getViewModel(blogsWallpaper: PhotoEntity, blogsMainImages: PhotoEntity[]) : BlogImagesViewModel {
+    static getViewModel(blogsWallpaper: PhotoEntity, blogsMainImages: PhotoEntity[]) {
         return {
-            images : {
-                wallpaper : blogsWallpaper,
-                main : blogsMainImages
-            }
+            wallpaper : PhotoSizeViewModel.getViewModel(blogsWallpaper),
+            main : blogsMainImages.map(photo => PhotoSizeViewModel.getViewModel(photo))
         };
     }
 }

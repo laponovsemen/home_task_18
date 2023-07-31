@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { PhotoEntity } from "../../entities/photo-entity";
 
 export class PhotoSizeViewModel {
     url:	string
@@ -16,4 +17,14 @@ export class PhotoSizeViewModel {
       image.fileSize = metadata.size
       return image
   }
+
+    static getViewModel(photo: PhotoEntity) {
+
+      const image = new PhotoSizeViewModel()
+      image.url = photo.url
+      image.width = photo.width
+      image.height = photo.height
+      image.fileSize = photo.fileSize
+      return image
+    }
 }
