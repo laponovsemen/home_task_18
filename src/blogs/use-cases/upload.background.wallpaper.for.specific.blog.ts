@@ -10,6 +10,11 @@ import { PostsRepository } from "../../posts/posts.repository";
 import {BlogsQueryRepository} from "../blogs.query.repository";
 import { Blog } from "../../entities/blog-entity";
 import { GoogleStorageService } from "../../utils/google-storage-adapter/google.storage.service";
+import { PhotoSizeViewModel } from "../../posts/posts.view.models/photo.size.view.model";
+import sharp from "sharp";
+import { BlogImagesViewModel } from "../blogs.view.models/blog.images.view.model";
+import { PhotoEntity } from "../../entities/photo-entity";
+import { PhotosRepository } from "../photos.repository";
 
 export class UploadBackgroundWallPapperForSpecificBlogCommand{
   constructor(
@@ -25,16 +30,23 @@ export class UploadBackgroundWallPapperForSpecificBlogUseCase implements IComman
   constructor(
     protected securityDevicesRepository: SecurityDevicesRepository,
     protected googleStorageService: GoogleStorageService,
-    protected blogsRepository: BlogsRepository,
+    protected photosRepository: PhotosRepository,
     protected blogsQueryRepository: BlogsQueryRepository,
     protected common: Common,
   ) {
 
   }
-  async execute(command : UploadBackgroundWallPapperForSpecificBlogCommand) {
+  async execute(command : UploadBackgroundWallPapperForSpecificBlogCommand) : Promise<BlogImagesViewModel> {
     const uploadedFile = await this.googleStorageService.uploadFile(command.fileType, command.fileBuffer, command.fileName)
     console.log(uploadedFile, " uploadedFile");
-    return uploadedFile
+    const url = await this.googleStorageService.getPublicUrl(uploadedFile)
+    console.log(url , " url");
+
+    const blogsWallpaper = await PhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    const blogsMainImages = await this.photosRepository.getMainPhotosFromDB(command.blog.main)
+    return BlogImagesViewModel.getViewModel(blogsWallpaper, blogsMainImages)
+
+
 
   }
 }

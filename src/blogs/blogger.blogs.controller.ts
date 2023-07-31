@@ -41,7 +41,7 @@ import {
 } from "./use-cases/upload.background.wallpaper.for.specific.blog";
 
 
-@UseGuards(AuthGuard)
+//@UseGuards(AuthGuard)
 
 @Controller("/blogger/blogs")
 export class BloggerBlogsController {
@@ -60,7 +60,7 @@ export class BloggerBlogsController {
   @UseInterceptors(FileInterceptor("file"))
   async uploadBackGroundWallPapperForBlog(@Res({ passthrough: true }) res: Response,
                                           @Req() req: Request,
-                                          @User() user,
+                                          //@User() user,
                                           @UploadedFile("file") file: Express.Multer.File,
                                           @Param("blogId") blogId): Promise<BlogImagesViewModel> {
     const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
@@ -68,9 +68,9 @@ export class BloggerBlogsController {
     if (!foundBlog) {
       throw new ForbiddenException("Blog not found");
     }
-    if (foundBlog.blogOwner.id.toString() !== user.userId) {
+    /*if (foundBlog.blogOwner.id.toString() !== user.userId) {
       throw new ForbiddenException("Blog not found");
-    }
+    }*/
 
     const wallpaperUploadResult: BlogImagesViewModel = await this.commandBus.execute(new UploadBackgroundWallPapperForSpecificBlogCommand(
       foundBlog,

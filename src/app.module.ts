@@ -134,13 +134,16 @@ import { GoogleStorageService } from "./utils/google-storage-adapter/google.stor
 import {
   UploadBackgroundWallPapperForSpecificBlogCommand, UploadBackgroundWallPapperForSpecificBlogUseCase
 } from "./blogs/use-cases/upload.background.wallpaper.for.specific.blog";
+import { PhotosRepository } from "./blogs/photos.repository";
+import { PhotoEntity } from "./entities/photo-entity";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
   LikeService, CommentsService, JwtService, SecurityDevicesService, TypeORMTransactionService, GoogleStorageService]
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
-  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository]
+  BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository,
+  PhotosRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,
   GetAllCommentForUserUseCase,
@@ -168,7 +171,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
-      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz]),
+      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, PhotoEntity]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
@@ -193,7 +196,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: '2233',
       database: 'postgres',*/
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
-        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz],
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, PhotoEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),
