@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
+import path from "node:path";
 
 @Injectable()
 export class GoogleStorageService {
@@ -7,8 +8,9 @@ export class GoogleStorageService {
   private storage;
 
   constructor() {
+    console.log(__dirname , " dirname");
     this.storage = new Storage({
-      keyFilename: './serviceAccountKey.json', // Путь к вашему служебному ключу
+      keyFilename: path.join(__dirname, '..', '..', '..', 'serviceAccountKey.json'), // Путь к вашему служебному ключу
       projectId: 'practical-mason-393920', // Замените на идентификатор вашего проекта Google Cloud
     });
   }
