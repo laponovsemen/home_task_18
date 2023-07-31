@@ -131,6 +131,9 @@ import { SaveAvatarToFSCommand, SaveAvatarToFSUseCase } from "./utils/use-cases/
 import { Storage } from "@google-cloud/storage";
 import { MulterModule } from "@nestjs/platform-express";
 import { GoogleStorageService } from "./utils/google-storage-adapter/google.storage.service";
+import {
+  UploadBackgroundWallPapperForSpecificBlogCommand, UploadBackgroundWallPapperForSpecificBlogUseCase
+} from "./blogs/use-cases/upload.background.wallpaper.for.specific.blog";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -146,7 +149,8 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   publishOrUnpublishQuestionOfQuizByIdUseCase,
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
-  returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase]
+  returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase,
+  UploadBackgroundWallPapperForSpecificBlogUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -154,7 +158,8 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   CreateNewQuestionOfQuizCommand, deleteQuestionOfQuizCommand, getAllQuestionsOfQuizCommand,
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
-  returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand]
+  returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand,
+  UploadBackgroundWallPapperForSpecificBlogCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
 
