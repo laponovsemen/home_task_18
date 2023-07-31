@@ -125,16 +125,19 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
       .send(createBlogDto)
 
 
-
-    expect(createdBlogRes.status).toBe(201)
+    expect(createdBlogRes.status).toBe(201);
     expect(createdBlogRes.body).toEqual({
-        "createdAt": expect.any(String),
-         "description": createBlogDto.description,
-         "id": expect.any(String),
-         "isMembership": false,
-         "name": createBlogDto.name,
-         "websiteUrl": createBlogDto.websiteUrl,
-    })
+      "createdAt": expect.any(String),
+      "description": createBlogDto.description,
+      "id": expect.any(String),
+      "images": {
+        "main": [],
+        "wallpaper": null
+      },
+      "isMembership": false,
+      "name": createBlogDto.name,
+      "websiteUrl": createBlogDto.websiteUrl
+    });
 
     const blogId = createdBlogRes.body.id
 

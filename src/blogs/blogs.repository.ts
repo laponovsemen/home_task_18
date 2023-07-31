@@ -273,6 +273,10 @@ export class BlogsRepository {
             websiteUrl: blogToCreate.websiteUrl,
             isMembership: blogToCreate.isMembership,
             createdAt: blogToCreate.createdAt,
+            images : {
+              main : blogToCreate.main,
+              wallpaper : blogToCreate.wallpaper
+            },
             banInfo: {
                 banDate: null,
                 isBanned: false

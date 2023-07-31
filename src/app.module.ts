@@ -129,10 +129,12 @@ import { AvatarController } from "./avatar/avatar.controller";
 import { FileSystemAdapter } from "./utils/fs-utils";
 import { SaveAvatarToFSCommand, SaveAvatarToFSUseCase } from "./utils/use-cases/save-avatar-to-file-system.use-case";
 import { Storage } from "@google-cloud/storage";
+import { MulterModule } from "@nestjs/platform-express";
+import { GoogleStorageService } from "./utils/firebase-adapter/google.storage.service";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
-  LikeService, CommentsService, JwtService, SecurityDevicesService, TypeORMTransactionService]
+  LikeService, CommentsService, JwtService, SecurityDevicesService, TypeORMTransactionService, GoogleStorageService]
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
   BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository]

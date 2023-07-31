@@ -41,14 +41,14 @@ const appSettings = (app: INestApplication) => {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   appSettings(app)
-  const config = new DocumentBuilder()
+  /*const config = new DocumentBuilder()
     .setTitle('social-network example')
     .setDescription('The cats API description')
     .setVersion('1.0')
     .addTag('social-network')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('swagger', app, document);*/
 
   await app.listen(8080);
 }

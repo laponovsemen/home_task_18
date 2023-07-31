@@ -24,6 +24,8 @@ export class APIPost {
     createdAt: string;
     @Column()
     isHiden: boolean;
+    @Column()
+    main: string[];
 
     @OneToMany(() => APIComment, c => c.post, {onDelete : 'SET NULL'})
     comments : APIComment[]

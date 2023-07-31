@@ -1,11 +1,13 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import path from "node:path";
 import { FileSystemAdapter } from "../fs-utils";
+import { GoogleStorageService } from "../firebase-adapter/google.storage.service";
 
 
 export class SaveAvatarToFSCommand{
   constructor(public userId : string,
               public originalName : string,
+              public fileType : string,
               public buffer : Buffer,
   ) {
   }
@@ -13,19 +15,19 @@ export class SaveAvatarToFSCommand{
 @CommandHandler(SaveAvatarToFSCommand)
 export class SaveAvatarToFSUseCase implements ICommandHandler<SaveAvatarToFSCommand> {
   constructor(
-    protected fileSystemAdapter : FileSystemAdapter
+    protected storage : GoogleStorageService
   ) {
 
   }
 
   async execute(command: SaveAvatarToFSCommand) {
-    const dirPath = path.join('./', 'content','users', command.userId, 'avatars', 'change-page.html')
+    const dirPath = path.join("images")
 
-    this.fileSystemAdapter.ensureDirSync(dirPath)
     console.log('dirPath ensured');
-    await this.fileSystemAdapter.saveFileAsync(
-      path.join(dirPath, command.originalName),
-      command.buffer
+    await this.storage.uploadFile(
+      command.fileType,
+      command.buffer,
+      [dirPath, command.originalName.split(".")[0]].join("/")
     )
   }
 }

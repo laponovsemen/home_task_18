@@ -34,9 +34,13 @@ export class Blog {
     @JoinColumn()
     blogOwner: User
 
-    @OneToOne(() => BlogBan)
+    @OneToOne(() => BlogBan, {onDelete: "SET NULL"})
     @JoinColumn()
     blogBan : BlogBan
+    @Column()
+    main: string[];
+    @Column()
+    wallpaper: string | null;
 
 
     @OneToMany(() => APIPost, p => p.blog)
@@ -54,6 +58,8 @@ export class Blog {
         newBlog.createdAt = new Date().toISOString()
         newBlog.blogOwner = blogOwner
         newBlog.blogBan = newBanWithEmptyFields
+        newBlog.main = []
+        newBlog.wallpaper = null
 
         return newBlog
     }
