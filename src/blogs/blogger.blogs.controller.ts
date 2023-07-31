@@ -55,7 +55,7 @@ export class BloggerBlogsController {
   }
 
 
-  @Put("/:blogId/images/wallpaper")
+  @Post(":blogId/images/wallpaper")
   @HttpCode(201)
   @UseInterceptors(FileInterceptor("file"))
   async uploadBackGroundWallPapperForBlog(@Res({ passthrough: true }) res: Response,
