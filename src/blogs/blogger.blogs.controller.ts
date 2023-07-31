@@ -66,7 +66,7 @@ export class BloggerBlogsController {
     const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
     console.log(" Blog not found in updateBlogById");
     if (!foundBlog) {
-      throw new NotFoundException("Blog not found");
+      throw new ForbiddenException("Blog not found");
     }
     if (foundBlog.blogOwner.id.toString() !== user.userId) {
       throw new ForbiddenException("Blog not found");
