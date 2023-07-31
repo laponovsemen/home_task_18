@@ -29,4 +29,8 @@ export class PhotosRepository {
             }
         })
     }
+
+    async saveWallpaperToDB(blogsWallpaper: PhotoEntity) {
+        await this.dataSource.getRepository(PhotoEntity).save(blogsWallpaper)
+    }
 }

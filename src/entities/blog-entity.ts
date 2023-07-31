@@ -15,6 +15,7 @@ import {Post} from "@nestjs/common";
 import {APIPost} from "./api-post-entity";
 import {BlogDTO} from "../input.classes";
 import {randomUUID} from "crypto";
+import { PhotoEntity } from "./photo-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class Blog {
@@ -76,6 +77,23 @@ export class Blog {
         newBlogToUpdate.isMembership = false
         newBlogToUpdate.createdAt = presentBlog.createdAt
 
+
+        return newBlogToUpdate
+    }
+
+    static updateWallpaper(blog: Blog, blogsWallpaper: PhotoEntity) {
+        const newBlogToUpdate = new Blog()
+        newBlogToUpdate.id = blog.id
+        newBlogToUpdate.name = blog.name
+        newBlogToUpdate.description = blog.description
+        newBlogToUpdate.websiteUrl = blog.websiteUrl
+        newBlogToUpdate.isMembership = blog.isMembership
+        newBlogToUpdate.createdAt = blog.createdAt
+        newBlogToUpdate.blogBan = blog.blogBan
+        newBlogToUpdate.posts = blog.posts
+        newBlogToUpdate.blogOwner = blog.blogOwner
+        newBlogToUpdate.main = blog.main
+        newBlogToUpdate.wallpaper = blogsWallpaper.id
 
         return newBlogToUpdate
     }

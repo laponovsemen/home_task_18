@@ -361,4 +361,8 @@ export class BlogsQueryRepository {
     `)
     return result.map(item => item._id.toString())
   }
+
+  async saveBlogToDB(blogWithUpdatedWallpaper: Blog) {
+    await this.dataSource.getRepository(Blog).save(blogWithUpdatedWallpaper)
+  }
 }

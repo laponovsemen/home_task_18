@@ -43,6 +43,9 @@ export class UploadBackgroundWallPapperForSpecificBlogUseCase implements IComman
     console.log(url , " url");
 
     const blogsWallpaper = await PhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    const blogWithUpdatedWallpaper = Blog.updateWallpaper(command.blog, blogsWallpaper)
+    await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedWallpaper)
+    await this.photosRepository.saveWallpaperToDB(blogsWallpaper)
     const blogsMainImages = await this.photosRepository.getMainPhotosFromDB(command.blog.main)
     return BlogImagesViewModel.getViewModel(blogsWallpaper, blogsMainImages)
 
