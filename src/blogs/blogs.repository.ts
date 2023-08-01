@@ -11,6 +11,7 @@ import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
 import {BlogBan} from "../entities/blog-ban-entity";
 import {TokenPayload} from "../working.classess";
+import { BlogWallpaperPhotoEntity } from "../entities/photo.entities/blog.wallpaper.photo-entity";
 
 @Injectable()
 export class BlogsRepository {
@@ -263,7 +264,11 @@ export class BlogsRepository {
         const blogOwner : User = await this.usersTypeORMRepository.findOneBy({id: user.userId})
         const newBanWithEmptyFields = BlogBan.create()
         const newBan : BlogBan = await this.blogBansTypeORMRepository.save(newBanWithEmptyFields)
-        const blogToCreate : Blog = Blog.create(DTO, blogOwner, newBan)
+        const emptyWallpaper : BlogWallpaperPhotoEntity = BlogWallpaperPhotoEntity.createEmptyPhoto()
+        const newWallpaper : BlogWallpaperPhotoEntity = await this.dataSource
+          .getRepository(BlogWallpaperPhotoEntity).save(emptyWallpaper)
+
+        const blogToCreate : Blog = Blog.create(DTO, blogOwner, newBan, emptyWallpaper)
         const createdBlog: Blog = await this.blogsTypeORMRepository.save(blogToCreate)
         console.log(createdBlog, "createdBlog to return")
         return {

@@ -15,9 +15,7 @@ export class BlogWallpaperPhotoEntity {
   height:	number | null //  In pixels
   @Column({type : 'integer', nullable : true})
   fileSize : 	number | null //   In bytes
-  @OneToOne(() => Blog, blog => blog.wallpaper, {onDelete: "SET NULL"})
-  @JoinColumn()
-  blog : Blog
+
 
   static async create(param: { fileBuffer: Buffer; url: string }) {
     const image = new BlogWallpaperPhotoEntity()

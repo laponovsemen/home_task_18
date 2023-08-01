@@ -56,12 +56,15 @@ export class TestingService {
     delete from "api_post";
     delete from "blogger_bans_for_specific_blog";
     delete from "blog_ban";
+    delete from "blog_main_photo_entity"; 
+    delete from "blog_wallpaper_photo_entity";
     delete from "blog";
     delete from "api_session";
     delete from "api_quiz_question_answer";
     delete from "api_quiz_question";
     delete from "pair_game_quiz";
     delete from "user";
+   
     `)
   }
 }

@@ -50,7 +50,7 @@ export class Blog {
     @JoinColumn()
     posts : APIPost[]
 
-    static create(DTO: BlogDTO, blogOwner: User, newBanWithEmptyFields : BlogBan) {
+    static create(DTO: BlogDTO, blogOwner: User, newBanWithEmptyFields : BlogBan, wallpaper : BlogWallpaperPhotoEntity) {
         const newBlog = new Blog()
 
         newBlog.id = randomUUID()
@@ -62,7 +62,7 @@ export class Blog {
         newBlog.blogOwner = blogOwner
         newBlog.blogBan = newBanWithEmptyFields
         newBlog.main = []
-        newBlog.wallpaper = BlogWallpaperPhotoEntity.createEmptyPhoto()
+        newBlog.wallpaper = wallpaper
 
         return newBlog
     }

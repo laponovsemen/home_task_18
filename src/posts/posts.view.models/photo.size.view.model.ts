@@ -1,5 +1,6 @@
 import sharp from "sharp";
 import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
+import { BlogWallpaperPhotoEntity } from "../../entities/photo.entities/blog.wallpaper.photo-entity";
 
 export class PhotoSizeViewModel {
     url:	string
@@ -27,4 +28,22 @@ export class PhotoSizeViewModel {
       image.fileSize = photo.fileSize
       return image
     }
+
+  static getViewModelForWallpaper(blogsWallpaper: BlogWallpaperPhotoEntity) {
+    const image = new PhotoSizeViewModel()
+    image.url = blogsWallpaper.url
+    image.width = blogsWallpaper.width
+    image.height = blogsWallpaper.height
+    image.fileSize = blogsWallpaper.fileSize
+    return image
+  }
+
+  static getViewModelForMain(blogMain: BlogMainPhotoEntity) {
+    const image = new PhotoSizeViewModel()
+    image.url = blogMain.url
+    image.width = blogMain.width
+    image.height = blogMain.height
+    image.fileSize = blogMain.fileSize
+    return image
+  }
 }

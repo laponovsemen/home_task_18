@@ -1,5 +1,6 @@
 import { PhotoSizeViewModel } from "../../posts/posts.view.models/photo.size.view.model";
 import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
+import { BlogWallpaperPhotoEntity } from "../../entities/photo.entities/blog.wallpaper.photo-entity";
 
 export class BlogImagesViewModel {
 
@@ -14,10 +15,10 @@ export class BlogImagesViewModel {
         return viewModel
     }
 
-    static getViewModel(blogsWallpaper: BlogMainPhotoEntity, blogsMainImages: BlogMainPhotoEntity[]) {
+    static getViewModel(blogsWallpaper: BlogWallpaperPhotoEntity, blogsMainImages: BlogMainPhotoEntity[]) {
         return {
-            wallpaper : PhotoSizeViewModel.getViewModel(blogsWallpaper),
-            main : blogsMainImages.map(photo => PhotoSizeViewModel.getViewModel(photo))
+            wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(blogsWallpaper),
+            main : blogsMainImages.map(photo => PhotoSizeViewModel.getViewModelForMain(photo))
         };
     }
 }
