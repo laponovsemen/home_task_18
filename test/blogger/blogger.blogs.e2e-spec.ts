@@ -843,7 +843,7 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
         }
       ],
       "wallpaper": {
-        "fileSize": 123441,
+        "fileSize": 89465,
         "height": 312,
         "url": expect.any(String),
         "width": 1028

@@ -16,11 +16,11 @@ export class FileValidator {
       const imageInfo = await sharp(file.buffer).metadata();
 
       console.log("1");
-      if (width && imageInfo.width > width) {
+      if (width && imageInfo.width !== width) {
         return { valid: false, error: [`Image width should not exceed ${width}px.`] };
       }
       console.log("2");
-      if (height && imageInfo.height > height) {
+      if (height && imageInfo.height !== height) {
         return { valid: false, error: [`Image height should not exceed ${height}px.`] };
       }
       console.log("3");
