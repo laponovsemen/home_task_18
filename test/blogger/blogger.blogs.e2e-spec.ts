@@ -917,6 +917,13 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
 
         ]}
        })
+
+    const allBlogs = await request(server)
+      .get("/blogger/blogs")
+      .auth(accessToken, {type: "bearer"})
+
+    expect(allBlogs.status).toBe(200)
+    expect(allBlogs.body.items).toEqual({})
   }, 20000);
 
 });
