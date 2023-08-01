@@ -100,7 +100,14 @@ export class BloggerBlogsController {
   async uploadMainForBlog(@Res({ passthrough: true }) res: Response,
                                           @Req() req: Request,
                                           @User() user,
-                                          @UploadedFile("file") file: Express.Multer.File,
+                                          @UploadedFile(
+                                            new FileValidatorPipe(
+                                              {
+                                                width: 156,
+                                                height: 156,
+                                                type: ['jpeg', 'jpg','png'],
+                                                fileSize: 100 * 1000 /* 10 MB */ }
+                                            )) file: Express.Multer.File,
                                           @Param("blogId") blogId): Promise<BlogImagesViewModel> {
     const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
     console.log(" Blog not found in updateBlogById");
