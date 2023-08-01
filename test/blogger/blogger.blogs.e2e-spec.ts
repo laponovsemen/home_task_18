@@ -16,6 +16,7 @@ import {
   PostForSpecificBlogDTO,
   UserDTO
 } from "../../src/input.classes";
+import path from "node:path";
 
 
 const authE2eSpec = "Authorization";
@@ -683,6 +684,171 @@ describe("TESTING OF CREATING USER AND AUTH", () => {
 
 
 
+  }, 200000);
+
+});
+describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER AND UPLOAD IMAGE FOR IT", () => {
+  let app: INestApplication;
+  let server: any;
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule]
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
+
+    app.useGlobalPipes(new ValidationPipe(
+        {
+          stopAtFirstError: true,
+          exceptionFactory: (errors) => {
+            const errorsForResponse = [];
+            console.log(errors, "ERRORS");
+
+            errors.forEach(e => {
+              const constrainedKeys = Object.keys(e.constraints);
+              //console.log(constrainedKeys, "constrainedKeys");
+              constrainedKeys.forEach((ckey) => {
+                errorsForResponse.push({
+                  message: e.constraints[ckey],
+                  field: e.property
+                });
+                console.log(errorsForResponse, "errorsForResponse");
+
+              });
+
+            });
+            throw new BadRequestException(errorsForResponse);
+          }
+        }
+      )
+    );
+    app.useGlobalFilters(new HttpExceptionFilter());
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+    await app.init();
+    server = app.getHttpServer();
+  });
+  afterAll(async () => {
+    await app.close();
+  });
+  it("create user, login, create blog, create another user and ban user2 for blog", async () => {
+
+    await request(server).delete("/testing/all-data");
+
+    const users = [];
+    for (let i = 0; i <= 2; i++) {
+      const createUserDto: UserDTO = {
+        login: `login${i}`,
+        password: "password",
+        email: `simsbury65${i}@gmail.com`
+      };
+      const res = await request(server)
+        .post("/sa/users")
+        .set(authE2eSpec, basic)
+        .send(createUserDto);
+
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({
+        id: expect.any(String),
+        login: createUserDto.login,
+        "email": createUserDto.email,
+        "createdAt": expect.any(String),
+        "banInfo": {
+          "banDate": null,
+          "banReason": null,
+          "isBanned": false
+        }
+      });
+      expect(isString(res.body.id)).toBeTruthy();
+      users.push({ ...createUserDto, ...res.body });
+    }
+
+    const [user0, user1] = users;
+
+    const loginRes = await request(server)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: user0.login,
+        password: user0.password
+      });
+
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body).toEqual({ accessToken: expect.any(String) });
+    const { accessToken } = loginRes.body;
+
+    const createBlogDto: BlogDTO = {
+      name : "string",
+      description: "stringasdstring",
+      websiteUrl : "simsbury65@gmail.com"
+    }
+
+    const createdBlogRes = await request(server)
+      .post(`/blogger/blogs`)
+      .auth(accessToken, {type: 'bearer'})
+      .send(createBlogDto)
+
+
+    expect(createdBlogRes.status).toBe(201);
+    expect(createdBlogRes.body).toEqual({
+      "createdAt": expect.any(String),
+      "description": createBlogDto.description,
+      "id": expect.any(String),
+      "images": {
+        "main": [],
+        "wallpaper": null
+      },
+      "isMembership": false,
+      "name": createBlogDto.name,
+      "websiteUrl": createBlogDto.websiteUrl
+    });
+
+    const blogId = createdBlogRes.body.id
+
+    console.log("blog created");
+    const uploadMainPhotoForBlog = await request(server)
+      .post(`/blogger/blogs/${blogId}/images/main`)
+      .auth(accessToken, {type: 'bearer'})
+      .attach('file', path.join(__dirname, '../testing.images/testing-image-156x156pixels.jpg'))
+
+    expect(uploadMainPhotoForBlog.status).toBe(201)
+    expect(uploadMainPhotoForBlog.body).toEqual({
+      "main": [
+        {
+          "fileSize": 3501,
+          "height": 156,
+          "url":  expect.any(String),
+          "width": 156
+        }
+      ],
+      "wallpaper": null
+    });
+
+
+    console.log("main image for blog uploaded");
+    const uploadWallpaperPhotoForBlog = await request(server)
+      .post(`/blogger/blogs/${blogId}/images/wallpaper`)
+      .auth(accessToken, {type: 'bearer'})
+      .attach('file', path.join(__dirname, '../testing.images/blogs-wallpaper1028x312.jpg'))
+
+    expect(uploadWallpaperPhotoForBlog.status).toBe(201)
+    expect(uploadWallpaperPhotoForBlog.body).toEqual({
+      "main": [
+        {
+          "fileSize": 3501,
+          "height": 156,
+          "url":  expect.any(String),
+          "width": 156
+        }
+      ],
+      "wallpaper": {
+        "fileSize": 123441,
+        "height": 312,
+        "url": expect.any(String),
+        "width": 1028
+      }
+    });
   }, 200000);
 
 });

@@ -17,6 +17,7 @@ export class BlogWallpaperPhotoEntity {
   fileSize : 	number | null //   In bytes
 
 
+
   static async create(param: { fileBuffer: Buffer; url: string }) {
     const image = new BlogWallpaperPhotoEntity()
     const metadata = await sharp(param.fileBuffer).metadata()

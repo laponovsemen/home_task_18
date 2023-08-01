@@ -268,7 +268,8 @@ export class BlogsRepository {
         const newWallpaper : BlogWallpaperPhotoEntity = await this.dataSource // ask mentor
           .getRepository(BlogWallpaperPhotoEntity).save(emptyWallpaper)
 
-        const blogToCreate : Blog = Blog.create(DTO, blogOwner, newBan, emptyWallpaper)
+        const blogToCreate: Blog = Blog.create(DTO, blogOwner, newBan, emptyWallpaper)
+        console.log(blogToCreate, " blog");
         const createdBlog: Blog = await this.blogsTypeORMRepository.save(blogToCreate)
         console.log(createdBlog, "createdBlog to return")
         return {

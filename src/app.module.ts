@@ -141,6 +141,8 @@ import {
   UploadMainPhotosForSpecificBlogCommand,
   UploadMainPhotosForSpecificBlogUseCase
 } from "./blogs/use-cases/upload.main.photos.for.specific.blog";
+import { BlogWallpaperPhotosRepository } from "./blogs/blog.wallpaper.photos.repository";
+import { BlogMainPhotosRepository } from "./blogs/blog.main.photos.repository";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -148,7 +150,7 @@ const services = [AppService,BlogsService, PostsService, TestingService, UsersSe
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
   BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository,
-  PhotosRepository]
+  PhotosRepository,BlogWallpaperPhotosRepository, BlogMainPhotosRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,
   GetAllCommentForUserUseCase,
@@ -176,7 +178,8 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
-      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity,BlogWallpaperPhotoEntity
+      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity,
+      BlogWallpaperPhotoEntity
     ]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({

@@ -17,7 +17,7 @@ export class BlogImagesViewModel {
 
     static getViewModel(blogsWallpaper: BlogWallpaperPhotoEntity, blogsMainImages: BlogMainPhotoEntity[]) {
         return {
-            wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(blogsWallpaper),
+            wallpaper : blogsWallpaper.url ? PhotoSizeViewModel.getViewModelForWallpaper(blogsWallpaper) : null,
             main : blogsMainImages.map(photo => PhotoSizeViewModel.getViewModelForMain(photo))
         };
     }

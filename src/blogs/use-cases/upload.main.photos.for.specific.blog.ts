@@ -15,6 +15,7 @@ import sharp from "sharp";
 import { BlogImagesViewModel } from "../blogs.view.models/blog.images.view.model";
 import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
 import { PhotosRepository } from "../photos.repository";
+import { BlogMainPhotosRepository } from "../blog.main.photos.repository";
 
 export class UploadMainPhotosForSpecificBlogCommand{
   constructor(
@@ -30,7 +31,7 @@ export class UploadMainPhotosForSpecificBlogUseCase implements ICommandHandler<U
   constructor(
     protected securityDevicesRepository: SecurityDevicesRepository,
     protected googleStorageService: GoogleStorageService,
-    protected photosRepository: PhotosRepository,
+    protected blogsMainPhotoRepository: BlogMainPhotosRepository,
     protected blogsQueryRepository: BlogsQueryRepository,
     protected common: Common,
   ) {
@@ -43,9 +44,11 @@ export class UploadMainPhotosForSpecificBlogUseCase implements ICommandHandler<U
     console.log(url , " url");
 
     const blogsMain : BlogMainPhotoEntity = await BlogMainPhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    await this.blogsMainPhotoRepository.saveMainToDB(blogsMain)
     console.log(command.blog , " blog");
     const blogWithUpdatedMain = Blog.updateMain(command.blog, blogsMain)
     await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedMain)
+    console.log(blogWithUpdatedMain, " blogWithUpdatedMain");
 
     return BlogImagesViewModel.getViewModel(blogWithUpdatedMain.wallpaper, blogWithUpdatedMain.main)
 

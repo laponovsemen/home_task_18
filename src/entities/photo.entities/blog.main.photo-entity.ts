@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { randomUUID } from "crypto";
 import { Blog } from "../blog-entity";
 
@@ -15,8 +15,7 @@ export class BlogMainPhotoEntity {
   height:	number //  In pixels
   @Column()
   fileSize : 	number //   In bytes
-  @OneToOne(() => Blog, blog => blog.main, {onDelete: "SET NULL"})
-  @JoinColumn()
+  @ManyToOne(() => Blog, blog => blog.main, {onDelete: "SET NULL"})
   blog : Blog
 
   static async create(param: { fileBuffer: Buffer; url: string }) {

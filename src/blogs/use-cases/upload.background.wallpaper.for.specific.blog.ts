@@ -16,6 +16,7 @@ import { BlogImagesViewModel } from "../blogs.view.models/blog.images.view.model
 import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
 import { PhotosRepository } from "../photos.repository";
 import { BlogWallpaperPhotoEntity } from "../../entities/photo.entities/blog.wallpaper.photo-entity";
+import { BlogWallpaperPhotosRepository } from "../blog.wallpaper.photos.repository";
 
 export class UploadBackgroundWallPapperForSpecificBlogCommand{
   constructor(
@@ -31,7 +32,7 @@ export class UploadBackgroundWallPapperForSpecificBlogUseCase implements IComman
   constructor(
     protected securityDevicesRepository: SecurityDevicesRepository,
     protected googleStorageService: GoogleStorageService,
-    protected photosRepository: PhotosRepository,
+    protected blogWallpaperPhotoEntityQueryRepository: BlogWallpaperPhotosRepository,
     protected blogsQueryRepository: BlogsQueryRepository,
     protected common: Common,
   ) {
@@ -44,7 +45,10 @@ export class UploadBackgroundWallPapperForSpecificBlogUseCase implements IComman
     console.log(url , " url");
 
     const blogsWallpaper : BlogWallpaperPhotoEntity = await BlogWallpaperPhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    console.log(blogsWallpaper, " blogsWallpaper");
+    await this.blogWallpaperPhotoEntityQueryRepository.saveWallpaperToDB(blogsWallpaper)
     const blogWithUpdatedWallpaper : Blog = Blog.updateWallpaper(command.blog, blogsWallpaper)
+    console.log(blogWithUpdatedWallpaper, " blogWithUpdatedWallpaper");
     await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedWallpaper)
 
     return BlogImagesViewModel.getViewModel(blogsWallpaper, blogWithUpdatedWallpaper.main)
