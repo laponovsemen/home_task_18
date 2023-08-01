@@ -65,6 +65,10 @@ export class BlogsRepository {
 
         const result = await this.blogsTypeORMRepository
             .find({
+                relations : {
+                  main : true,
+                  wallpaper : true
+                },
                 where: {
                     name: ILike(filter.name),
                     blogBan: {

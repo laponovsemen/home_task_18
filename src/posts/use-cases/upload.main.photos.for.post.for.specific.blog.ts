@@ -58,18 +58,23 @@ export class UploadMainPhotosForPostForSpecificBlogUseCase implements ICommandHa
     console.log(uploadedOriginalFile, " uploadedFile");
     console.log(uploadedMiddleFile, " uploadedFile");
     console.log(uploadedSmallFile, " uploadedFile");
-    const urlOfOriginalFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)
+    const [urlOfOriginalFile, urlOfMiddleFile, urlOfSmallFile] = await Promise.all([
+      this.googleStorageService.getPublicUrl(uploadedOriginalFile),
+      this.googleStorageService.getPublicUrl(uploadedOriginalFile),
+      this.googleStorageService.getPublicUrl(uploadedOriginalFile)
+    ])
+    /*const urlOfOriginalFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)
     const urlOfMiddleFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)
-    const urlOfSmallFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)
+    const urlOfSmallFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)*/
     console.log(urlOfOriginalFile , " urlOfOriginalFile");
     console.log(urlOfMiddleFile , " urlOfMiddleFile");
     console.log(urlOfSmallFile , " urlOfSmallFile");
 
-    const postsMain : PostMainPhotoEntity[] = [
-      await PostMainPhotoEntity.create({fileBuffer : command.fileBuffer, url : urlOfOriginalFile}),
-      await PostMainPhotoEntity.create({fileBuffer : middleFile, url : urlOfMiddleFile}),
-      await PostMainPhotoEntity.create({fileBuffer : smallFile, url : urlOfSmallFile}),
-  ]
+    const postsMain : PostMainPhotoEntity[] = await Promise.all([
+       PostMainPhotoEntity.create({fileBuffer : command.fileBuffer, url : urlOfOriginalFile}),
+       PostMainPhotoEntity.create({fileBuffer : middleFile, url : urlOfMiddleFile}),
+       PostMainPhotoEntity.create({fileBuffer : smallFile, url : urlOfSmallFile}),
+  ])
     await this.postsMainPhotoRepository.saveMainToDB(postsMain)
     console.log(command.post , " blog");
     const postWithUpdatedMain = APIPost.updateMain(command.post, postsMain)

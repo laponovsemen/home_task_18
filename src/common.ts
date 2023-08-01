@@ -18,6 +18,7 @@ import {APIPost} from "./entities/api-post-entity";
 import {APIComment} from "./entities/api-comment-entity";
 import {Blog} from "./entities/blog-entity";
 import {User} from "./entities/user-entity";
+import { PhotoSizeViewModel } from "./posts/posts.view.models/photo.size.view.model";
 
 
 
@@ -133,7 +134,11 @@ export class Common {
       websiteUrl: Obj2.websiteUrl,
       isMembership: Obj2.isMembership,
       createdAt: Obj2.createdAt,
-      banInfo : Obj2.banInfo
+      banInfo : Obj2.banInfo,
+      images : {
+        main : PhotoSizeViewModel.getViewModelForMain(Obj2.main),
+        wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(Obj2.wallpaper)
+      }
 
     };
   };

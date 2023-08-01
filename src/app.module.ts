@@ -202,13 +202,13 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: 'pbzw6dDdgwDXKcr5QzUU9qAwZyLdsoHo',
       database: 'tfaepjvr',*/
       type: 'postgres',
-      url : "postgres://laponovsemen:jb5zyBeHskM2@ep-floral-block-080205-pooler.eu-central-1.aws.neon.tech/neondb",
-      ssl : true,
-      /*host: "localhost",
+      /*url : "postgres://laponovsemen:jb5zyBeHskM2@ep-floral-block-080205-pooler.eu-central-1.aws.neon.tech/neondb",
+      ssl : true,*/
+      host: "localhost",
       port: 5432,
       username: 'postgres',
       password: '2233',
-      database: 'postgres',*/
+      database: 'postgres',
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
         APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity, PostMainPhotoEntity],
       autoLoadEntities: true,
