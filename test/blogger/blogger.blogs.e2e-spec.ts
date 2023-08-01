@@ -861,6 +861,33 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
       .auth(accessToken, {type: 'bearer'})
       .attach('file', path.join(__dirname, '../testing.images/testing-image-156x156pixels.jpg'))
       .expect(400)
+
+    const foundBlogAfterUpdatingImages = await request(server)
+      .get(`/blogs/${blogId}`)
+      .expect(200)
+
+    expect(foundBlogAfterUpdatingImages.body).toEqual({
+      createdAt: expect.any(String),
+      description: "stringasdstring",
+      id: expect.any(String),
+      isMembership: false,
+      name: "string",
+      websiteUrl: "simsbury65@gmail.com",
+      images : {
+        wallpaper : {
+          url : expect.any(String),
+          width: 1028,
+          height : 312,
+          fileSize : 89465
+        },
+        main : [{
+          url : expect.any(String),
+          width: 156,
+          height : 156,
+          fileSize : 3501
+        }]
+      }
+    })
   }, 20000);
 
 });

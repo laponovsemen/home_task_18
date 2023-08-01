@@ -12,6 +12,7 @@ import {User} from "../entities/user-entity";
 import {BlogBan} from "../entities/blog-ban-entity";
 import {TokenPayload} from "../working.classess";
 import { BlogWallpaperPhotoEntity } from "../entities/photo.entities/blog.wallpaper.photo-entity";
+import { PhotoSizeViewModel } from "../posts/posts.view.models/photo.size.view.model";
 
 @Injectable()
 export class BlogsRepository {
@@ -300,10 +301,16 @@ export class BlogsRepository {
         WHERE "id" = $1 AND "blogBanId" IS NULL
         `, [blogId])*/
 
-        const foundBlog = await this.blogsTypeORMRepository.findOneBy({
-            id: blogId,
-            blogBan : {
-                isBanned : false
+        const foundBlog = await this.blogsTypeORMRepository.findOne({
+            where : {
+                id: blogId,
+                blogBan: {
+                    isBanned: false
+                }
+            },
+            relations : {
+                main : true,
+                wallpaper : true
             }
         })
 
@@ -317,6 +324,10 @@ export class BlogsRepository {
             websiteUrl: foundBlog.websiteUrl,
             isMembership: foundBlog.isMembership,
             createdAt: foundBlog.createdAt,
+            images : {
+                main : foundBlog.main.map(item => PhotoSizeViewModel.getViewModel(item)),
+                wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(foundBlog.wallpaper)
+            }
 
         }
     }
