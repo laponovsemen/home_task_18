@@ -146,6 +146,8 @@ import { BlogMainPhotosRepository } from "./blogs/blog.main.photos.repository";
 import {
   UploadMainPhotosForPostForSpecificBlogCommand, UploadMainPhotosForPostForSpecificBlogUseCase
 } from "./posts/use-cases/upload.main.photos.for.post.for.specific.blog";
+import { PostMainPhotosRepository } from "./posts/post.main.photos.repository";
+import { PostMainPhotoEntity } from "./entities/photo.entities/post.main.photo-entity";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -153,7 +155,7 @@ const services = [AppService,BlogsService, PostsService, TestingService, UsersSe
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
   BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository,
-  PhotosRepository,BlogWallpaperPhotosRepository, BlogMainPhotosRepository]
+  PhotosRepository,BlogWallpaperPhotosRepository, BlogMainPhotosRepository,PostMainPhotosRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,
   GetAllCommentForUserUseCase,
@@ -182,7 +184,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
       APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity,
-      BlogWallpaperPhotoEntity
+      BlogWallpaperPhotoEntity, PostMainPhotoEntity
     ]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
@@ -208,7 +210,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: '2233',
       database: 'postgres',*/
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
-        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity],
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity, PostMainPhotoEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),
