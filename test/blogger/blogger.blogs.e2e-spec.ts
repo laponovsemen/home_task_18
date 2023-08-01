@@ -849,6 +849,18 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
         "width": 1028
       }
     });
-  }, 200000);
+
+    await request(server)
+      .post(`/blogger/blogs/${blogId}/images/main`)
+      .auth(accessToken, {type: 'bearer'})
+      .attach('file', path.join(__dirname, '../testing.images/blogs-wallpaper1028x312.jpg'))
+      .expect(400)
+
+    await request(server)
+      .post(`/blogger/blogs/${blogId}/images/wallpaper`)
+      .auth(accessToken, {type: 'bearer'})
+      .attach('file', path.join(__dirname, '../testing.images/testing-image-156x156pixels.jpg'))
+      .expect(400)
+  }, 20000);
 
 });

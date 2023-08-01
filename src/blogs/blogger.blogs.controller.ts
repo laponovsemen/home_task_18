@@ -40,6 +40,8 @@ import {
   UploadBackgroundWallPapperForSpecificBlogCommand
 } from "./use-cases/upload.background.wallpaper.for.specific.blog";
 import { UploadMainPhotosForSpecificBlogCommand } from "./use-cases/upload.main.photos.for.specific.blog";
+import { FileValidator } from "../auth/custom.validators/file-size.validator";
+import { FileValidatorPipe } from "../auth/custom.validators/file-validator.pipe";
 
 
 @UseGuards(AuthGuard)
@@ -62,7 +64,15 @@ export class BloggerBlogsController {
   async uploadBackGroundWallPapperForBlog(@Res({ passthrough: true }) res: Response,
                                           @Req() req: Request,
                                           @User() user,
-                                          @UploadedFile("file") file: Express.Multer.File,
+                                          @UploadedFile(
+                                            new FileValidatorPipe(
+                                              {
+                                                width: 1028,
+                                                height: 312,
+                                                type: ['jpeg', 'jpg','png'],
+                                                fileSize: 100 * 1000 /* 10 MB */ }
+                                            )
+                                          ) file: Express.Multer.File,
                                           @Param("blogId") blogId): Promise<BlogImagesViewModel> {
     const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
     console.log(" Blog not found in updateBlogById");
