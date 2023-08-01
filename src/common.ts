@@ -91,6 +91,9 @@ export class Common {
         myStatus: "None",
         newestLikes: [],
       },
+      images: {
+        main : Obj2.main
+      }
     };
   };
 

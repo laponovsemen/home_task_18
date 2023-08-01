@@ -888,6 +888,35 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
         }]
       }
     })
+
+    const createPostForSpecificPost = await request(server)
+      .post(`/blogger/blogs/${blogId}/posts`)
+      .auth(accessToken, {type: "bearer"})
+      .send({
+        content: "ldmslekfm.sldk",
+        shortDescription : "shortDescription",
+        title : "title",
+      })
+
+    expect(createPostForSpecificPost.status).toBe(201)
+    expect(createPostForSpecificPost.body).toEqual({
+         "blogId": expect.any(String),
+         "blogName": "string",
+         "content": "ldmslekfm.sldk",
+         "createdAt":  expect.any(String),
+         "extendedLikesInfo":  {
+           "dislikesCount": 0,
+             "likesCount": 0,
+             "myStatus": "None",
+             "newestLikes": [],
+           },
+          "id":  expect.any(String),
+         "shortDescription": "shortDescription",
+         "title": "title",
+        images: {main : [
+
+        ]}
+       })
   }, 20000);
 
 });

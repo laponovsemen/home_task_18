@@ -23,35 +23,26 @@ export class PostsRepository {
   ) {
   }
 
-  async createNewPost(DTO: any) {
-    const blogId = this.common.tryConvertToObjectId(DTO.blogId)
+  async createNewPost(DTO: PostDTO) {
     const createdAt = new Date()
-    if(!blogId){
-      return null
-    }
-    const blog = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+
+    const blog = await this.dataSource.getRepository(Blog)
+      .findOne({
+        where : {
+          id : DTO.blogId
+        }
+      })
     if(!blog) return null;
-    const newPost = {
-      title: DTO.title, //    maxLength: 30
-      shortDescription: DTO.shortDescription, //maxLength: 100
-      content: DTO.content, // maxLength: 1000
-      blogId: new ObjectId(blogId),
-      blogName: blog.name,
-      createdAt: createdAt,
-    }
-    const createdPost = await this.dataSource.query(`
-    DELETE FROM public."UserTable"
-    WHERE 1 = 1;
-    `)
+    const newPost = APIPost.create(DTO, blog)
+    const createdPost = await this.dataSource.getRepository(APIPost)
+      .save(newPost)
     return {
-      id: createdPost._id,
-      title: DTO.title, //    maxLength: 30
-      shortDescription: DTO.shortDescription, //maxLength: 100
-      content: DTO.content, // maxLength: 1000
-      blogId: new ObjectId(blogId),
+      id: newPost.id,
+      title: newPost.title, //    maxLength: 30
+      shortDescription: newPost.shortDescription, //maxLength: 100
+      content: newPost.content, // maxLength: 1000
+      blogId: blog.id,
+      main : newPost.main,
       blogName: blog.name,
       createdAt: createdAt,
       extendedLikesInfo: {

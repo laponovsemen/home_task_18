@@ -50,6 +50,7 @@ export class APIPost {
         newPost.blog = blog
         newPost.createdAt = new Date().toISOString()
         newPost.isHiden = false
+        newPost.main = []
 
         return newPost
     }
