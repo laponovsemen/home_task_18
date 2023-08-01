@@ -43,6 +43,7 @@ export class UploadMainPhotosForSpecificBlogUseCase implements ICommandHandler<U
     console.log(url , " url");
 
     const blogsMain : BlogMainPhotoEntity = await BlogMainPhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    console.log(command.blog , " blog");
     const blogWithUpdatedMain = Blog.updateMain(command.blog, blogsMain)
     await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedMain)
 

@@ -137,6 +137,10 @@ import {
 import { PhotosRepository } from "./blogs/photos.repository";
 import { BlogMainPhotoEntity } from "./entities/photo.entities/blog.main.photo-entity";
 import { BlogWallpaperPhotoEntity } from "./entities/photo.entities/blog.wallpaper.photo-entity";
+import {
+  UploadMainPhotosForSpecificBlogCommand,
+  UploadMainPhotosForSpecificBlogUseCase
+} from "./blogs/use-cases/upload.main.photos.for.specific.blog";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -154,7 +158,7 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
   returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase,
-  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadBackgroundWallPapperForSpecificBlogUseCase]
+  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadMainPhotosForSpecificBlogUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -163,7 +167,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
   returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand,
-  UploadBackgroundWallPapperForSpecificBlogCommand, UploadBackgroundWallPapperForSpecificBlogCommand]
+  UploadBackgroundWallPapperForSpecificBlogCommand, UploadMainPhotosForSpecificBlogCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
 

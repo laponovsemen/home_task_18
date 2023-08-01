@@ -418,7 +418,9 @@ export class BlogsRepository {
                     relations: {
                         blogOwner: true,
                         blogBan : true,
-                        posts : true
+                        posts : true,
+                        main : true,
+                        wallpaper : true
                     },
                     select: {
                         blogOwner: {
