@@ -6,6 +6,7 @@ import { paginationCriteriaType } from "../appTypes";
 import { Common } from "../common";
 import { LikeRepository } from "../likes/likes.repository";
 import {DataSource} from "typeorm";
+import { APIPost } from "../entities/api-post-entity";
 
 @Injectable()
 export class PostsQueryRepository {
@@ -78,5 +79,23 @@ export class PostsQueryRepository {
       postIdArray.push(...posts)
     }
     return postIdArray
+  }
+
+  async getPostById(id : string) : Promise<APIPost>{
+    return this.dataSource.getRepository(APIPost).findOne({
+      relations : {
+        blog : true,
+        main : true,
+        comments : true,
+        likes : true
+      },
+      where : {
+        id : id
+      }
+    })
+  }
+
+  async savePostToDB(postWithUpdatedMain: APIPost) {
+    await this.dataSource.getRepository(APIPost).save(postWithUpdatedMain)
   }
 }

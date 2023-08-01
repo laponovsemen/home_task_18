@@ -42,6 +42,12 @@ import {
 import { UploadMainPhotosForSpecificBlogCommand } from "./use-cases/upload.main.photos.for.specific.blog";
 import { FileValidator } from "../auth/custom.validators/file-size.validator";
 import { FileValidatorPipe } from "../auth/custom.validators/file-validator.pipe";
+import { PostImagesViewModel } from "../posts/posts.view.models/post.images.view.model";
+import {
+  UploadMainPhotosForPostForSpecificBlogCommand
+} from "../posts/use-cases/upload.main.photos.for.post.for.specific.blog";
+import { APIPost } from "../entities/api-post-entity";
+import { PostsQueryRepository } from "../posts/posts.query.repository";
 
 
 @UseGuards(AuthGuard)
@@ -51,6 +57,7 @@ export class BloggerBlogsController {
   constructor(
     private readonly blogsService: BlogsService,
     private readonly userService: UsersService,
+    private readonly postQueryRepository: PostsQueryRepository,
     private readonly common: Common,
     private readonly commandBus: CommandBus,
     private readonly postsService: PostsService
@@ -129,6 +136,46 @@ export class BloggerBlogsController {
 
   }
 
+
+  @Post(":blogId/posts/:postId/images/main")
+  @HttpCode(201)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadMainForPostForSpecificBlog(@Res({ passthrough: true }) res: Response,
+                          @Req() req: Request,
+                          @User() user,
+                          @UploadedFile(
+                            new FileValidatorPipe(
+                              {
+                                width: 940,
+                                height: 432,
+                                type: ['jpeg', 'jpg','png'],
+                                fileSize: 100 * 1000 /* 10 MB */ }
+                            )) file: Express.Multer.File,
+                                         @Param("blogId") blogId,
+                                         @Param("postId") postId): Promise<PostImagesViewModel> {
+    const foundBlog: Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
+    console.log(" Blog not found in updateBlogById");
+    if (!foundBlog) {
+      throw new NotFoundException("Blog not found");
+    }
+    const foundPost : APIPost = await this.postQueryRepository.getPostById(postId);
+    if (!foundPost) {
+      throw new NotFoundException("Post not found");
+    }
+    if (foundBlog.blogOwner.id.toString() !== user.userId) {
+      throw new ForbiddenException("Blog not found");
+    }
+
+    const mainUploadResult: PostImagesViewModel = await this.commandBus.execute(new UploadMainPhotosForPostForSpecificBlogCommand(
+      foundPost,
+      file.originalname,
+      file.mimetype,
+      file.buffer
+    ));
+
+    return mainUploadResult;
+
+  }
   @Get("/comments")
   @HttpCode(200)
   async getAllCommentsForSpecificBlog(@Req() req: Request,

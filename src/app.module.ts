@@ -143,6 +143,9 @@ import {
 } from "./blogs/use-cases/upload.main.photos.for.specific.blog";
 import { BlogWallpaperPhotosRepository } from "./blogs/blog.wallpaper.photos.repository";
 import { BlogMainPhotosRepository } from "./blogs/blog.main.photos.repository";
+import {
+  UploadMainPhotosForPostForSpecificBlogCommand, UploadMainPhotosForPostForSpecificBlogUseCase
+} from "./posts/use-cases/upload.main.photos.for.post.for.specific.blog";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -160,7 +163,7 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
   returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase,
-  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadMainPhotosForSpecificBlogUseCase]
+  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadMainPhotosForSpecificBlogUseCase, UploadMainPhotosForPostForSpecificBlogUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -169,7 +172,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
   returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand,
-  UploadBackgroundWallPapperForSpecificBlogCommand, UploadMainPhotosForSpecificBlogCommand]
+  UploadBackgroundWallPapperForSpecificBlogCommand, UploadMainPhotosForSpecificBlogCommand, UploadMainPhotosForPostForSpecificBlogCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
 

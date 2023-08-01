@@ -4,6 +4,7 @@ import {PostDTO} from "../input.classes";
 import {APIComment} from "./api-comment-entity";
 import {APILike} from "./api-like-entity";
 import {randomUUID} from "crypto";
+import { PostMainPhotoEntity } from "./photo.entities/post.main.photo-entity";
 
 
 
@@ -24,11 +25,8 @@ export class APIPost {
     createdAt: string;
     @Column()
     isHiden: boolean;
-    @Column('varchar', {
-        array : true,
-        nullable : true
-    })
-    main: string[];
+    @OneToMany(() => PostMainPhotoEntity, main => main.post, {onDelete : "SET NULL"})
+    main: PostMainPhotoEntity[];
 
     @OneToMany(() => APIComment, c => c.post, {onDelete : 'SET NULL'})
     comments : APIComment[]
@@ -65,6 +63,24 @@ export class APIPost {
         newPostToUpdate.blog = foundPostQuery.blog
         newPostToUpdate.createdAt = foundPostQuery.createdAt
         newPostToUpdate.isHiden = foundPostQuery.isHiden
+
+        return newPostToUpdate
+    }
+
+    static updateMain(post: APIPost, postsMain: PostMainPhotoEntity[]) {
+        const newPostToUpdate = new APIPost()
+        //const main = blog.main
+        //main.push(blogsMain)
+        newPostToUpdate.id = post.id
+        newPostToUpdate.title = post.title
+        newPostToUpdate.blog = post.blog
+        newPostToUpdate.likes = post.likes
+        newPostToUpdate.comments = post.comments
+        newPostToUpdate.createdAt = post.createdAt
+        newPostToUpdate.content = post.content
+        newPostToUpdate.shortDescription = post.shortDescription
+        newPostToUpdate.main = postsMain
+
 
         return newPostToUpdate
     }
