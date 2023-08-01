@@ -136,6 +136,7 @@ import {
 } from "./blogs/use-cases/upload.background.wallpaper.for.specific.blog";
 import { PhotosRepository } from "./blogs/photos.repository";
 import { BlogMainPhotoEntity } from "./entities/photo.entities/blog.main.photo-entity";
+import { BlogWallpaperPhotoEntity } from "./entities/photo.entities/blog.wallpaper.photo-entity";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -171,7 +172,8 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
-      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity]),
+      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity,BlogWallpaperPhotoEntity
+    ]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
@@ -196,7 +198,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: '2233',
       database: 'postgres',*/
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
-        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity],
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),
