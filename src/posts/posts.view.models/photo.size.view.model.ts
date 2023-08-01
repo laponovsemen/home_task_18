@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { PhotoEntity } from "../../entities/photo-entity";
+import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
 
 export class PhotoSizeViewModel {
     url:	string
@@ -18,7 +18,7 @@ export class PhotoSizeViewModel {
       return image
   }
 
-    static getViewModel(photo: PhotoEntity) {
+    static getViewModel(photo: BlogMainPhotoEntity) {
 
       const image = new PhotoSizeViewModel()
       image.url = photo.url

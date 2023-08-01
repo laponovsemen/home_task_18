@@ -39,6 +39,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import {
   UploadBackgroundWallPapperForSpecificBlogCommand
 } from "./use-cases/upload.background.wallpaper.for.specific.blog";
+import { UploadMainPhotosForSpecificBlogCommand } from "./use-cases/upload.main.photos.for.specific.blog";
 
 
 @UseGuards(AuthGuard)
@@ -66,7 +67,7 @@ export class BloggerBlogsController {
     const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
     console.log(" Blog not found in updateBlogById");
     if (!foundBlog) {
-      throw new ForbiddenException("Blog not found");
+      throw new NotFoundException("Blog not found");
     }
     if (foundBlog.blogOwner.id.toString() !== user.userId) {
       throw new ForbiddenException("Blog not found");
@@ -80,6 +81,34 @@ export class BloggerBlogsController {
     ));
 
     return wallpaperUploadResult;
+
+  }
+
+  @Post(":blogId/images/main")
+  @HttpCode(201)
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadMainForBlog(@Res({ passthrough: true }) res: Response,
+                                          @Req() req: Request,
+                                          @User() user,
+                                          @UploadedFile("file") file: Express.Multer.File,
+                                          @Param("blogId") blogId): Promise<BlogImagesViewModel> {
+    const foundBlog : Blog = await this.blogsService.getBlogByIdWithBloggerInfo(blogId);
+    console.log(" Blog not found in updateBlogById");
+    if (!foundBlog) {
+      throw new NotFoundException("Blog not found");
+    }
+    if (foundBlog.blogOwner.id.toString() !== user.userId) {
+      throw new ForbiddenException("Blog not found");
+    }
+
+    const mainUploadResult: BlogImagesViewModel = await this.commandBus.execute(new UploadMainPhotosForSpecificBlogCommand(
+      foundBlog,
+      file.originalname,
+      file.mimetype,
+      file.buffer
+    ));
+
+    return mainUploadResult;
 
   }
 

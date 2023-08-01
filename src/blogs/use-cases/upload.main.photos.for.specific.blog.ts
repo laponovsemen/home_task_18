@@ -15,9 +15,8 @@ import sharp from "sharp";
 import { BlogImagesViewModel } from "../blogs.view.models/blog.images.view.model";
 import { BlogMainPhotoEntity } from "../../entities/photo.entities/blog.main.photo-entity";
 import { PhotosRepository } from "../photos.repository";
-import { BlogWallpaperPhotoEntity } from "../../entities/photo.entities/blog.wallpaper.photo-entity";
 
-export class UploadBackgroundWallPapperForSpecificBlogCommand{
+export class UploadMainPhotosForSpecificBlogCommand{
   constructor(
               public blog : Blog,
               public fileName : string,
@@ -26,8 +25,8 @@ export class UploadBackgroundWallPapperForSpecificBlogCommand{
   ) {
   }
 }
-@CommandHandler(UploadBackgroundWallPapperForSpecificBlogCommand)
-export class UploadBackgroundWallPapperForSpecificBlogUseCase implements ICommandHandler<UploadBackgroundWallPapperForSpecificBlogCommand>{
+@CommandHandler(UploadMainPhotosForSpecificBlogCommand)
+export class UploadMainPhotosForSpecificBlogUseCase implements ICommandHandler<UploadMainPhotosForSpecificBlogCommand>{
   constructor(
     protected securityDevicesRepository: SecurityDevicesRepository,
     protected googleStorageService: GoogleStorageService,
@@ -37,16 +36,19 @@ export class UploadBackgroundWallPapperForSpecificBlogUseCase implements IComman
   ) {
 
   }
-  async execute(command : UploadBackgroundWallPapperForSpecificBlogCommand) : Promise<BlogImagesViewModel> {
+  async execute(command : UploadMainPhotosForSpecificBlogCommand) : Promise<BlogImagesViewModel> {
     const uploadedFile = await this.googleStorageService.uploadFile(command.fileType, command.fileBuffer, command.fileName)
     console.log(uploadedFile, " uploadedFile");
-    const url : string = await this.googleStorageService.getPublicUrl(uploadedFile)
+    const url = await this.googleStorageService.getPublicUrl(uploadedFile)
     console.log(url , " url");
 
-    const blogsWallpaper : BlogWallpaperPhotoEntity = await BlogWallpaperPhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
-    const blogWithUpdatedWallpaper : Blog = Blog.updateWallpaper(command.blog, blogsWallpaper)
-    await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedWallpaper)
+    const blogsMain : BlogMainPhotoEntity = await BlogMainPhotoEntity.create({fileBuffer : command.fileBuffer, url : url})
+    const blogWithUpdatedMain = Blog.updateMain(command.blog, blogsMain)
+    await this.blogsQueryRepository.saveBlogToDB(blogWithUpdatedMain)
 
-    return BlogImagesViewModel.getViewModel(blogsWallpaper, blogWithUpdatedWallpaper.main)
+    return BlogImagesViewModel.getViewModel(blogWithUpdatedMain.wallpaper, blogWithUpdatedMain.main)
+
+
+
   }
 }

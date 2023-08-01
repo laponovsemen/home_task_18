@@ -135,7 +135,7 @@ import {
   UploadBackgroundWallPapperForSpecificBlogCommand, UploadBackgroundWallPapperForSpecificBlogUseCase
 } from "./blogs/use-cases/upload.background.wallpaper.for.specific.blog";
 import { PhotosRepository } from "./blogs/photos.repository";
-import { PhotoEntity } from "./entities/photo-entity";
+import { BlogMainPhotoEntity } from "./entities/photo.entities/blog.main.photo-entity";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -153,7 +153,7 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
   returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase,
-  UploadBackgroundWallPapperForSpecificBlogUseCase]
+  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadBackgroundWallPapperForSpecificBlogUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -162,7 +162,7 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
   returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand,
-  UploadBackgroundWallPapperForSpecificBlogCommand]
+  UploadBackgroundWallPapperForSpecificBlogCommand, UploadBackgroundWallPapperForSpecificBlogCommand]
 
 const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
 
@@ -171,7 +171,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
-      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, PhotoEntity]),
+      APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
     ttl: 10,
@@ -196,7 +196,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: '2233',
       database: 'postgres',*/
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
-        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, PhotoEntity],
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),

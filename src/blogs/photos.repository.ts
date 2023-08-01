@@ -11,12 +11,12 @@ import {APIPost} from "../entities/api-post-entity";
 import {User} from "../entities/user-entity";
 import {BlogBan} from "../entities/blog-ban-entity";
 import {TokenPayload} from "../working.classess";
-import { PhotoEntity } from "../entities/photo-entity";
+import { BlogMainPhotoEntity } from "../entities/photo.entities/blog.main.photo-entity";
 
 @Injectable()
 export class PhotosRepository {
     constructor(
-        @InjectRepository(PhotoEntity) protected photosTypeORMRepository: Repository<PhotoEntity>,
+        @InjectRepository(BlogMainPhotoEntity) protected photosTypeORMRepository: Repository<BlogMainPhotoEntity>,
         protected readonly dataSource: DataSource,
         protected readonly common: Common,
     ) {
@@ -30,7 +30,7 @@ export class PhotosRepository {
         })
     }
 
-    async saveWallpaperToDB(blogsWallpaper: PhotoEntity) {
-        await this.dataSource.getRepository(PhotoEntity).save(blogsWallpaper)
+    async saveWallpaperToDB(blogsWallpaper: BlogMainPhotoEntity) {
+        await this.dataSource.getRepository(BlogMainPhotoEntity).save(blogsWallpaper)
     }
 }

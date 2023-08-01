@@ -15,7 +15,8 @@ import {Post} from "@nestjs/common";
 import {APIPost} from "./api-post-entity";
 import {BlogDTO} from "../input.classes";
 import {randomUUID} from "crypto";
-import { PhotoEntity } from "./photo-entity";
+import { BlogMainPhotoEntity } from "./photo.entities/blog.main.photo-entity";
+import { BlogWallpaperPhotoEntity } from "./photo.entities/blog.wallpaper.photo-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class Blog {
@@ -38,14 +39,12 @@ export class Blog {
     @OneToOne(() => BlogBan, {onDelete: "SET NULL"})
     @JoinColumn()
     blogBan : BlogBan
-    @Column('varchar', {
-        array : true,
-        nullable : true
-    })
-    main: string[];
-    @Column({nullable : true})
-    wallpaper: string | null;
-
+    @OneToMany(() => BlogMainPhotoEntity, main => main.blog, {onDelete: "SET NULL"})
+    @JoinColumn()
+    main: BlogMainPhotoEntity[];
+    @OneToOne(() => BlogWallpaperPhotoEntity, {onDelete: "SET NULL"})
+    @JoinColumn()
+    wallpaper: BlogWallpaperPhotoEntity
 
     @OneToMany(() => APIPost, p => p.blog)
     @JoinColumn()
@@ -63,7 +62,7 @@ export class Blog {
         newBlog.blogOwner = blogOwner
         newBlog.blogBan = newBanWithEmptyFields
         newBlog.main = []
-        newBlog.wallpaper = null
+        newBlog.wallpaper = BlogWallpaperPhotoEntity.createEmptyPhoto()
 
         return newBlog
     }
@@ -81,7 +80,7 @@ export class Blog {
         return newBlogToUpdate
     }
 
-    static updateWallpaper(blog: Blog, blogsWallpaper: PhotoEntity) {
+    static updateWallpaper(blog: Blog, blogsWallpaper: BlogWallpaperPhotoEntity) {
         const newBlogToUpdate = new Blog()
         newBlogToUpdate.id = blog.id
         newBlogToUpdate.name = blog.name
@@ -93,7 +92,26 @@ export class Blog {
         newBlogToUpdate.posts = blog.posts
         newBlogToUpdate.blogOwner = blog.blogOwner
         newBlogToUpdate.main = blog.main
-        newBlogToUpdate.wallpaper = blogsWallpaper.id
+        newBlogToUpdate.wallpaper = blogsWallpaper
+
+        return newBlogToUpdate
+    }
+
+    static updateMain(blog: Blog, blogsMain: BlogMainPhotoEntity) {
+        const newBlogToUpdate = new Blog()
+        const main = blog.main
+        main.push(blogsMain)
+        newBlogToUpdate.id = blog.id
+        newBlogToUpdate.name = blog.name
+        newBlogToUpdate.description = blog.description
+        newBlogToUpdate.websiteUrl = blog.websiteUrl
+        newBlogToUpdate.isMembership = blog.isMembership
+        newBlogToUpdate.createdAt = blog.createdAt
+        newBlogToUpdate.blogBan = blog.blogBan
+        newBlogToUpdate.posts = blog.posts
+        newBlogToUpdate.blogOwner = blog.blogOwner
+        newBlogToUpdate.main = main
+        newBlogToUpdate.wallpaper = blog.wallpaper
 
         return newBlogToUpdate
     }
