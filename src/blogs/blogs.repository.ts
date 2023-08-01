@@ -265,7 +265,7 @@ export class BlogsRepository {
         const newBanWithEmptyFields = BlogBan.create()
         const newBan : BlogBan = await this.blogBansTypeORMRepository.save(newBanWithEmptyFields)
         const emptyWallpaper : BlogWallpaperPhotoEntity = BlogWallpaperPhotoEntity.createEmptyPhoto()
-        const newWallpaper : BlogWallpaperPhotoEntity = await this.dataSource
+        const newWallpaper : BlogWallpaperPhotoEntity = await this.dataSource // ask mentor
           .getRepository(BlogWallpaperPhotoEntity).save(emptyWallpaper)
 
         const blogToCreate : Blog = Blog.create(DTO, blogOwner, newBan, emptyWallpaper)
@@ -280,7 +280,7 @@ export class BlogsRepository {
             createdAt: blogToCreate.createdAt,
             images : {
               main : blogToCreate.main,
-              wallpaper : blogToCreate.wallpaper
+              wallpaper : blogToCreate.wallpaper.url ? blogToCreate.wallpaper : null
             },
             banInfo: {
                 banDate: null,
