@@ -87,7 +87,7 @@ export class AllPostsForSpecificBlogGuard implements CanActivate {
     if (authValue !== "YWRtaW46cXdlcnR5") throw new UnauthorizedException();
     const blogId = req.params.id
     console.log(blogId, " blogId");
-    const foundBlog = await this.blogsRepository.getBlogById(blogId)
+    const foundBlog = await this.blogsRepository.getBlogByIdWithBloggerInfo(blogId)
     console.log(foundBlog, "foundBlog");
 
     return true;

@@ -55,8 +55,8 @@ export class BlogsService {
       return allPostsFrames
     }
   }
-  getBlogById(id: string) {
-    return this.blogsRepository.getBlogById(id);
+  getBlogById(blogId: string, userId : string) {
+    return this.blogsRepository.getBlogById(blogId, userId);
   }
   updateBlogById(DTO: any, id: string) {
     console.log("we are in updateBlogById in blogs.service");

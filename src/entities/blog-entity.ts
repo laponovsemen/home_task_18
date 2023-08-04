@@ -17,6 +17,7 @@ import {BlogDTO} from "../input.classes";
 import {randomUUID} from "crypto";
 import { BlogMainPhotoEntity } from "./photo.entities/blog.main.photo-entity";
 import { BlogWallpaperPhotoEntity } from "./photo.entities/blog.wallpaper.photo-entity";
+import { APISubscriptionEntity } from "./api-subscription-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class Blog {
@@ -49,6 +50,9 @@ export class Blog {
     @OneToMany(() => APIPost, p => p.blog)
     @JoinColumn()
     posts : APIPost[]
+    @OneToMany(() => APISubscriptionEntity, subscribtion => subscribtion.blog)
+
+    subscribtionOfBlog : APISubscriptionEntity[]
 
     static create(DTO: BlogDTO, blogOwner: User, newBanWithEmptyFields : BlogBan, wallpaper : BlogWallpaperPhotoEntity) {
         const newBlog = new Blog()

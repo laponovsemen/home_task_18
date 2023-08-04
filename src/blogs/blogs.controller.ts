@@ -1,7 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
-  Delete,
+  Delete, ForbiddenException,
   Get, HttpCode, HttpStatus, NotFoundException,
   Param,
   Post,
@@ -21,6 +22,11 @@ import { BlogsService } from './blogs.service';
 import { isNotEmpty, IsNotEmpty, IsString, IsUrl, Length } from "class-validator";
 import { AllPostsForSpecificBlogGuard, AuthGuard, BasicAuthGuard } from "../auth/auth.guard";
 import { BlogDTO, PostForSpecificBlogDTO } from "../input.classes";
+import { User } from "../auth/decorators/public.decorator";
+import { TokenPayload } from "../working.classess";
+import { CommandBus } from "@nestjs/cqrs";
+import { SubscribeBlogCommand } from "./use-cases/subscribe.blog.use-case";
+import { UnubscribeBlogCommand } from "./use-cases/unsubscribe.blog.use-case";
 
 
 
@@ -31,6 +37,7 @@ export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
     private readonly common: Common,
+    private readonly commandBus: CommandBus,
   ) {}
 
 
@@ -80,10 +87,14 @@ export class BlogsController {
       return result
     }
   }
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async getBlogById(@Res({passthrough : true}) res: Response,
-    @Param('id') id): Promise<any> {
-    const result = await this.blogsService.getBlogById(id);
+  async getBlogById(
+    @Res({passthrough : true}) res: Response,
+    @Param('id') id,
+    @User() tokenPayload : TokenPayload
+  ): Promise<any> {
+    const result = await this.blogsService.getBlogById(id, tokenPayload.userId);
     if(!result){
       throw new NotFoundException("Blog not found")
     }
@@ -102,14 +113,43 @@ export class BlogsController {
     return
 
   }
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(204)
   async deleteBlogById(@Res({passthrough : true}) res: Response,
                        @Param('id') id) {
     const deletedBlog = await this.blogsService.deleteBlogById(id);
     if(!deletedBlog){
-      throw new NotFoundException("Blog not found")
+      throw new ForbiddenException("Blog not found")
+    }
+    return
+
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/:blogId/subscription')
+  @HttpCode(204)
+  async subscribeBlog(@Res({passthrough : true}) res: Response,
+                       @Param('blogId') blogId,
+                       @User() tokenPayload : TokenPayload
+  ) {
+    const subscribeResult = await this.commandBus.execute(new SubscribeBlogCommand(blogId, tokenPayload));
+    if(!subscribeResult){
+      throw new BadRequestException("Blog not found")
+    }
+    return
+
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/:blogId/subscription')
+  @HttpCode(204)
+  async unsubscribeBlog(@Res({passthrough : true}) res: Response,
+                      @Param('blogId') blogId,
+                        @User() tokenPayload : TokenPayload) {
+    const unsubscribeResult = await this.commandBus.execute(new UnubscribeBlogCommand(blogId, tokenPayload));
+    if(!unsubscribeResult){
+      throw new BadRequestException("Blog not found")
     }
     return
 

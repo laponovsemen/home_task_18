@@ -60,8 +60,8 @@ export class UploadMainPhotosForPostForSpecificBlogUseCase implements ICommandHa
     console.log(uploadedSmallFile, " uploadedFile");
     const [urlOfOriginalFile, urlOfMiddleFile, urlOfSmallFile] = await Promise.all([
       this.googleStorageService.getPublicUrl(uploadedOriginalFile),
-      this.googleStorageService.getPublicUrl(uploadedOriginalFile),
-      this.googleStorageService.getPublicUrl(uploadedOriginalFile)
+      this.googleStorageService.getPublicUrl(uploadedMiddleFile),
+      this.googleStorageService.getPublicUrl(uploadedSmallFile)
     ])
     /*const urlOfOriginalFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)
     const urlOfMiddleFile = await this.googleStorageService.getPublicUrl(uploadedOriginalFile)

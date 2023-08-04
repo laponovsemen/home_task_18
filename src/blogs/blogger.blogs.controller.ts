@@ -48,6 +48,7 @@ import {
 } from "../posts/use-cases/upload.main.photos.for.post.for.specific.blog";
 import { APIPost } from "../entities/api-post-entity";
 import { PostsQueryRepository } from "../posts/posts.query.repository";
+import { TokenPayload } from "../working.classess";
 
 
 @UseGuards(AuthGuard)
@@ -263,8 +264,9 @@ export class BloggerBlogsController {
 
   @Get(":id")
   async getBlogById(@Res({ passthrough: true }) res: Response,
-                    @Param("id") id): Promise<any> {
-    const result = await this.blogsService.getBlogById(id);
+                    @Param("id") id,
+                    @User() tokenPayload : TokenPayload): Promise<any> {
+    const result = await this.blogsService.getBlogById(id, tokenPayload.userId);
     if (!result) {
       throw new NotFoundException("Blog not found");
     }

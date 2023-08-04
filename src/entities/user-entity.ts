@@ -7,6 +7,7 @@ import {APISession} from "./api-session-entity";
 import {APIComment} from "./api-comment-entity";
 import {PairGameQuiz} from "./api-pair-game-quiz-entity";
 import {APIQuizQuestionAnswer} from "./api-quiz-question-answer-entity";
+import { APISubscriptionEntity } from "./api-subscription-entity";
 
 @Entity({ database: "tfaepjvr" })
 export class User {
@@ -48,6 +49,15 @@ export class User {
     @OneToMany(() => PairGameQuiz, g => g.secondPlayer, {onDelete : 'SET NULL'})
     @JoinColumn()
     gameAsSecondPlayer : PairGameQuiz
+    @OneToMany(() => APISubscriptionEntity, subscription => subscription.subscriber, {onDelete : 'SET NULL'})
+    @JoinColumn()
+    subscribtionOfUser : APISubscriptionEntity[]
+    @Column({type : "varchar", nullable : true})
+    telegramId: string | null // telegram id of user
+    @Column({type : "boolean", nullable : true})
+    isBotActivated: boolean // bot activation info
+    @Column({type : "varchar", nullable : true})
+    activationBotCode: string | null// bot activation info
 
 
 
@@ -67,6 +77,9 @@ export class User {
         newUser.banDate = null
         newUser.banReason = null
         newUser.isBanned = false
+        newUser.activationBotCode = null
+        newUser.isBotActivated = false
+        newUser.telegramId = null
 
         return newUser
     }
@@ -87,6 +100,9 @@ export class User {
         newUser.banDate = null
         newUser.banReason = null
         newUser.isBanned = false
+        newUser.activationBotCode = null
+        newUser.isBotActivated = false
+        newUser.telegramId = null
 
         return newUser
     }

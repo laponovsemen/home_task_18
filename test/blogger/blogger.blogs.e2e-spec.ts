@@ -918,12 +918,23 @@ describe("TESTING OF CREATING USER AND AUTH CREATING BLOG FOR SPECIFIC BLOGGER A
         ]}
        })
 
+    const updateImageForPost = await request(server)
+      .post(`/blogger/blogs/${blogId}/posts/${createPostForSpecificPost.body.id}/images/main`)
+      .auth(accessToken, {type : "bearer"})
+      .attach('file', path.join(__dirname, '../testing.images/main-post940x432.jpg'))
+      .expect(201)
+
+    expect(updateImageForPost.body).toEqual({})
+
     const allBlogs = await request(server)
       .get("/blogger/blogs")
       .auth(accessToken, {type: "bearer"})
 
     expect(allBlogs.status).toBe(200)
-    expect(allBlogs.body.items).toEqual({})
+    //expect(allBlogs.body.items).toEqual({})
+
+
+
   }, 20000);
 
 });

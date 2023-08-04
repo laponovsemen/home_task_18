@@ -231,7 +231,8 @@ export class BlogsRepository {
         const result = await this.postsTypeORMRepository
             .find({
                 relations: {
-                    blog : true
+                    blog : true,
+                    main : true
                 },
                 where : {
                     blog : {
@@ -295,7 +296,7 @@ export class BlogsRepository {
         }
     }
 
-    async getBlogById(blogId: string) {
+    async getBlogById(blogId: string, userId : string) {
 
         if (!blogId) {
             return null
@@ -314,7 +315,10 @@ export class BlogsRepository {
             },
             relations : {
                 main : true,
-                wallpaper : true
+                wallpaper : true,
+                subscribtionOfBlog : {
+                    subscriber : true
+                }
             }
         })
 
@@ -330,8 +334,13 @@ export class BlogsRepository {
             createdAt: foundBlog.createdAt,
             images : {
                 main : foundBlog.main.map(item => PhotoSizeViewModel.getViewModel(item)),
-                wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(foundBlog.wallpaper)
-            }
+                wallpaper : foundBlog.wallpaper.url ? PhotoSizeViewModel.getViewModelForWallpaper(foundBlog.wallpaper) : null
+            },
+            subscribersCount : foundBlog.subscribtionOfBlog.length,
+            currentUserSubscriptionStatus : foundBlog.subscribtionOfBlog.find(item => item.subscriber.id === userId)
+              ? foundBlog.subscribtionOfBlog.find(item => item.subscriber.id === userId).isSubscribed
+                ? "Subscribed" : "Unsubscribed"
+              : "None"
 
         }
     }

@@ -148,6 +148,12 @@ import {
 } from "./posts/use-cases/upload.main.photos.for.post.for.specific.blog";
 import { PostMainPhotosRepository } from "./posts/post.main.photos.repository";
 import { PostMainPhotoEntity } from "./entities/photo.entities/post.main.photo-entity";
+import { TelegramController } from "./telegram/telegram.controller";
+import { TelegramAdapter } from "./utils/telegram.adapter/telegram.adapter";
+import { APISubscriptionEntity } from "./entities/api-subscription-entity";
+import { SubscriptionsRepository } from "./blogs/subscriptions.repository";
+import { UnubscribeBlogCommand, UnubscribeBlogUseCase } from "./blogs/use-cases/unsubscribe.blog.use-case";
+import { SubscribeBlogCommand, SubscribeBlogUseCase } from "./blogs/use-cases/subscribe.blog.use-case";
 const modules = [AuthModule]
 
 const services = [AppService,BlogsService, PostsService, TestingService, UsersService, AuthService,
@@ -155,7 +161,7 @@ const services = [AppService,BlogsService, PostsService, TestingService, UsersSe
 
 const repositories = [BlogsRepository, PostsRepository, UsersRepository,CommentsRepository, LikeRepository,CommentsQueryRepository,
   BlogsQueryRepository, SecurityDevicesRepository,BansRepository, PostsQueryRepository, QuizQuestionsRepository, PairGameQuizRepository,
-  PhotosRepository,BlogWallpaperPhotosRepository, BlogMainPhotosRepository,PostMainPhotosRepository]
+  PhotosRepository,BlogWallpaperPhotosRepository, BlogMainPhotosRepository,PostMainPhotosRepository, SubscriptionsRepository]
 
 const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVerificationOfUserUseCase,
   GetAllCommentForUserUseCase,
@@ -165,7 +171,8 @@ const useCases = [BanProcedureUseCase, GettingAllUsersForSuperAdminUseCase,BanVe
   updateQuestionOfQuizUseCase,CreateOrConnectPairUseCase, returnCurrentUnfinishedUserGameUseCase,
   returnGameByIdUseCase, sendAnswerForNextQuestionUseCase, returnAllMyGamesUseCase, returnStatisticForSpecificUserUseCase,
   returnTopUsersUseCase, autoFinishingEscapedGamesUseCase, SaveAvatarToFSUseCase,
-  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadMainPhotosForSpecificBlogUseCase, UploadMainPhotosForPostForSpecificBlogUseCase]
+  UploadBackgroundWallPapperForSpecificBlogUseCase, UploadMainPhotosForSpecificBlogUseCase, UploadMainPhotosForPostForSpecificBlogUseCase,
+  UnubscribeBlogUseCase, SubscribeBlogUseCase]
 
 const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVerificationOfUserCommand,
   GetAllCommentForUserCommand,
@@ -174,9 +181,10 @@ const commands = [BanProcedureCommand, GettingAllUsersForSuperAdminCommand,BanVe
   publishOrUnpublishQuestionOfQuizByIdCommand, updateQuestionOfQuizCommand, CreateOrConnectPairCommand,
   returnCurrentUnfinishedUserGameCommand, returnGameByIdCommand, sendAnswerForNextQuestionCommand, returnAllMyGamesCommand,
   returnStatisticForSpecificUserCommand, returnTopUsersCommand, autoFinishingEscapedGamesCommand, SaveAvatarToFSCommand,
-  UploadBackgroundWallPapperForSpecificBlogCommand, UploadMainPhotosForSpecificBlogCommand, UploadMainPhotosForPostForSpecificBlogCommand]
+  UploadBackgroundWallPapperForSpecificBlogCommand, UploadMainPhotosForSpecificBlogCommand, UploadMainPhotosForPostForSpecificBlogCommand,
+  UnubscribeBlogCommand, SubscribeBlogCommand]
 
-const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage]
+const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Storage, TelegramAdapter]
 
 
 @Module({
@@ -184,7 +192,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
     CqrsModule,
     TypeOrmModule.forFeature([Blog, User, BlogBan, APIComment, APILike, APISession,
       APIPost, BloggerBansForSpecificBlog, APIQuizQuestion, APIQuizQuestionAnswer,PairGameQuiz, BlogMainPhotoEntity,
-      BlogWallpaperPhotoEntity, PostMainPhotoEntity
+      BlogWallpaperPhotoEntity, PostMainPhotoEntity, APISubscriptionEntity
     ]),
     JwtModule.register({secret: "123"}),
     ThrottlerModule.forRoot({
@@ -210,7 +218,8 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
       password: '2233',
       database: 'postgres',
       entities: [Blog, User, BlogBan, APIComment, APILike, APISession, APIPost, BloggerBansForSpecificBlog,
-        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity, PostMainPhotoEntity],
+        APIQuizQuestion, APIQuizQuestionAnswer, PairGameQuiz, BlogMainPhotoEntity, BlogWallpaperPhotoEntity, PostMainPhotoEntity,
+        APISubscriptionEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),
@@ -218,7 +227,7 @@ const adapters = [EmailAdapter, Common, BlogIdExistsRule, FileSystemAdapter, Sto
 
   controllers: [AppController, BloggerBlogsController, TestingController,BlogsController,SABlogsController,SAUsersController,
     PostsController, UsersController, AuthController, CommentsController, SecurityDevicesController, BloggerUsersController,
-    SAQuizController, PairQuizGamePairsController, PairQuizGameUsersController, AvatarController],
+    SAQuizController, PairQuizGamePairsController, PairQuizGameUsersController, AvatarController, TelegramController],
 
   providers: [...modules,
     ...services,

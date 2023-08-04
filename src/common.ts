@@ -93,7 +93,17 @@ export class Common {
         newestLikes: [],
       },
       images: {
-        main : Obj2.main
+        main : Obj2.main ? Obj2.main.map(item => PhotoSizeViewModel.getViewModelForPost(item)).sort((n1,n2) => {
+          if (n1.width > n2.width) {
+            return -1;
+          }
+
+          if (n1.width < n2.width) {
+            return 1;
+          }
+
+          return 0;
+        }) : []
       }
     };
   };
@@ -136,7 +146,7 @@ export class Common {
       createdAt: Obj2.createdAt,
       banInfo : Obj2.banInfo,
       images : {
-        main : PhotoSizeViewModel.getViewModelForMain(Obj2.main),
+        main : Obj2.main ? Obj2.main.map(item => PhotoSizeViewModel.getViewModelForMain(item)) : [],
         wallpaper : PhotoSizeViewModel.getViewModelForWallpaper(Obj2.wallpaper)
       }
 

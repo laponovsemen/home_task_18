@@ -64,6 +64,7 @@ export class PostsRepository {
                 isHiden : false
               },
                 relations: {
+                  main : true,
                   blog : true
                 }
               })

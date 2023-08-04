@@ -10,7 +10,7 @@ export class BlogIdExistsRule implements ValidatorConstraintInterface {
   async validate(value: string) {
     try {
       console.log(this.blogsRepository, 'br');
-      return !!await this.blogsRepository.getBlogById(value);
+      return !!await this.blogsRepository.getBlogByIdWithBloggerInfo(value);
     } catch (e) {
       return false;
     }
